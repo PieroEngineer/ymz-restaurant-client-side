@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors */
+  --color-brand-primary: #ff751f;      /* Main Orange */
+  --color-brand-secondary: #d94500;    /* Complementary Darker Orange */
+  --color-brand-navy: #001560;         /* App Deep Navy Text/Accents */
+  --color-brand-background: #ffffff;   /* Clean White Base */
+
+  /* Custom Fonts */
+  --font-sans: "Glacial Indifference", sans-serif;
+  --font-heading: "League Spartan", sans-serif;
+  --font-accent: "Comfortaa", cursive;
+
+  /* Custom Shadows */
+  --shadow-yummizi: 0 10px 30px -5px rgba(0, 21, 96, 0.08), 0 4px 12px -2px rgba(255, 117, 31, 0.03);
+  --shadow-yummizi-hover: 0 20px 40px -5px rgba(0, 21, 96, 0.12), 0 8px 20px -2px rgba(255, 117, 31, 0.06);
+
+  /* Custom Animations & Keyframes */
+  --animate-pulse-alert: pulseAlert 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in: fadeIn 0.3s ease-out forwards;
+
+  @keyframes pulseAlert {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: .6; transform: scale(0.98); background-color: rgba(217, 69, 0, 0.1); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}
+
+@utility yummizi-shadow {
+  box-shadow: var(--shadow-yummizi);
+}
+
+/* Base Defaults */
+@layer base {
+  @font-face {
+    font-family: 'Glacial Indifference';
+    src: url('@/assets/fonts/GlacialIndifference-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'League Spartan';
+    src: url('@/assets/fonts/LeagueSpartan-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Comfortaa';
+    src: url('@/assets/fonts/Comfortaa-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  body {
+    background-color: var(--color-brand-background);
+    color: var(--color-brand-navy);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+}
+
+/* Global Fixed Logo Layout Requirement */
+.global-brand-watermark {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 40;
+  pointer-events: none;
+}
