@@ -26,7 +26,7 @@ export function HubPage() {
         <div className="flex flex-col h-3/4">
           {/* Header text occupies exactly 30% of the column height */}
           <div className="h-[30%] flex items-center pb-4">
-            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none">
+            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none text-shadow-yummizi">
               Bienvenidos <br />Pollitos chiken
             </span>
           </div>
