@@ -7,16 +7,19 @@ import mic from '@/features/hub/assets/mic.webp'
 import options from '@/features/hub/assets/options.webp'
 import restaurant from '@/features/hub/assets/restaurant.webp'
 import trafficlight from '@/features/hub/assets/traffic-light.webp'
+import yummizilogo from '@/assets/images/yummizi-logo.webp'
 
 export function HubPage() {
   return (
     <div className="w-screen h-screen bg-brand-background relative flex flex-col items-center justify-center px-12 overflow-hidden">
       
       {/* 1. TOP-RIGHT BRANDING LOGO WATERMARK WITH SHADOW */}
-      <div className="absolute top-6 right-6 select-none">
-        <span className="font-heading text-2xl font-bold text-brand-primary tracking-wider bg-white px-4 py-2 rounded-xl shadow-yummizi border border-brand-navy/5">
-          YUMMIZI
-        </span>
+      <div className="absolute top-6 right-6 select-none">  {/*TODO: Change its absolute position by a position that doesn't cross the button in small screens*/}
+        <img 
+          src={yummizilogo} 
+          alt="Yummizi logo" 
+          className="size-24 object-contain select-none transition-transform rounded-xl group-hover:scale-105"
+        />
       </div>
 
       {/* 2. RESPONSIVE CONTAINER MATRIX (Locked safely inside viewport constraints) */}
@@ -26,14 +29,14 @@ export function HubPage() {
         <div className="flex flex-col h-3/4">
           {/* Header text occupies exactly 30% of the column height */}
           <div className="h-[30%] flex items-center pb-4">
-            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none text-shadow-yummizi">
+            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none text-shadow-yummizi">  {/*Here there will be the restaurant logo instead of the name*/}
               Bienvenidos <br />Pollitos chiken
             </span>
           </div>
           {/* Button occupies the remaining 70% of the column height */}
           <div className="h-[70%]">
             <HubButton 
-              label="Table Requests" 
+              label="Solicitudes de mesa" 
               imageSrc={trafficlight} 
               contentPadding="p-10" // Generous, easily controllable custom padding
             />
