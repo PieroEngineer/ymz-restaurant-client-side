@@ -14,7 +14,7 @@ export function HubPage() {
       
       {/* 1. TOP-RIGHT BRANDING LOGO WATERMARK WITH SHADOW */}
       <div className="absolute top-6 right-6 select-none">
-        <span className="font-heading text-2xl font-bold text-brand-primary tracking-wider bg-white px-4 py-2 rounded-xl shadow-yummizi border border-brand-navy/5">
+        <span className="font-accent text-2xl font-bold text-brand-primary tracking-wider bg-white px-4 py-2 rounded-xl shadow-yummizi border border-brand-navy/5">
           YUMMIZI
         </span>
       </div>
@@ -24,8 +24,8 @@ export function HubPage() {
         
         {/* COLUMN 1: Heading Label + Single Tall Button Slot */}
         <div className="flex flex-col gap-4 h-full">
-          <span className="font-sans font-bold text-brand-navy tracking-wide text-sm px-1 shrink-0 uppercase">
-            Bienvenidos Pollitos chiken
+          <span className="font-sans font-bold text-brand-navy tracking-wide text-sm px-1 shrink-0">
+            Bienvenidos <br />Pollitos chiken
           </span>
           <div className="flex-1">
             <HubButton 

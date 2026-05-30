@@ -10,7 +10,7 @@
   /* Custom Fonts */
   --font-sans: "Glacial Indifference", sans-serif;
   --font-heading: "League Spartan", sans-serif;
-  --font-accent: "Comfortaa", cursive;
+  --font-accent: "Comfortaa", sans-serif;
 
   /* Custom Shadows */
   --shadow-yummizi: 0 10px 30px -5px rgba(0, 21, 96, 0.08), 0 4px 12px -2px rgba(255, 117, 31, 0.03);
@@ -35,34 +35,34 @@
 }
 
 /* Base Defaults */
-@layer base {
-  @font-face {
-    font-family: 'Glacial Indifference';
-    src: url('@/assets/fonts/Teachers-VariableFont_wght.ttf') format('ttf');
-    font-weight: 400;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: 'League Spartan';
-    src: url('@/assets/fonts/LeagueSpartan-VariableFont_wght.ttf') format('ttf');
-    font-weight: 700;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: 'Comfortaa';
-    src: url('@/assets/fonts/Comfortaa-VariableFont_wght.ttf') format('ttf');
-    font-weight: 400;
-    font-style: normal;
-  }
-
-  body {
-    background-color: var(--color-brand-background);
-    color: var(--color-brand-navy);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+/*X @layer base { */
+@font-face {
+  font-family: 'Glacial Indifference';
+  src: url('/src/assets/fonts/Teachers-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
 }
+@font-face {
+  font-family: 'League Spartan';
+  src: url('/src/assets/fonts/LeagueSpartan-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('/src/assets/fonts/Comfortaa-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+body {
+  background-color: var(--color-brand-background);
+  color: var(--color-brand-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+/*X } */
 
 /* Global Fixed Logo Layout Requirement */
 .global-brand-watermark {
