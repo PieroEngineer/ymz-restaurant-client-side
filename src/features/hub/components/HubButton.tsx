@@ -1,5 +1,3 @@
-//X import React from 'react';
-
 interface HubButtonProps {
   label: string;
   imageSrc: string;
