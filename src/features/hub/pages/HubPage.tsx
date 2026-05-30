@@ -20,13 +20,13 @@ export function HubPage() {
       </div>
 
       {/* 2. RESPONSIVE CONTAINER MATRIX (Locked safely inside viewport constraints) */}
-      <div className="grid grid-cols-4 gap-8 w-full max-w-7xl h-[65vh] items-stretch">
+      <div className="grid grid-cols-4 gap-8 w-full max-w-7xl h-dvh items-center">  {/*TODO: Convert into rows when the screen is vertical*/}
         
         {/* COLUMN 1: Explicitly distributed height segments */}
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-3/4">
           {/* Header text occupies exactly 30% of the column height */}
           <div className="h-[30%] flex items-center pb-4">
-            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-xl leading-none">
+            <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none">
               Bienvenidos <br />Pollitos chiken
             </span>
           </div>
@@ -41,19 +41,19 @@ export function HubPage() {
         </div>
 
         {/* COLUMN 2: Stacked Buttons Container */}
-        <div className="grid grid-rows-2 gap-8 h-full">
+        <div className="grid grid-rows-2 gap-8 h-3/4">
           <HubButton label="Mi Restaurante" imageSrc={restaurant} />
           <HubButton label="Mi Menú" imageSrc={menu} />
         </div>
 
         {/* COLUMN 3: Stacked Buttons Container */}
-        <div className="grid grid-rows-2 gap-8 h-full">
+        <div className="grid grid-rows-2 gap-8 h-3/4">
           <HubButton label="Mis Dispositivos" imageSrc={deviceswithyummizi} />
           <HubButton label="Mis Estadísticas" imageSrc={analytics} />
         </div>
 
         {/* COLUMN 4: Stacked Buttons Container */}
-        <div className="grid grid-rows-2 gap-8 h-full">
+        <div className="grid grid-rows-2 gap-8 h-3/4">
           <HubButton label="Contáctanos" imageSrc={mic} />
           <HubButton label="Opciones" imageSrc={options} />
         </div>

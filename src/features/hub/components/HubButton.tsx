@@ -17,7 +17,7 @@ export function HubButton({ label, imageSrc, altText, contentPadding = 'p-8' }: 
       <img 
         src={imageSrc} 
         alt={altText || label} 
-        className="w-20 h-20 object-contain select-none transition-transform group-hover:scale-105"
+        className="size-24 object-contain select-none transition-transform group-hover:scale-105"
       />
       
       {/* Amplified text sizes */}
