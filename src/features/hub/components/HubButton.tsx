@@ -3,12 +3,14 @@ interface HubButtonProps {
   imageSrc: string;
   altText?: string;
   contentPadding?: string; // e.g., "p-4", "p-8", "p-12" to control interior spacing
+  onClick?: () => void;
 }
 
-export function HubButton({ label, imageSrc, altText, contentPadding = 'p-8' }: HubButtonProps) {
+export function HubButton({ label, imageSrc, altText, contentPadding = 'p-8', onClick }: HubButtonProps) {
   return (
     <button 
       type="button"
+      onClick={onClick}
       className={`w-full h-full flex flex-col items-center justify-center gap-6 bg-brand-primary rounded-2xl shadow-yummizi hover:shadow-yummizi-hover hover:scale-[1.01] transition-all duration-200 cursor-pointer ${contentPadding}`}
     >
       {/* Scaled-up asset wrapper to match larger button targets */}

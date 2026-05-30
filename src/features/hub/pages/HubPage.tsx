@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { HubButton } from '@/features/hub/components/HubButton';
 
 import analytics from '@/features/hub/assets/analytics.webp'
@@ -10,6 +11,8 @@ import trafficlight from '@/features/hub/assets/traffic-light.webp'
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
 
 export function HubPage() {
+  const navigate = useNavigate(); // TanStack navigation hook instance
+  
   return (
     <div className="w-screen h-screen bg-brand-background relative flex flex-col items-center justify-center px-12 overflow-hidden">
       
@@ -39,6 +42,7 @@ export function HubPage() {
               label="Solicitudes de mesa" 
               imageSrc={trafficlight} 
               contentPadding="p-10" // Generous, easily controllable custom padding
+              onClick={() => navigate({ to: '/dashboard' })}
             />
           </div>
         </div>
