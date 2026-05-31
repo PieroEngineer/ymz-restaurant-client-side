@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { HubPage } from '@/features/hub/pages/HubPage';
-import { DashboardLayout } from '@/layouts/DashboardLayout';
+//X import { DashboardLayout } from '@/layouts/DashboardLayout';
+import { SectionLayout } from '@/layouts/SectionLayout';
 
 // 1. Root Route: Acts as the absolute base container wrapper
 const rootRoute = createRootRoute();
@@ -17,8 +18,8 @@ const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/dashboard',
   component: () => (
-    <DashboardLayout>
-      <div className="h-full w-full flex flex-col">
+    <SectionLayout showLogo={true}> 
+      <div className="h-full w-full flex flex-col items-center">
         <h1 className="text-3xl font-heading font-bold mb-1 tracking-tight animate-fade-in">
           Table Requests Portal
         </h1>
@@ -26,13 +27,13 @@ const dashboardRoute = createRoute({
           Monitoring active diner arrival windows and order details
         </p>
 
-        <div className="flex-1 border border-brand-navy/10 rounded-2xl flex items-center justify-center bg-slate-50 shadow-inner">
+        <div className="flex-1 border border-brand-navy/10 rounded-2xl flex items-center justify-center bg-slate-50 shadow-inner w-full">
           <span className="text-brand-navy/40 font-accent text-xs tracking-wide">
             [Table Requests Interactive Workspace Content Area]
           </span>
         </div>
       </div>
-    </DashboardLayout>
+    </SectionLayout>
   ),
 });
 
