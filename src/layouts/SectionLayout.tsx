@@ -16,11 +16,11 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
     <div className="flex h-screen w-screen bg-brand-background overflow-hidden relative font-sans">
       {/* 1. DYNAMIC WATERMARK LOGO CONTROL */}
       {showLogo && (
-        <div className="absolute top-3 right-6 select-none z-40 animate-fade-in">
+        <div className="absolute top-(--logo-vertical-offset) right-6 select-none z-40 animate-fade-in">
           <img 
             src={yummizilogo} 
             alt="Yummizi logo" 
-            className="size-20 object-contain select-none transition-transform rounded-xl group-hover:scale-105 shadow-yummizi"
+            className="size-(--logo-side-lenght) object-contain select-none transition-transform rounded-xl group-hover:scale-105 shadow-yummizi"
             />
         </div>
       )}
