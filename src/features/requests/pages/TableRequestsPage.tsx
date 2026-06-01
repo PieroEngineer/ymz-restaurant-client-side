@@ -3,6 +3,9 @@ import { ColoredExplorationIcon } from '@/features/requests/components/ColoredEx
 import { LightExplorationIcon } from '@/features/requests/components/LightExplorationIcon';    // toggle the color by 
 import { ColoredMgfGlassIcon } from '@/features/requests/components/ColoredMgfGlassIcon';     // clicking, so only 2
 import { LightMgfGlassIcon } from '@/features/requests/components/LightMgfGlassIcon';        // images necessary here
+import { DoorIcon } from '@/features/requests/components/DoorIcon';
+import { QueueIcon } from '@/features/requests/components/QueueIcon';
+import { CookingIcon } from '@/features/requests/components/CookingIcon';
 
 
 export function TableRequestsPage() {
@@ -60,19 +63,25 @@ export function TableRequestsPage() {
         </div>
       </div>
 
-      {/* 3. VERTICAL LEFT-SIDE STATUS RAIL (Sits below the 64px / 16rem button footprint area) */}
+      {/* 3. VERTICAL LEFT-SIDE STATUS RAIL*/}
       <div className="absolute top-20 left-0 w-20 bottom-0 py-4 flex flex-col items-center justify-center z-20">
         {/* Master Obround Shell Container */}
-        <div className="w-14 h-full bg-white rounded-full shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-between py-8 px-2">
+        <div className="w-18 h-full bg-white rounded-full shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-between py-8 px-2">
           
           {/* Sub-Obround 1: #ff3131 (High Priority / Urgent Alert Status) */}
-          <div className="w-8 h-[25%] bg-[#ff3131] rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer" />
+          <div className="w-14 h-[30%] bg-[#ff3131] rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer grid place-items-center px-1">
+            <QueueIcon className = "w-full h-full"/>
+          </div>
           
           {/* Sub-Obround 2: #ff751f (In Progress / Standard Active Flow) */}
-          <div className="w-8 h-[25%] bg-brand-primary rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer" />
+          <div className="w-14 h-[30%] bg-brand-primary rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer grid place-items-center px-1">
+            <DoorIcon className = "w-full h-full"/>
+          </div>
           
           {/* Sub-Obround 3: #00bf63 (Ready / Fulfilled Status Tracker) */}
-          <div className="w-8 h-[25%] bg-[#00bf63] rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer" />
+          <div className="w-14 h-[30%] bg-[#00bf63] rounded-full shadow-inner transition-transform hover:scale-105 cursor-pointer grid place-items-center px-1">
+            <CookingIcon className = "w-full h-full"/>
+          </div>
 
         </div>
       </div>

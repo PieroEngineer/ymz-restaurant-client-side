@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
+// import { GearIcon } from '@/shared/components/icons/GearIcon';
+import { MenuIcon } from '@/shared/components/icons/MenuIcon';
+import { HouseIcon } from '@/shared/components/icons/HouseIcon';
+import { ExitIcon } from '@/shared/components/icons/ExitIcon';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
@@ -41,9 +45,9 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           
           {/* Main Hub Option */}
           <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
-            <img src="/vite.svg" alt="Main" className="w-6 h-6 object-contain" />
+            <HouseIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-              Main Hub
+              Inicio
             </span>
           </button>
 
@@ -52,20 +56,9 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
 
           {/* Menu Option */}
           <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
-            <img src="/vite.svg" alt="Menu" className="w-6 h-6 object-contain" />
+            <MenuIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-              Menu Management
-            </span>
-          </button>
-
-          {/* Thin, non-touching separating divider line */}
-          <div className="mx-4 my-2 border-t border-brand-navy/20 shrink-0" />
-
-          {/* Table Requests Option */}
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
-            <img src="/vite.svg" alt="Requests" className="w-6 h-6 object-contain" />
-            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-              Table Requests
+              Menu
             </span>
           </button>
 
@@ -74,9 +67,9 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
             <div className="mx-4 mb-2 border-t border-brand-navy/20 shrink-0" />
             
             <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
-              <img src="/vite.svg" alt="Settings" className="w-5 h-5 object-contain" />
+              <ExitIcon className='size-7' />
               <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-                System Settings
+                Salir
               </span>
             </button>
           </div>
