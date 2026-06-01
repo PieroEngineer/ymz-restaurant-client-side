@@ -2,6 +2,7 @@ import { createRootRoute, createRoute, createRouter } from '@tanstack/react-rout
 import { HubPage } from '@/features/hub/pages/HubPage';
 import { TableRequestsPage } from '@/features/requests/pages/TableRequestsPage';
 import { SectionLayout } from '@/layouts/SectionLayout';
+import { MenuManagerPage } from '@/features/menu/pages/MenuManagerPage';
 
 // Root Route: Acts as the absolute base container wrapper
 const rootRoute = createRootRoute();
@@ -25,8 +26,18 @@ const dashboardRoute = createRoute({
   ),
 });
 
+const menuRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/menu',
+  component: () => (
+    <SectionLayout showLogo={false}>
+      <MenuManagerPage />
+    </SectionLayout>
+  ),
+});
+
 // Create the unified router instance passing our route definitions
-const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute, menuRoute]);
 
 export const router = createRouter({ routeTree });
 
