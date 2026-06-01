@@ -14,6 +14,7 @@
 
   /* Custom Shadows */
   --shadow-yummizi: 0 10px 20px -5px rgba(0, 0, 0, 0.6), 0 4px 12px -2px rgba(255, 117, 31, 0.03);
+  --shadow-yummizi-blue: 0 10px 20px -5px rgba(0, 15, 60, 0.6), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
   --shadow-yummizi-hover: 0 20px 40px -5px rgba(0, 21, 96, 0.12), 0 10px 20px -2px rgba(255, 117, 31, 0.8);
   --text-shadow-yummizi: 0 4px 12px rgba(0, 0, 0, 0.2), 0 4px 4px rgba(0, 15, 60, 0.5);
   
