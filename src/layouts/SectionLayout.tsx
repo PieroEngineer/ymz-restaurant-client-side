@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import React, { useState } from 'react';
 
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
@@ -12,6 +13,8 @@ interface SectionLayoutProps {
 }
 
 export function SectionLayout({ children, showLogo = true }: SectionLayoutProps) {
+  const navigate = useNavigate(); // TanStack navigation hook instance
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -44,7 +47,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
         <nav className="flex-1 px-4 py-2 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
           
           {/* Main Hub Option */}
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: '/' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <HouseIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Inicio
