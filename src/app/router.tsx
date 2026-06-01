@@ -30,7 +30,7 @@ const menuRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/menu',
   component: () => (
-    <SectionLayout showLogo={true}>
+    <SectionLayout showLogo={false}>
       <MenuManagerPage />
     </SectionLayout>
   ),

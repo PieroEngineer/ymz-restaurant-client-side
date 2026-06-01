@@ -1,5 +1,4 @@
 import { PageChanger } from '@/features/menu/components/PageChanger';
-import { GroupLabelButton } from '@/features/menu/components/GroupLabelButton';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
 import { MenuDisplay } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
@@ -10,16 +9,22 @@ export function MenuManagerPage() {
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none">
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
-      <div className="w-16 flex flex-col gap-4 pt-20 shrink-0 h-full items-center">
+      <div className="w-18 flex flex-col gap-4 pt-20 shrink-0 h-full items-center">
         {/* Component 1: Page Changer */}
         <PageChanger 
           onPageUp={() => console.log('Inject code: Page Increment')} 
           onPageDown={() => console.log('Inject code: Page Decrement')}
         />
         {/* Component 2: Group Label Button */}
-        <GroupLabelButton 
-          onClick={() => console.log('Inject code: Shift layout to page 2 view state')} 
-        />
+        <button
+            type="button"
+            onClick={() => console.log('Inject code: Shift layout to page 2 view state')}
+            className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-2 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
+            >
+            <span className="font-heading font-bold text-[14px] text-brand-primary uppercase tracking-tighter leading-tight">
+                Group Labels
+            </span>
+        </button>
       </div>
 
       {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}

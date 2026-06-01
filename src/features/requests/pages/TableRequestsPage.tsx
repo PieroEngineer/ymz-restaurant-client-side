@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { ColoredExplorationIcon } from '@/features/requests/components/ColoredExplorationIcon'; // TODO: It's possible to 
-import { LightExplorationIcon } from '@/features/requests/components/LightExplorationIcon';    // toggle the color by 
-import { ColoredMgfGlassIcon } from '@/features/requests/components/ColoredMgfGlassIcon';     // clicking, so only 2
-import { LightMgfGlassIcon } from '@/features/requests/components/LightMgfGlassIcon';        // images necessary here
-import { DoorIcon } from '@/features/requests/components/DoorIcon';
-import { QueueIcon } from '@/features/requests/components/QueueIcon';
-import { CookingIcon } from '@/features/requests/components/CookingIcon';
+import { ColoredExplorationIcon } from '@/features/requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
+import { LightExplorationIcon } from '@/features/requests/components/icons/LightExplorationIcon';    // toggle the color by 
+import { ColoredMgfGlassIcon } from '@/features/requests/components/icons/ColoredMgfGlassIcon';     // clicking, so only 2
+import { LightMgfGlassIcon } from '@/features/requests/components/icons/LightMgfGlassIcon';        // images necessary here
+import { DoorIcon } from '@/features/requests/components/icons/DoorIcon';
+import { QueueIcon } from '@/features/requests/components/icons/QueueIcon';
+import { CookingIcon } from '@/features/requests/components/icons/CookingIcon';
 
 
 export function TableRequestsPage() {

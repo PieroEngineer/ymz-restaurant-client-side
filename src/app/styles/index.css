@@ -22,7 +22,7 @@
     --logo-vertical-offset: 10px;
     --logo-side-lenght: 90px;
   
-    --used-height-by-logo: calc(var(--logo-vertical-offset) * 2 + var(--logo-side-lenght));
+    --used-height-by-logo: calc(var(--logo-vertical-offset) + var(--logo-side-lenght));
 
   /* Custom Animations & Keyframes */
   --animate-pulse-alert: pulseAlert 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
