@@ -1,4 +1,5 @@
 import React from 'react';
+import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
 
 interface MenuDisplayProps {
   imageSrc?: string;
@@ -17,20 +18,24 @@ export function MenuDisplay({ imageSrc, onImageClick }: MenuDisplayProps) {
   return (
     <div 
       onClick={handleCanvasInteraction}
-      className="w-full h-full bg-white border-2 border-brand-navy rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group transition-all"
+      className="w-max h-full p-2 bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden group transition-all"
     >
+      
       {imageSrc ? (
-        <img 
-          src={imageSrc} 
-          alt="Active Restaurant Blueprint" 
-          className="w-full h-full object-contain pointer-events-none select-none" 
-        />
+        <div className="text-center flex flex-col justify-center items-center select-none">
+          <span className="text-md block text-brand-primary italic">Clickea el menu para añadir una referencia 👇🏻</span>
+          <img 
+            src={imageSrc} 
+            alt="Active Restaurant Blueprint" 
+            className="w-full h-full object-contain select-none" 
+          />
+        </div>
       ) : (
-        <div className="text-center p-6 pointer-events-none select-none">
-          <span className="text-6xl mb-3 block opacity-30">📋</span>
-          <p className="font-heading font-bold text-brand-navy/30 text-sm tracking-wide uppercase">
-            [ Interactive Menu Display Asset Space ]
-          </p>
+        <div className="text-center flex flex-col justify-center items-center select-none gap-15">
+            <p className="text-brand-navy font-accents text-2xl leading-relaxed">
+              Presiona aquí para agregar <br />páginas de menú
+            </p>
+          <PlusIcon className='size-12'/>
         </div>
       )}
     </div>
