@@ -1,10 +1,51 @@
+import { useState } from 'react';
+
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
-import { MenuDisplay } from '@/features/menu/components/MenuDisplay';
+import { MenuDisplay, type MenuCoordinate } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
 
+
 export function MenuManagerPage() {
+  // FDD State Layer Matrix Storage Units
+  const [uploadedMenuImages, setUploadedMenuImages] = useState<string[]>([]);
+  const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  const [masterCoordinates, setMasterCoordinates] = useState<MenuCoordinate[]>([]);
+
+  // Logic handlers for tracking horizontal menu layout page indexing operations
+  const handlePageNext = () => {
+    if (activePageIndex < uploadedMenuImages.length - 1) {
+      setActivePageIndex((prev) => prev + 1);
+    }
+  };
+
+  const handlePagePrevious = () => {
+    if (activePageIndex > 0) {
+      setActivePageIndex((prev) => prev - 1);
+    }
+  };
+
+  // Logic: Intercept percentage vector captures and append them to data context schemas
+  const handleAddNewCoordinatePin = (newPin: Omit<MenuCoordinate, 'id' | 'pageIndex'>) => {
+    const freshCoordinateRecord: MenuCoordinate = {
+      ...newPin,
+      id: crypto.randomUUID(), // Generate a safe localized runtime id token anchor
+      pageIndex: activePageIndex, // Save the index number of the image being pinned
+    };
+
+    setMasterCoordinates((prev) => [...prev, freshCoordinateRecord]);
+    
+    // 💡 Prepared debug point layout terminal indicator for later backend wiring connections
+    console.log('📌 Saved Image-Relative Coordinate Payload:', freshCoordinateRecord);
+  };
+
+  // 📥 Logic: Receive fresh bulk data collections from local input uploads
+  const handleUploadedFilesPipeline = (urls: string[]) => {
+    setUploadedMenuImages(urls);
+    setActivePageIndex(0); // Auto-focus back onto the initial index sheet
+  };
+
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none">
       
@@ -12,8 +53,10 @@ export function MenuManagerPage() {
       <div className="w-18 flex flex-col gap-4 pt-20 shrink-0 h-full items-center">
         {/* Component 1: Page Changer */}
         <PageChanger 
-          onPageUp={() => console.log('Inject code: Page Increment')} 
-          onPageDown={() => console.log('Inject code: Page Decrement')}
+          currentPage={uploadedMenuImages.length > 0 ? activePageIndex + 1 : 0}
+          totalPages={uploadedMenuImages.length}
+          onPageUp={handlePagePrevious}
+          onPageDown={handlePageNext}
         />
         {/* Component 2: Group Label Button */}
         <button
@@ -35,10 +78,14 @@ export function MenuManagerPage() {
             onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
           />
         </div>
-        {/* Component 4: Menu Display (Takes all remaining fluid vertical layout context) */}
+        {/* Component 4: Dynamic Interactive Menu Display Context */}
         <div className="flex-1 pb-4 pt-4">
           <MenuDisplay 
-            onImageClick={(coords) => console.log(`Inject code: Capture mapping tag at coordinate X: ${coords.x} Y: ${coords.y}`)}
+            activeImageSrc={uploadedMenuImages.length > 0 ? uploadedMenuImages[activePageIndex] : null}
+            currentPageIndex={activePageIndex}
+            coordinates={masterCoordinates}
+            onImagesUploaded={handleUploadedFilesPipeline}
+            onCoordinateAdded={handleAddNewCoordinatePin}
           />
         </div>
       </div>
