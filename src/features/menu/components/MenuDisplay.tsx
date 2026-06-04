@@ -2,6 +2,18 @@ import React, { useRef } from 'react';
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
 import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
+// 📝 Unified FDD state contract mapping coordinates to table items
+export interface DishItem {
+  id: string;
+  pageIndex: number;
+  xPercent: number;
+  yPercent: number;
+  name: string;
+  cost: string;
+  prepTime: string;
+  createdAt: number; // ⏳ Tie-breaker timestamp for identical positions
+}
+
 // Structure contract for pinning coordinates to specific uploaded sheets
 export interface MenuCoordinate {
   id: string;
@@ -13,16 +25,16 @@ export interface MenuCoordinate {
 interface MenuDisplayProps {
   activeImageSrc: string | null;
   currentPageIndex: number;
-  coordinates: MenuCoordinate[];
-  // 🔥 Callbacks prepared for state pipeline binding
+  // 🔢 Array of dishes already injected with their dynamically calculated N° values
+  dishesWithNumbers: (DishItem & { orderNumber: number })[];
   onImagesUploaded: (fileUrls: string[]) => void;
-  onCoordinateAdded: (coord: Omit<MenuCoordinate, 'id' | 'pageIndex'>) => void;
+  onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageIndex' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => void;
 }
 
 export function MenuDisplay({ 
   activeImageSrc, 
   currentPageIndex, 
-  coordinates, 
+  dishesWithNumbers, 
   onImagesUploaded, 
   onCoordinateAdded 
 }: MenuDisplayProps) {
@@ -54,14 +66,14 @@ export function MenuDisplay({
 
     // Convert pixel coordinate targets to structural layout scale safe percentages
     const xPercent = (clickXWithinImage / rect.width) * 100;
-    const animateY = (clickYWithinImage / rect.height) * 100;
+    const yPercent = (clickYWithinImage / rect.height) * 100;
 
     // Forward the relative data coordinates straight up to our FDD state context engine
-    onCoordinateAdded({ xPercent, yPercent: animateY });
+    onCoordinateAdded({ xPercent, yPercent: yPercent });
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
-  const activePagePins = coordinates.filter(coord => coord.pageIndex === currentPageIndex);
+  const activePagePins = dishesWithNumbers.filter(dish => dish.pageIndex === currentPageIndex);
 
   return (
     <div 
@@ -80,9 +92,9 @@ export function MenuDisplay({
 
       {activeImageSrc ? (
         /* 🗺️ ACTIVE COMPONENT VIEW CANVAS PATH */
-        <div className="relative w-full h-full flex flex-col items-center overflow-auto"> {/*TODO: Repare the overflow, the image shouldn't push the bottom of the container*/}
+        <div className="relative w-full h-full flex flex-col items-center p-2 overflow-auto">
           <span className="text-md block text-brand-primary italic flex-none">Clickea sobre el menu para añadir una referencia 👇🏻</span>
-          <div className="relative inline-block h-full select-none items-center cursor-crosshair">
+          <div className="relative min-h-0 inline-block h-full select-none items-center cursor-crosshair">
             <img 
               ref={imageRef}
               src={activeImageSrc} 
@@ -103,6 +115,7 @@ export function MenuDisplay({
                       alt="Description of icon"
                       loading="lazy" // Optimizes loading if it is below the fold
                     />
+                {/* {pin.orderNumber} */}
               </div>
             ))}
 
