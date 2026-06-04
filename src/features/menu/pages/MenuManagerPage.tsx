@@ -84,15 +84,15 @@ export function MenuManagerPage() {
       </div>
 
       {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}
-      <div className="flex-1 flex flex-col items-center h-full min-w-[320px]">
+      <div className="flex-1 flex flex-col items-center h-screen min-w-[320px]">
         {/* Component 3: View Selector (Touches extreme top bounds) */}
-        <div className="h-16 shrink-0 flex justify-center">
-          <ViewSelector // TODO: Move it to the right of the and become it vertical
+        <div className="h-[10%] shrink-0 flex justify-center">
+          <ViewSelector // TODO: Move it to the right of the Menu display and become it vertical
             onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
           />
         </div>
         {/* Component 4: Dynamic Interactive Menu Display Context */}
-        <div className="flex-1 pb-4 pt-4">
+        <div className="h-[90%]"> {/** Is it a bad practices? */}
           <MenuDisplay 
             activeImageSrc={uploadedMenuImages.length > 0 ? uploadedMenuImages[activePageIndex] : null}
             currentPageIndex={activePageIndex}

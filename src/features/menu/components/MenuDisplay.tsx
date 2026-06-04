@@ -64,7 +64,7 @@ export function MenuDisplay({
 
   return (
     <div 
-      className="w-max h-full p-3 bg-white border-2 border-brand-navy rounded-3xl flex-1 flex flex-col justify-center items-center relative overflow-hidden group transition-all"
+      className="w-auto h-full bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden group transition-all"
     >
 
       {/* 📥 Hidden System Input Element managed by pointer anchors */}
@@ -79,9 +79,9 @@ export function MenuDisplay({
 
       {activeImageSrc ? (
         /* 🗺️ ACTIVE COMPONENT VIEW CANVAS PATH */
-        <div className="relative w-full h-full flex flex-col items-center p-1 overflow-auto"> {/*TODO: Repare the overflow, the image shouldn't push the bottom of the container*/}
-          <span className="text-md block text-brand-primary italic flex-none">Clickea el menu para añadir una referencia 👇🏻</span>
-          <div className="relative inline-block h-full select-none items-center cursor-crosshair">
+        <div className="relative w-full h-full flex flex-col items-center overflow-auto"> {/*TODO: Repare the overflow, the image shouldn't push the bottom of the container*/}
+          <span className="text-md block text-brand-primary italic flex-none">Clickea sobre el menu para añadir una referencia 👇🏻</span>
+          <div className="relative inline-block min-h-0 h-full select-none items-center cursor-crosshair">
             <img 
               ref={imageRef}
               src={activeImageSrc} 
