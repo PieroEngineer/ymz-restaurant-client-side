@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
+import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
 // Structure contract for pinning coordinates to specific uploaded sheets
 export interface MenuCoordinate {
@@ -81,7 +82,7 @@ export function MenuDisplay({
         /* 🗺️ ACTIVE COMPONENT VIEW CANVAS PATH */
         <div className="relative w-full h-full flex flex-col items-center overflow-auto"> {/*TODO: Repare the overflow, the image shouldn't push the bottom of the container*/}
           <span className="text-md block text-brand-primary italic flex-none">Clickea sobre el menu para añadir una referencia 👇🏻</span>
-          <div className="relative inline-block min-h-0 h-full select-none items-center cursor-crosshair">
+          <div className="relative inline-block h-full select-none items-center cursor-crosshair">
             <img 
               ref={imageRef}
               src={activeImageSrc} 
@@ -94,10 +95,14 @@ export function MenuDisplay({
             {activePagePins.map((pin) => (
               <div
                 key={pin.id}
-                className="absolute w-6 h-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-none"
+                className="absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-none"
                 style={{ left: `${pin.xPercent}%`, top: `${pin.yPercent}%` }}
               >
-                🎯
+                <img 
+                      src={SelectionIcon} 
+                      alt="Description of icon"
+                      loading="lazy" // Optimizes loading if it is below the fold
+                    />
               </div>
             ))}
 
