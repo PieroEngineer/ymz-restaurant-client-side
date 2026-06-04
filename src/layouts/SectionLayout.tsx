@@ -82,7 +82,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
       {/* 3. CORE VIEWPORT MAIN COMPONENT */}
       <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* WORKSPACE DATA MOUNT SLOT */}
-        <main className="flex-1 w-full h-full px-10 pb-10 overflow-hidden relative">
+        <main className="flex-1 w-full h-full px-10 overflow-hidden relative">
           {children}
         </main>
       </div>

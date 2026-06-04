@@ -59,12 +59,12 @@ export function MenuDisplay({
     onCoordinateAdded({ xPercent, yPercent: animateY });
   };
 
-  // 🔥 Filter out pin markers belonging strictly to the menu page being viewed right now
+  // Filter out pin markers belonging strictly to the menu page being viewed right now
   const activePagePins = coordinates.filter(coord => coord.pageIndex === currentPageIndex);
 
   return (
     <div 
-      className="w-max h-full p-2 bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden group transition-all"
+      className="w-max h-full p-3 bg-white border-2 border-brand-navy rounded-3xl flex-1 flex flex-col justify-center items-center relative overflow-hidden group transition-all"
     >
 
       {/* 📥 Hidden System Input Element managed by pointer anchors */}
@@ -72,23 +72,22 @@ export function MenuDisplay({
         type="file" 
         ref={fileInputRef} 
         onChange={handleFileChange} 
-        multiple // 🔥 Feature: Allows selection of multiple files simultaneously
+        multiple // Feature: Allows selection of multiple files simultaneously
         accept="image/*" 
         className="hidden" 
       />
 
-      {/**/}
       {activeImageSrc ? (
         /* 🗺️ ACTIVE COMPONENT VIEW CANVAS PATH */
-        <div className="relative w-full h-full flex items-center justify-center p-4">
-          <div className="relative inline-block max-w-full max-h-full select-none cursor-crosshair">
-            <span className="text-md block text-brand-primary italic">Clickea el menu para añadir una referencia 👇🏻</span>
+        <div className="relative w-full h-full flex flex-col items-center p-1 overflow-auto"> {/*TODO: Repare the overflow, the image shouldn't push the bottom of the container*/}
+          <span className="text-md block text-brand-primary italic flex-none">Clickea el menu para añadir una referencia 👇🏻</span>
+          <div className="relative inline-block h-full select-none items-center cursor-crosshair">
             <img 
               ref={imageRef}
               src={activeImageSrc} 
               onClick={handleImageCanvasClick}
               alt="Active Restaurant Menu Page Layout" 
-              className="max-w-full max-h-[60vh] object-contain pointer-events-auto rounded-lg" 
+              className="w-auto h-full object-contain pointer-events-auto rounded-lg border" 
             />
 
             {/* 📍 Feature: Dynamically render target icon tags over exact layout points */}
