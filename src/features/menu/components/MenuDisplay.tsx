@@ -111,11 +111,17 @@ export function MenuDisplay({
                 style={{ left: `${pin.xPercent}%`, top: `${pin.yPercent}%` }}
               >
                 <img 
-                      src={SelectionIcon} 
-                      alt="Description of icon"
-                      loading="lazy" // Optimizes loading if it is below the fold
-                    />
-                {/* {pin.orderNumber} */}
+                  src={SelectionIcon} 
+                  alt="Description of icon"
+                  loading="lazy" // Optimizes loading if it is below the fold
+                />
+
+                {/* <div className={`absolute flex items-center justify-center w-8 h-8 bg-brand-secondary/30 rounded-full text-white text-xs font-sans p-1${ */}
+                <div className={`absolute top-1/2 -translate-y-1/2 flex items-center justify-center size-8 bg-brand-secondary/30 rounded-full text-white text-xs font-sans ${pin.xPercent<50 ? "left-full ml-1" : "right-full mr-1"}`}>
+                  {pin.orderNumber}
+                </div>
+                
+
               </div>
             ))}
 

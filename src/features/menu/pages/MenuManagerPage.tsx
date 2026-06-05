@@ -89,8 +89,6 @@ export function MenuManagerPage() {
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
-      
-      
       <div className="w-18 flex flex-col gap-4 pt-30 shrink-0 h-full items-center">
         {/* Component 0: Add page button */}
         <button
@@ -125,7 +123,7 @@ export function MenuManagerPage() {
       {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}
       <div className="flex-1 flex flex-col items-center h-screen min-w-[320px]">
         {/* Component 3: View Selector (Touches extreme top bounds) */}
-        <div className="h-[10%] shrink-0 flex justify-center">
+        <div className="h-16 shrink-0 flex justify-center">
           <ViewSelector // TODO: Move it to the right of the Menu display and become it vertical
             onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
           />
