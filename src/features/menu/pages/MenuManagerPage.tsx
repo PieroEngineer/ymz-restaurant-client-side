@@ -6,8 +6,7 @@ import { MenuDisplay, type DishItem } from '@/features/menu/components/MenuDispl
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
 
-
-export function MenuManagerPage() {
+export function MenuManagerPage() { 
   // FDD State Layer Matrix Storage Units
   const [uploadedMenuImages, setUploadedMenuImages] = useState<string[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
@@ -75,6 +74,21 @@ export function MenuManagerPage() {
     setActiveEditCell({ id: newId, field: 'name' });
   };
 
+    // 🚀 Logic: Dynamic adjustment of coordinates while dragging across the image matrix canvas
+  const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {
+    setDishes((prev) =>
+      prev.map((dish) => (dish.id === id ? { ...dish, xPercent, yPercent } : dish))
+    );
+  };
+
+  // 🧹 Logic: Erase marker pin item record and clear related lines out of the grid layout
+  const handleDeleteCoordinateRecord = (id: string) => {
+    setDishes((prev) => prev.filter((dish) => dish.id !== id));
+    if (activeEditCell?.id === id) {
+      setActiveEditCell(null);
+    }
+  };
+
   // 📝 LOGIC: Handle live data edits across inline cells
   const handleUpdateDishDataField = (id: string, field: 'name' | 'cost' | 'prepTime', value: string) => {
     setDishes((prev) => 
@@ -137,6 +151,10 @@ export function MenuManagerPage() {
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
             onImagesUploaded={handleUploadedFilesPipeline}
             onCoordinateAdded={handleAddNewCoordinatePin}
+            /* 🔌 Added interactive handlers */
+            onCoordinateUpdated={handleUpdateCoordinatePosition}
+            onCoordinateDeleted={handleDeleteCoordinateRecord}
+
           />
         </div>
       </div>
