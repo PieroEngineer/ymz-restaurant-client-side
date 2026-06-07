@@ -1,5 +1,9 @@
 import { useCallback, useState } from 'react';
 
+// TODO: It work nicem but there are somethings to improve:
+// - Some undos and redos are ghost (do nothing)
+// - In Dish chart, the undo in letters shouldn't be by letters, but by textfield modified 
+
 interface UndoableStateOptions<T> {
   isEqual: (left: T, right: T) => boolean;
 }

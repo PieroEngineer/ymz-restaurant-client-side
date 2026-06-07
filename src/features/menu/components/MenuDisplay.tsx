@@ -1,4 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { TrashIcon } from "@/features/menu/components/icons/TrashIcon";
+import { PencilIcon } from "@/features/menu/components/icons/PencilIcon";
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
 import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
@@ -193,10 +195,10 @@ export function MenuDisplay({
                         onCoordinateDeleted(pin.id);
                         setHoveredPinId(null);
                       }}
-                      className="text-white text-xs font-bold hover:scale-110 active:scale-95 transition-transform cursor-pointer"
-                      title="Delete Marker"
+                      className="hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                      title="Borrar pin"
                     >
-                      🗑️
+                      <TrashIcon className='size-6'/>
                     </button>
 
                     {/* ▫️ Vertical partition separation wireframe rule line */}
@@ -210,9 +212,10 @@ export function MenuDisplay({
                         onTargetRowFocusRequested(pin.id);
                         setHoveredPinId(null); // Collapse frame after jumping
                       }}
-                      className="text-white opacity-60 text-xs font-bold hover:scale-120 active:scale-90 transition-transform cursor-pointer"
+                      className="hover:scale-120 active:scale-90 transition-transform cursor-pointer"
+                      title="Editar pin"
                     >
-                      ⚙️
+                      <PencilIcon className='size-6'/>
                     </button>
                   </div>
                 </div>
