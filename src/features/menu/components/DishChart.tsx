@@ -42,7 +42,7 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
   // 🧮 Keyboard Navigation Engine: Handles Tab and Enter loops
   const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: 'name' | 'cost' | 'prepTime') => {
     const isTab = e.key === 'Tab';
-    const isEnter = e.key === 'Enter';
+    const isEnter = e.key === 'Enter';  //TODO: Enter should also jump between rows, not only within one row
 
     if (!isTab && !isEnter) return;
 
