@@ -84,9 +84,7 @@ export function MenuManagerPage() {
   // 🧹 Logic: Erase marker pin item record and clear related lines out of the grid layout
   const handleDeleteCoordinateRecord = (id: string) => {
     setDishes((prev) => prev.filter((dish) => dish.id !== id));
-    if (activeEditCell?.id === id) {
-      setActiveEditCell(null);
-    }
+    if (activeEditCell?.id === id) setActiveEditCell(null);
   };
 
   // 📝 LOGIC: Handle live data edits across inline cells
@@ -94,6 +92,16 @@ export function MenuManagerPage() {
     setDishes((prev) => 
       prev.map((dish) => (dish.id === id ? { ...dish, [field]: value } : dish))
     );
+  };
+
+  // 🧭 Logic: Sync active canvas viewport to match a selected table item's page index
+  const handleSyncCanvasToRowPage = (targetPageIndex: number) => {
+    setActivePageIndex(targetPageIndex);
+  };
+
+  // 👁️ Logic: Shift selection to target name input row field
+  const handleRequestRowFocus = (id: string) => {
+    setActiveEditCell({ id, field: 'name' });
   };
 
   // Run the data array compilation engine
@@ -154,7 +162,8 @@ export function MenuManagerPage() {
             /* 🔌 Added interactive handlers */
             onCoordinateUpdated={handleUpdateCoordinatePosition}
             onCoordinateDeleted={handleDeleteCoordinateRecord}
-
+            /* 🔌 Actions connection string parameter */
+            onTargetRowFocusRequested={handleRequestRowFocus}
           />
         </div>
       </div>
@@ -176,6 +185,8 @@ export function MenuManagerPage() {
             activeEditCell={activeEditCell}
             setActiveEditCell={setActiveEditCell}
             onUpdateItem={handleUpdateDishDataField}
+            /* 🔌 Added sync listener hooks */
+            onRowClicked={handleSyncCanvasToRowPage}
           />
         </div>
       </div>

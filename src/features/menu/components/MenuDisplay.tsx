@@ -24,7 +24,8 @@ interface MenuDisplayProps {
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
   onCoordinateDeleted: (id: string) => void;
-
+    // 🔌 Action callback to target a table row directly from a marker pin
+  onTargetRowFocusRequested: (id: string) => void;
 }
 
 export function MenuDisplay({ 
@@ -34,7 +35,9 @@ export function MenuDisplay({
   onImagesUploaded, 
   onCoordinateAdded,
   onCoordinateUpdated,
-  onCoordinateDeleted
+  onCoordinateDeleted,
+  onTargetRowFocusRequested
+
 }: MenuDisplayProps) {
 
   // Reference triggers for native file upload explorer and image elements
@@ -48,9 +51,7 @@ export function MenuDisplay({
   // 🧹 Keyboard Listener: Collapse expanded action frames instantly when pressing Escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setHoveredPinId(null);
-      }
+      if (e.key === 'Escape') setHoveredPinId(null);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -76,11 +77,8 @@ export function MenuDisplay({
     const rect = imageRef.current.getBoundingClientRect();
     
     // 📏 Boundary Protection Rule: Force calculations to lock between 0% and 100% boundary limits
-    const rawX = ((e.clientX - rect.left) / rect.width) * 100;
-    const rawY = ((e.clientY - rect.top) / rect.height) * 100;
-    
-    const boundedX = Math.max(0, Math.min(100, rawX));
-    const boundedY = Math.max(0, Math.min(100, rawY));
+    const boundedX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const boundedY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
 
     onCoordinateUpdated(draggingPinId, boundedX, boundedY);
   };
@@ -88,9 +86,7 @@ export function MenuDisplay({
 
   // 🛑 Gesture Drop Event Engine: Fires formal completion hook when user releases mouse hold click
   const handleCanvasMouseUp = () => {
-    if (draggingPinId) {
-      setDraggingPinId(null);
-    }
+        if (draggingPinId) setDraggingPinId(null);
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
@@ -98,7 +94,7 @@ export function MenuDisplay({
 
   return (
     <div 
-      className="w-auto h-full bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden group transition-all"
+      className="w-auto h-full bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden" /// |-> X group transition-all
       onMouseMove={handleCanvasMouseMove}
       onMouseUp={handleCanvasMouseUp}
       onMouseLeave={handleCanvasMouseUp} // Auto-drop if mouse slips entirely out of the display box
@@ -128,7 +124,7 @@ export function MenuDisplay({
               src={activeImageSrc} 
               onClick={handleImageCanvasClick}
               alt="Active Restaurant Menu Page Layout" 
-              className="w-auto h-full object-contain pointer-events-auto rounded-lg border" 
+              className="w-auto h-full object-contain pointer-events-auto rounded-lg" 
             />
 
             {activePagePins.map((pin) => {
@@ -201,8 +197,12 @@ export function MenuDisplay({
                     {/* Right Action Button: Stub placeholder reserved for future extensions */}
                     <button
                       type="button"
-                      onClick={(e) => e.stopPropagation()}
-                      className="text-white opacity-60 text-xs font-bold cursor-default"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onTargetRowFocusRequested(pin.id);
+                        setHoveredPinId(null); // Collapse frame after jumping
+                      }}
+                      className="text-white opacity-60 text-xs font-bold hover:scale-120 active:scale-90 transition-transform cursor-pointer"
                     >
                       ⚙️
                     </button>
@@ -218,7 +218,7 @@ export function MenuDisplay({
         <button 
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full h-full flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-slate-50 transition-colors group"
+          className="w-full h-full flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-slate-50 transition-colors"
         >
           <p className="text-brand-navy font-accents text-2xl leading-relaxed">
             Presiona aquí para agregar <br />páginas de menú
