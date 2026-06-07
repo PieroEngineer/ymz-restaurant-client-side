@@ -1,10 +1,32 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
 import { MenuDisplay, type DishItem } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
+import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
+
+type EditableDishField = 'name' | 'cost' | 'prepTime';
+
+const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
+  if (left.length !== right.length) return false;
+
+  return left.every((leftDish, index) => {
+    const rightDish = right[index];
+
+    return (
+      leftDish.id === rightDish.id &&
+      leftDish.pageIndex === rightDish.pageIndex &&
+      leftDish.xPercent === rightDish.xPercent &&
+      leftDish.yPercent === rightDish.yPercent &&
+      leftDish.name === rightDish.name &&
+      leftDish.cost === rightDish.cost &&
+      leftDish.prepTime === rightDish.prepTime &&
+      leftDish.createdAt === rightDish.createdAt
+    );
+  });
+};
 
 export function MenuManagerPage() { 
   // FDD State Layer Matrix Storage Units
@@ -12,10 +34,50 @@ export function MenuManagerPage() {
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
     
   // 💾 Master FDD Data Storage Unit for all interactive items
-  const [dishes, setDishes] = useState<DishItem[]>([]);
+  const {
+    value: dishes,
+    setValue: setDishes,
+    reset: resetDishesHistory,
+    undo: undoDishAction,
+    redo: redoDishAction,
+    canUndo,
+    canRedo,
+  } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
   
   // 🔌 Selection tracker across input component frames
-  const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: 'name' | 'cost' | 'prepTime' } | null>(null);
+  const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
+  const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
+
+  const handleUndoDishAction = useCallback(() => {
+    undoDishAction();
+    setActiveEditCell(null);
+  }, [undoDishAction]);
+
+  const handleRedoDishAction = useCallback(() => {
+    redoDishAction();
+    setActiveEditCell(null);
+  }, [redoDishAction]);
+
+  useEffect(() => {
+    const handleKeyboardHistoryCommand = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase();
+
+      if (!event.ctrlKey) return;
+
+      if (key === 'z') {
+        event.preventDefault();
+        handleUndoDishAction();
+      }
+
+      if (key === 'y') {
+        event.preventDefault();
+        handleRedoDishAction();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyboardHistoryCommand);
+    return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
+  }, [handleRedoDishAction, handleUndoDishAction]);
 
   // Logic handlers for tracking horizontal menu layout page indexing operations
   const handlePageNext = () => {
@@ -34,7 +96,9 @@ export function MenuManagerPage() {
   const handleUploadedFilesPipeline = (urls: string[]) => {
     setUploadedMenuImages(urls);
     setActivePageIndex(0);
-    setDishes([]); // Wipe previous data frames for fresh uploads
+    resetDishesHistory([]); // Wipe previous data frames for fresh uploads
+    setActiveEditCell(null);
+    dragHistoryBaseRef.current = null;
   };
 
   // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
@@ -75,10 +139,22 @@ export function MenuManagerPage() {
   };
 
     // 🚀 Logic: Dynamic adjustment of coordinates while dragging across the image matrix canvas
+  const handleStartCoordinateDrag = useCallback(() => {
+    dragHistoryBaseRef.current = dishes;
+  }, [dishes]);
+
   const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {
-    setDishes((prev) =>
-      prev.map((dish) => (dish.id === id ? { ...dish, xPercent, yPercent } : dish))
+    setDishes(
+      (prev) => prev.map((dish) => (dish.id === id ? { ...dish, xPercent, yPercent } : dish)),
+      { record: false }
     );
+  };
+
+  const handleCommitCoordinateDrag = () => {
+    if (!dragHistoryBaseRef.current) return;
+
+    setDishes((current) => current, { historyBase: dragHistoryBaseRef.current });
+    dragHistoryBaseRef.current = null;
   };
 
   // 🧹 Logic: Erase marker pin item record and clear related lines out of the grid layout
@@ -88,7 +164,7 @@ export function MenuManagerPage() {
   };
 
   // 📝 LOGIC: Handle live data edits across inline cells
-  const handleUpdateDishDataField = (id: string, field: 'name' | 'cost' | 'prepTime', value: string) => {
+  const handleUpdateDishDataField = (id: string, field: EditableDishField, value: string) => {
     setDishes((prev) => 
       prev.map((dish) => (dish.id === id ? { ...dish, [field]: value } : dish))
     );
@@ -161,6 +237,8 @@ export function MenuManagerPage() {
             onCoordinateAdded={handleAddNewCoordinatePin}
             /* 🔌 Added interactive handlers */
             onCoordinateUpdated={handleUpdateCoordinatePosition}
+            onCoordinateDragStarted={handleStartCoordinateDrag}
+            onCoordinateDragCommitted={handleCommitCoordinateDrag}
             onCoordinateDeleted={handleDeleteCoordinateRecord}
             /* 🔌 Actions connection string parameter */
             onTargetRowFocusRequested={handleRequestRowFocus}
@@ -173,8 +251,10 @@ export function MenuManagerPage() {
         {/* Component 5: Support Frame (Touches extreme top bounds) */}
         <div className="h-16 shrink-0 flex justify-center">
           <SupportFrame 
-            onUndo={() => console.log('Inject code: Revert operation history queue')}
-            onRedo={() => console.log('Inject code: Re-apply operation history queue')}
+            onUndo={handleUndoDishAction}
+            onRedo={handleRedoDishAction}
+            canUndo={canUndo}
+            canRedo={canRedo}
           />
         </div>
         {/* Component 6: Dish Chart Data Table Matrix Grid Wrapper */}
