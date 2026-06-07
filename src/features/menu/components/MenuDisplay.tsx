@@ -23,8 +23,6 @@ interface MenuDisplayProps {
   onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageIndex' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => void;
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
-  onCoordinateDragStarted: (id: string) => void;
-  onCoordinateDragCommitted: () => void;
   onCoordinateDeleted: (id: string) => void;
     // 🔌 Action callback to target a table row directly from a marker pin
   onTargetRowFocusRequested: (id: string) => void;
@@ -37,8 +35,6 @@ export function MenuDisplay({
   onImagesUploaded, 
   onCoordinateAdded,
   onCoordinateUpdated,
-  onCoordinateDragStarted,
-  onCoordinateDragCommitted,
   onCoordinateDeleted,
   onTargetRowFocusRequested
 
@@ -90,10 +86,7 @@ export function MenuDisplay({
 
   // 🛑 Gesture Drop Event Engine: Fires formal completion hook when user releases mouse hold click
   const handleCanvasMouseUp = () => {
-    if (!draggingPinId) return;
-
-    onCoordinateDragCommitted();
-    setDraggingPinId(null);
+        if (draggingPinId) setDraggingPinId(null);
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
@@ -146,7 +139,6 @@ export function MenuDisplay({
                   onMouseLeave={() => setHoveredPinId(null)}
                   onMouseDown={(e) => {
                     e.stopPropagation(); // Stop click from creating a second pin on top of this one
-                    onCoordinateDragStarted(pin.id);
                     setDraggingPinId(pin.id);
                     //XsetHoveredPinId(null); // 🧹 Rule: Collapse expanded frame immediately when dragging starts
                   }}
