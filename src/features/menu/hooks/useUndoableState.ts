@@ -25,6 +25,7 @@ interface UndoableState<T> {
 
 export function useUndoableState<T>(
   initialValue: T,
+  
   { isEqual }: UndoableStateOptions<T>
 ): UndoableState<T> {
   const [present, setPresent] = useState<T>(initialValue);

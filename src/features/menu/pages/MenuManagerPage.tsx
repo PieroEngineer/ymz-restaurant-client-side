@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
@@ -8,6 +8,10 @@ import { DishChart } from '@/features/menu/components/DishChart';
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
+
+const createMenuImageUrls = (files: FileList) => {
+  return Array.from(files).map((file) => URL.createObjectURL(file));
+};
 
 const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
   if (left.length !== right.length) return false;
@@ -46,6 +50,7 @@ export function MenuManagerPage() {
   
   // 🔌 Selection tracker across input component frames
   const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
+  const addPagesInputRef = useRef<HTMLInputElement>(null);
   const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
 
   const handleUndoDishAction = useCallback(() => {
@@ -99,6 +104,23 @@ export function MenuManagerPage() {
     resetDishesHistory([]); // Wipe previous data frames for fresh uploads
     setActiveEditCell(null);
     dragHistoryBaseRef.current = null;
+  };
+
+  const handleAppendUploadedPages = (urls: string[]) => {
+    if (urls.length === 0) return;
+
+    setUploadedMenuImages((prev) => [...prev, ...urls]);
+    setActivePageIndex(uploadedMenuImages.length);
+  };
+
+  const handleAppendPagesInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target;
+
+    if (files && files.length > 0) {
+      handleAppendUploadedPages(createMenuImageUrls(files));
+    }
+
+    event.target.value = '';
   };
 
   // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
@@ -185,13 +207,21 @@ export function MenuManagerPage() {
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
+      <input
+        ref={addPagesInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleAppendPagesInputChange}
+        className="hidden"
+      />
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
       <div className="w-18 flex flex-col gap-4 pt-30 shrink-0 h-full items-center">
         {/* Component 0: Add page button */}
         <button
           type="button"
-          onClick={() => console.log('Inject code: Shift layout to page 2 view state')}
+          onClick={() => addPagesInputRef.current?.click()}
           className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-3 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
           >
           <span className="font-heading font-bold text-[14px] text-brand-primary uppercase tracking-tighter leading-tight">

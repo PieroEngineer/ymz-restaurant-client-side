@@ -186,8 +186,6 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
                     </span>
                   )}
                 </td>
-
-
               </tr>
             ))}
           </tbody>
