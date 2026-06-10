@@ -5,19 +5,12 @@ import { ViewSelector } from '@/features/menu/components/ViewSelector';
 import { MenuDisplay, type DishItem } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
-import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
-import type { MenuPageItem } from '@/features/menu/types/sync.types';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
-const TEST_RESTAURANT_ID = '4258e0fa-6b3c-43bc-a6d8-82c5835d608d';
-
-const createMenuImagePages = (files: FileList): MenuPageItem[] => {
-  return Array.from(files).map((file) => ({
-    pageId: crypto.randomUUID(),
-    imageUrl: URL.createObjectURL(file),
-  }));
+const createMenuImageUrls = (files: FileList) => {
+  return Array.from(files).map((file) => URL.createObjectURL(file));
 };
 
 const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
@@ -39,11 +32,9 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
   });
 };
 
-
-// TODO: Add the option to update the image of the page keeping the position of the pins
 export function MenuManagerPage() { 
   // FDD State Layer Matrix Storage Units
-  const [uploadedMenuPages, setUploadedMenuPages] = useState<MenuPageItem[]>([]);
+  const [uploadedMenuImages, setUploadedMenuImages] = useState<string[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
     
   // 💾 Master FDD Data Storage Unit for all interactive items
@@ -95,7 +86,7 @@ export function MenuManagerPage() {
 
   // Logic handlers for tracking horizontal menu layout page indexing operations
   const handlePageNext = () => {
-    if (activePageIndex < uploadedMenuPages.length - 1) {
+    if (activePageIndex < uploadedMenuImages.length - 1) {
       setActivePageIndex((prev) => prev + 1);
     }
   };
@@ -108,30 +99,25 @@ export function MenuManagerPage() {
 
   
   const handleUploadedFilesPipeline = (urls: string[]) => {
-    const pages = urls.map<MenuPageItem>((imageUrl) => ({
-      pageId: crypto.randomUUID(),  // TODO: Shouldn't this UUID come from cloud? not from the client
-      imageUrl,
-    }));
-
-    setUploadedMenuPages(pages);
+    setUploadedMenuImages(urls);
     setActivePageIndex(0);
     resetDishesHistory([]); // Wipe previous data frames for fresh uploads
     setActiveEditCell(null);
     dragHistoryBaseRef.current = null;
   };
 
-  const handleAppendUploadedPages = (pages: MenuPageItem[]) => {
-    if (pages.length === 0) return;
+  const handleAppendUploadedPages = (urls: string[]) => {
+    if (urls.length === 0) return;
 
-    setUploadedMenuPages((prev) => [...prev, ...pages]);
-    setActivePageIndex(uploadedMenuPages.length);
+    setUploadedMenuImages((prev) => [...prev, ...urls]);
+    setActivePageIndex(uploadedMenuImages.length);
   };
 
   const handleAppendPagesInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
 
     if (files && files.length > 0) {
-      handleAppendUploadedPages(createMenuImagePages(files));
+      handleAppendUploadedPages(createMenuImageUrls(files));
     }
 
     event.target.value = '';
@@ -218,17 +204,6 @@ export function MenuManagerPage() {
 
   // Run the data array compilation engine
   const computedDishesDataset = getSortedDishesWithNumbers();
-  const {
-    status: menuSyncStatus,
-    canSynchronize,
-    synchronizeMenu,
-  } = useMenuSync({
-    restaurantId: TEST_RESTAURANT_ID,
-    source: {
-      menuPages: uploadedMenuPages,
-      dishes,
-    },
-  });
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
@@ -256,8 +231,8 @@ export function MenuManagerPage() {
         
         {/* Component 1: Page Changer */}
         <PageChanger 
-          currentPage={uploadedMenuPages.length > 0 ? activePageIndex + 1 : 0}
-          totalPages={uploadedMenuPages.length}
+          currentPage={uploadedMenuImages.length > 0 ? activePageIndex + 1 : 0}
+          totalPages={uploadedMenuImages.length}
           onPageUp={handlePagePrevious}
           onPageDown={handlePageNext}
         />
@@ -285,7 +260,7 @@ export function MenuManagerPage() {
         {/** <div className="h-[90%]">  It worked previously, is it a bad practices? */}
         <div className="flex-1 pb-4 pt-4 min-h-0">
           <MenuDisplay 
-            activeImageSrc={uploadedMenuPages.length > 0 ? uploadedMenuPages[activePageIndex].imageUrl : null}
+            activeImageSrc={uploadedMenuImages.length > 0 ? uploadedMenuImages[activePageIndex] : null}
             currentPageIndex={activePageIndex}
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
             onImagesUploaded={handleUploadedFilesPipeline}
@@ -320,9 +295,6 @@ export function MenuManagerPage() {
             activeEditCell={activeEditCell}
             setActiveEditCell={setActiveEditCell}
             onUpdateItem={handleUpdateDishDataField}
-            syncStatus={menuSyncStatus}
-            canSynchronize={canSynchronize}
-            onSynchronize={synchronizeMenu}
             /* 🔌 Added sync listener hooks */
             onRowClicked={handleSyncCanvasToRowPage}
           />

@@ -1,7 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 import type { DishItem } from '@/features/menu/components/MenuDisplay';
-import type { MenuSyncStatus } from '@/features/menu/types/sync.types';
 
 
 interface DishChartProps {
@@ -12,21 +10,9 @@ interface DishChartProps {
   onUpdateItem: (id: string, field: 'name' | 'cost' | 'prepTime', value: string) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
   onRowClicked: (pageIndex: number) => void;
-  syncStatus: MenuSyncStatus;
-  canSynchronize: boolean;
-  onSynchronize: () => void;
 }
 
-export function DishChart({
-  items,
-  activeEditCell,
-  setActiveEditCell,
-  onUpdateItem,
-  onRowClicked,
-  syncStatus,
-  canSynchronize,
-  onSynchronize,
-}: DishChartProps) {
+export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateItem, onRowClicked }: DishChartProps) {
   // 🎯 Reference anchor to capture the active input node instantly
   const activeInputRef = useRef<HTMLInputElement>(null);
 
@@ -101,21 +87,6 @@ export function DishChart({
 
   return (
     <div className="w-full h-full bg-white rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col p-6">
-      <div className="mb-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <div />
-        <button
-          type="button"
-          onClick={onSynchronize}
-          disabled={!canSynchronize}
-          className="h-10 rounded-md bg-brand-primary px-5 font-heading text-sm font-bold uppercase text-white shadow-yummizi transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
-        >
-          Sincronizar
-        </button>
-        <div className="flex justify-end">
-          <SyncStatusIndicator status={syncStatus} />
-        </div>
-      </div>
-
       <div className="w-full flex-1 overflow-y-scroll">
         <table className="w-full border-collapse text-left font-heading text-brand-navy">
           
@@ -179,6 +150,7 @@ export function DishChart({
                     <input
                       ref={activeInputRef}
                       type="text"
+                      //XautoFocus
                       value={dish.cost}
                       onChange={(e) => onUpdateItem(dish.id, 'cost', validateCostInput(e.target.value))}
                       onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'cost')}
