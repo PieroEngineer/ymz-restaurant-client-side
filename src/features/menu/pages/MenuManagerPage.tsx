@@ -11,8 +11,8 @@ import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
-const createMenuImageUrls = (files: FileList) => {
-  return Array.from(files).map((file) => URL.createObjectURL(file));
+const createMenuImageUrls = (files: FileList | null) => {
+  return Array.from(files || []).map((file) => URL.createObjectURL(file));
 };
 
 const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
@@ -111,50 +111,30 @@ export function MenuManagerPage() {
     if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
   };
 
-  //X   Maybe part of this function is useful for the uploading the images 
-  // const handleUploadedFilesPipeline = (urls: string[]) => {
-  //   setMenuPages(urls);
-  //   setActivePageIndex(0);
-  //   resetDishesHistory([]); // Wipe previous data frames for fresh uploads
-  //   setActiveEditCell(null);
-  //   dragHistoryBaseRef.current = null;
-  // };
-
-  const handleUploadedFilesPipeline = (urls: string[]) => {
-    // Transform the urls 
-    const transformedNewPages: MenuPage[] = urls.map((url, index) => ({ //TODO: Convert this transformer into a function
-      pageId: crypto.randomUUID(),
-      imageUrl: url,
-      pageNumber: index + 1
-    }));
-    setMenuPages(transformedNewPages);
-    setActivePageIndex(0);
-    resetDishesHistory([]); // Wipe previous data frames for fresh uploads
-    setActiveEditCell(null);
-    dragHistoryBaseRef.current = null;
-    setDishes([]);  /// Does it remove all dishes when a new image is uploaded 
-  };
-
-  const handleAppendUploadedPages = (newPages: MenuPage[]) => {
-    if (newPages.length === 0) return;
-
-    setMenuPages((prev) => [...prev, ...newPages]); /// FIXME: URLs are strings and prev are MenuPage. Now every page is not just a url string anymore
-    setActivePageIndex(menuPages.length);
-  };
-
-  const handleAppendPagesInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleUploadedLocalFilesPipeline = (event: ChangeEvent<HTMLInputElement>) => { /// For the local upload of image in the Menu display 
     const { files } = event.target;
-
+    
     if (files && files.length > 0) {
+      // Transform the urls 
       const transformedNewPages: MenuPage[] = createMenuImageUrls(files).map((url, index) => ({ //TODO: Convert this transformer into a function
         pageId: crypto.randomUUID(),  //TODO: Here is ok that a new UUID is generated because it's a new image, but later pass the UUID generation to the backend
         imageUrl: url,
         pageNumber: index + 1
       }));
-      handleAppendUploadedPages(transformedNewPages);
+  
+      if (transformedNewPages.length === 0) return;
+  
+      setMenuPages((prev) => [...prev || [], ...transformedNewPages]);
+  
+      setActivePageIndex(menuPages.length);
+      resetDishesHistory([]); // Wipe previous data frames for fresh uploads
+      setActiveEditCell(null);
+      dragHistoryBaseRef.current = null;
+  
+      //XsetDishes([]);  /// Does it remove all dishes when a new image is uploaded?
+  
+      event.target.value = '';
     }
-
-    event.target.value = '';
   };
 
   // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
@@ -248,7 +228,7 @@ export function MenuManagerPage() {
         type="file"
         multiple
         accept="image/*"
-        onChange={handleAppendPagesInputChange}
+        onChange={handleUploadedLocalFilesPipeline}
         className="hidden"
       />
       
@@ -299,7 +279,7 @@ export function MenuManagerPage() {
             activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
             currentPageIndex={activePageIndex}
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
-            onImagesUploaded={handleUploadedFilesPipeline}
+            onImagesUploaded={handleUploadedLocalFilesPipeline}
             onCoordinateAdded={handleAddNewCoordinatePin}
             /* 🔌 Added interactive handlers */
             onCoordinateUpdated={handleUpdateCoordinatePosition}

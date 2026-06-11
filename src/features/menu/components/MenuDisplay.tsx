@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { type ChangeEvent, useRef, useState, useEffect } from 'react';
 import { type DishItem } from '@/features/menu/types/sync.types';
 import { TrashIcon } from "@/features/menu/components/icons/TrashIcon";
 import { PencilIcon } from "@/features/menu/components/icons/PencilIcon";
@@ -23,7 +23,7 @@ interface MenuDisplayProps {
   currentPageIndex: number;
   // 🔢 Array of dishes already injected with their dynamically calculated N° values
   dishesWithNumbers: (DishItem & { orderNumber: number })[];
-  onImagesUploaded: (fileUrls: string[]) => void;
+  onImagesUploaded: (localFileEvent: ChangeEvent<HTMLInputElement>) => void;
   onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => void;
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
@@ -115,11 +115,7 @@ export function MenuDisplay({
       <input 
         type="file" 
         ref={fileInputRef} 
-        onChange={(e) => {
-          if (e.target.files && e.target.files.length > 0) {
-            onImagesUploaded(Array.from(e.target.files).map(file => URL.createObjectURL(file)));
-          }
-        }} 
+        onChange={onImagesUploaded} 
         multiple // Feature: Allows selection of multiple files simultaneously
         accept="image/*" 
         className="hidden" 
