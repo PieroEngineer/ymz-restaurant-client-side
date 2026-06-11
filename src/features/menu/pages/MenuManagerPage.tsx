@@ -2,10 +2,12 @@ import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'reac
 
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
-import { MenuDisplay, type DishItem } from '@/features/menu/components/MenuDisplay';
+import { MenuDisplay } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
+import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
+import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
@@ -21,7 +23,7 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
 
     return (
       leftDish.id === rightDish.id &&
-      leftDish.pageIndex === rightDish.pageIndex &&
+      leftDish.pageId === rightDish.pageId &&
       leftDish.xPercent === rightDish.xPercent &&
       leftDish.yPercent === rightDish.yPercent &&
       leftDish.name === rightDish.name &&
@@ -34,8 +36,9 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
 
 export function MenuManagerPage() { 
   // FDD State Layer Matrix Storage Units
-  const [uploadedMenuImages, setUploadedMenuImages] = useState<string[]>([]);
+  const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
+  //X const [menuPages, setMenuPages] = useState<string[]>([]);
     
   // 💾 Master FDD Data Storage Unit for all interactive items
   const {
@@ -84,40 +87,71 @@ export function MenuManagerPage() {
     return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
   }, [handleRedoDishAction, handleUndoDishAction]);
 
+   // 🔌 Data Sync Integration Pipe Engine Connections
+  const handleDatabaseInitCallback = (initialPages: MenuPage[], initialDishes: DishItem[]) => {
+    setMenuPages(initialPages);
+    setDishes(initialDishes);
+    setActivePageIndex(0);
+  };
+
+  const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
+    menuPages,
+    dishes,
+    handleDatabaseInitCallback
+  );
+
+  const activePageObject = menuPages[activePageIndex];
+
   // Logic handlers for tracking horizontal menu layout page indexing operations
   const handlePageNext = () => {
-    if (activePageIndex < uploadedMenuImages.length - 1) {
-      setActivePageIndex((prev) => prev + 1);
-    }
+    if (activePageIndex < menuPages.length - 1) setActivePageIndex((prev) => prev + 1);
   };
 
   const handlePagePrevious = () => {
-    if (activePageIndex > 0) {
-      setActivePageIndex((prev) => prev - 1);
-    }
+    if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
   };
 
-  
+  //X   Maybe part of this function is useful for the uploading the images 
+  // const handleUploadedFilesPipeline = (urls: string[]) => {
+  //   setMenuPages(urls);
+  //   setActivePageIndex(0);
+  //   resetDishesHistory([]); // Wipe previous data frames for fresh uploads
+  //   setActiveEditCell(null);
+  //   dragHistoryBaseRef.current = null;
+  // };
+
   const handleUploadedFilesPipeline = (urls: string[]) => {
-    setUploadedMenuImages(urls);
+    // Transform the urls 
+    const transformedNewPages: MenuPage[] = urls.map((url, index) => ({ //TODO: Convert this transformer into a function
+      pageId: crypto.randomUUID(),
+      imageUrl: url,
+      pageNumber: index + 1
+    }));
+    setMenuPages(transformedNewPages);
     setActivePageIndex(0);
     resetDishesHistory([]); // Wipe previous data frames for fresh uploads
     setActiveEditCell(null);
     dragHistoryBaseRef.current = null;
+    setDishes([]);  /// Does it remove all dishes when a new image is uploaded 
   };
 
-  const handleAppendUploadedPages = (urls: string[]) => {
-    if (urls.length === 0) return;
+  const handleAppendUploadedPages = (newPages: MenuPage[]) => {
+    if (newPages.length === 0) return;
 
-    setUploadedMenuImages((prev) => [...prev, ...urls]);
-    setActivePageIndex(uploadedMenuImages.length);
+    setMenuPages((prev) => [...prev, ...newPages]); /// FIXME: URLs are strings and prev are MenuPage. Now every page is not just a url string anymore
+    setActivePageIndex(menuPages.length);
   };
 
   const handleAppendPagesInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
 
     if (files && files.length > 0) {
-      handleAppendUploadedPages(createMenuImageUrls(files));
+      const transformedNewPages: MenuPage[] = createMenuImageUrls(files).map((url, index) => ({ //TODO: Convert this transformer into a function
+        pageId: crypto.randomUUID(),  //TODO: Here is ok that a new UUID is generated because it's a new image, but later pass the UUID generation to the backend
+        imageUrl: url,
+        pageNumber: index + 1
+      }));
+      handleAppendUploadedPages(transformedNewPages);
     }
 
     event.target.value = '';
@@ -128,11 +162,12 @@ export function MenuManagerPage() {
   const getSortedDishesWithNumbers = (): (DishItem & { orderNumber: number })[] => {
     return [...dishes]
       .sort((a, b) => {
-        // 1️⃣ First Tier: Sort sequentially by Page Index
-        if (a.pageIndex !== b.pageIndex) return a.pageIndex - b.pageIndex;
-        // 2️⃣ Second Tier: Sort vertically by Y Coordinate Position (Highest first)
+        const pageA = menuPages.find(p => p.pageId === a.pageId)?.pageNumber || 0;
+        const pageB = menuPages.find(p => p.pageId === b.pageId)?.pageNumber || 0;
+        if (pageA !== pageB) return pageA - pageB;
         if (a.yPercent !== b.yPercent) return a.yPercent - b.yPercent;
-        // 3️⃣ Third Tier: Tie-Breaker sorting by exact creation timestamp
+
+        // Tie-Breaker sorting by exact creation timestamp
         return a.createdAt - b.createdAt;
       })
       .map((dish, index) => ({
@@ -142,12 +177,12 @@ export function MenuManagerPage() {
   };
 
   // 🎯 LOGIC: Intercept canvas clicks and auto-focus the new row's name field
-  const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageIndex' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => {
+  const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => {
     const newId = crypto.randomUUID();
     const newDishRecord: DishItem = {
       ...coords,
       id: newId,
-      pageIndex: activePageIndex,
+      pageId: activePageObject.pageId,
       name: '',
       cost: '',
       prepTime: '',
@@ -193,8 +228,9 @@ export function MenuManagerPage() {
   };
 
   // 🧭 Logic: Sync active canvas viewport to match a selected table item's page index
-  const handleSyncCanvasToRowPage = (targetPageIndex: number) => {
-    setActivePageIndex(targetPageIndex);
+  const handleSyncCanvasToRowPage = (targetPageId: string) => {
+    const targetIdx = menuPages.findIndex(p => p.pageId === targetPageId);
+    if (targetIdx !== -1) setActivePageIndex(targetIdx);
   };
 
   // 👁️ Logic: Shift selection to target name input row field
@@ -231,8 +267,8 @@ export function MenuManagerPage() {
         
         {/* Component 1: Page Changer */}
         <PageChanger 
-          currentPage={uploadedMenuImages.length > 0 ? activePageIndex + 1 : 0}
-          totalPages={uploadedMenuImages.length}
+          currentPage={menuPages.length > 0 ? activePageIndex + 1 : 0}
+          totalPages={menuPages.length}
           onPageUp={handlePagePrevious}
           onPageDown={handlePageNext}
         />
@@ -260,7 +296,7 @@ export function MenuManagerPage() {
         {/** <div className="h-[90%]">  It worked previously, is it a bad practices? */}
         <div className="flex-1 pb-4 pt-4 min-h-0">
           <MenuDisplay 
-            activeImageSrc={uploadedMenuImages.length > 0 ? uploadedMenuImages[activePageIndex] : null}
+            activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
             currentPageIndex={activePageIndex}
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
             onImagesUploaded={handleUploadedFilesPipeline}
@@ -297,6 +333,9 @@ export function MenuManagerPage() {
             onUpdateItem={handleUpdateDishDataField}
             /* 🔌 Added sync listener hooks */
             onRowClicked={handleSyncCanvasToRowPage}
+              /* 🔌 Added sync properties */
+            syncStatus={syncStatus}
+            onSyncRequested={synchronizeDatasetChanges}
           />
         </div>
       </div>

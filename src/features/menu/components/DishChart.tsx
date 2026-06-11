@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import type { DishItem } from '@/features/menu/components/MenuDisplay';
-
+import type { DishItem } from '@/features/menu/types/sync.types';
+import { type SyncStatusType } from '@/features/menu/hooks/useMenuSync';
+import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
@@ -9,10 +10,22 @@ interface DishChartProps {
   setActiveEditCell: (cell: { id: string; field: 'name' | 'cost' | 'prepTime' } | null) => void;
   onUpdateItem: (id: string, field: 'name' | 'cost' | 'prepTime', value: string) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
-  onRowClicked: (pageIndex: number) => void;
+  onRowClicked: (pageId: string) => void;
+  // 🔌 New Sync Connection Prop Lines
+  syncStatus: SyncStatusType;
+  onSyncRequested: () => void;
+
 }
 
-export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateItem, onRowClicked }: DishChartProps) {
+export function DishChart({ 
+  items,
+  activeEditCell,
+  setActiveEditCell,
+  onUpdateItem,
+  onRowClicked,
+  syncStatus,
+  onSyncRequested
+}: DishChartProps) {
   // 🎯 Reference anchor to capture the active input node instantly
   const activeInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,10 +62,10 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
     // Prevent default browser tab loops so we can control the focus trajectory
     e.preventDefault();
 
-    const currentItemIndex = items.findIndex(item => item.id === currentId);
-    if (currentItemIndex === -1) return;
+    const idx = items.findIndex(item => item.id === currentId);
+    if (idx === -1) return;
 
-    const currentItem = items[currentItemIndex];
+    const currentItem = items[idx];
 
     // 🗺️ Focus Path Checklist Matrix
     if (isTab) {
@@ -62,8 +75,8 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
         setActiveEditCell({ id: currentId, field: 'prepTime' });
       } else if (currentField === 'prepTime') {
         // Jump to the first column of the next row if available
-        if (currentItemIndex < items.length - 1) {
-          setActiveEditCell({ id: items[currentItemIndex + 1].id, field: 'name' });
+        if (idx < items.length - 1) {
+          setActiveEditCell({ id: items[idx + 1].id, field: 'name' });
         } else {
           setActiveEditCell(null); // Close edit mode if we are on the very last field
         }
@@ -87,6 +100,25 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
 
   return (
     <div className="w-full h-full bg-white rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col p-6">
+      
+      {/* 🚀 TOP CENTER CLOUD WORKFORCE CONTROL SYSTEM BAR HEADER ZONE */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+        <SyncStatusIndicator status={syncStatus} />
+        
+        <button
+          type="button"
+          onClick={onSyncRequested}
+          disabled={syncStatus === 'Synchronized' || syncStatus === 'Loading'}
+          className={`px-4 py-1 rounded-full text-xs font-sans font-bold transition-all shadow-sm flex items-center gap-1 border ${
+            syncStatus === 'Synchronized' || syncStatus === 'Loading'
+              ? 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed shadow-none'
+              : 'bg-brand-primary text-white border-brand-primary hover:bg-[#e06114] active:scale-95 cursor-pointer'
+          }`}
+        >
+          📤 Sync Cloud
+        </button>
+      </div>
+
       <div className="w-full flex-1 overflow-y-scroll">
         <table className="w-full border-collapse text-left font-heading text-brand-navy">
           
@@ -104,7 +136,7 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
               <tr 
                 key={dish.id} 
                 /* 🧭 Feature: Clicking anywhere on a row takes you to its respective page */
-                onClick={() => onRowClicked(dish.pageIndex)}
+                onClick={() => onRowClicked(dish.pageId)}
                 className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-14 cursor-pointer"
               >
 
@@ -143,14 +175,13 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
 
                 {/* 💵 ITEM COST ROW COMPONENT CELL */}
                 <td 
-                  className="border-l border-brand-navy/10 px-4"  ///
+                  className="border-l border-brand-navy/10 px-4"
                   onClick={() => setActiveEditCell({ id: dish.id, field: 'cost' })}
                 >
                   {activeEditCell?.id === dish.id && activeEditCell?.field === 'cost' ? (
                     <input
                       ref={activeInputRef}
                       type="text"
-                      //XautoFocus
                       value={dish.cost}
                       onChange={(e) => onUpdateItem(dish.id, 'cost', validateCostInput(e.target.value))}
                       onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'cost')}
@@ -173,7 +204,6 @@ export function DishChart({ items, activeEditCell, setActiveEditCell, onUpdateIt
                     <input
                       ref={activeInputRef}
                       type="text"
-                      //XautoFocus
                       value={dish.prepTime}
                       onChange={(e) => onUpdateItem(dish.id, 'prepTime', validatePrepTimeInput(e.target.value))}
                       onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'prepTime')}

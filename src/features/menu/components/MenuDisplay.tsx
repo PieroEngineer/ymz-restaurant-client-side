@@ -1,20 +1,22 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { type DishItem } from '@/features/menu/types/sync.types';
 import { TrashIcon } from "@/features/menu/components/icons/TrashIcon";
 import { PencilIcon } from "@/features/menu/components/icons/PencilIcon";
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
 import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
+//X
 // 📝 Unified FDD state contract mapping coordinates to table items
-export interface DishItem {
-  id: string;
-  pageIndex: number;
-  xPercent: number;
-  yPercent: number;
-  name: string;
-  cost: string;
-  prepTime: string;
-  createdAt: number; // TODO: Remove this attribute becase it was made to handle marks in the same position but that should not happen
-}
+// export interface DishItem {
+//   id: string;
+//   pageIndex: number;
+//   xPercent: number;
+//   yPercent: number;
+//   name: string;
+//   cost: string;
+//   prepTime: string;
+//   createdAt: number; // TODO: Remove this attribute becase it was made to handle marks in the same position but that should not happen
+// }
 
 interface MenuDisplayProps {
   activeImageSrc: string | null;
@@ -22,7 +24,7 @@ interface MenuDisplayProps {
   // 🔢 Array of dishes already injected with their dynamically calculated N° values
   dishesWithNumbers: (DishItem & { orderNumber: number })[];
   onImagesUploaded: (fileUrls: string[]) => void;
-  onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageIndex' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => void;
+  onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => void;
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
   onCoordinateDragStarted: (id: string) => void;
@@ -99,7 +101,7 @@ export function MenuDisplay({
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
-  const activePagePins = dishesWithNumbers.filter(dish => dish.pageIndex === currentPageIndex);
+  const activePagePins = dishesWithNumbers.filter(dish => Number(dish.pageId) === currentPageIndex);
 
   return (
     <div 
