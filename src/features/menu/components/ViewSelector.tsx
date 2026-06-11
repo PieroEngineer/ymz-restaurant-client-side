@@ -2,11 +2,11 @@ import { PeopleIcon } from "@/features/menu/components/icons/PeopleIcon";
 import { EditIcon } from "@/features/menu/components/icons/EditIcon";
 
 interface ViewSelectorProps {
-  currentViewMode?: string;
+  inEditMode?: boolean;
   onToggleView?: (mode: string) => void;
 }
 
-export function ViewSelector({ currentViewMode = 'Standard View', onToggleView }: ViewSelectorProps) {
+export function ViewSelector({ inEditMode = true, onToggleView }: ViewSelectorProps) {
   return (
     <div className="bg-white rounded-b-2xl shadow-yummizi px-6 py-2 flex items-center gap-4 border-x border-b border-brand-navy/5 h-16 z-10 self-center">
       {/* View Icon Toggle Endpoint A */}
@@ -29,7 +29,7 @@ export function ViewSelector({ currentViewMode = 'Standard View', onToggleView }
 
       {/* Display Descriptor String Element */}
       <span className="font-heading font-bold text-brand-primary tracking-wide text-sm whitespace-nowrap min-w-25 text-center uppercase">
-        {currentViewMode}
+        {inEditMode ? "Vista editable" : "Vista de usuario"}  {/*TODO: When it's customer view, it show the current snapshot*/}
       </span>
     </div>
   );

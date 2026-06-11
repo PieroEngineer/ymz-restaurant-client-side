@@ -5,22 +5,9 @@ import { PencilIcon } from "@/features/menu/components/icons/PencilIcon";
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
 import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
-//X
-// 📝 Unified FDD state contract mapping coordinates to table items
-// export interface DishItem {
-//   id: string;
-//   pageIndex: number;
-//   xPercent: number;
-//   yPercent: number;
-//   name: string;
-//   cost: string;
-//   prepTime: string;
-//   createdAt: number; // TODO: Remove this attribute becase it was made to handle marks in the same position but that should not happen
-// }
-
 interface MenuDisplayProps {
   activeImageSrc: string | null;
-  currentPageIndex: number;
+  currentPageId: string;
   // 🔢 Array of dishes already injected with their dynamically calculated N° values
   dishesWithNumbers: (DishItem & { orderNumber: number })[];
   onImagesUploaded: (localFileEvent: ChangeEvent<HTMLInputElement>) => void;
@@ -36,7 +23,7 @@ interface MenuDisplayProps {
 
 export function MenuDisplay({ 
   activeImageSrc, 
-  currentPageIndex, 
+  currentPageId, 
   dishesWithNumbers, 
   onImagesUploaded, 
   onCoordinateAdded,
@@ -101,7 +88,8 @@ export function MenuDisplay({
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
-  const activePagePins = dishesWithNumbers.filter(dish => Number(dish.pageId) === currentPageIndex);
+
+  const activePagePins = dishesWithNumbers.filter(dish => dish.pageId === currentPageId);
 
   return (
     <div 
@@ -148,7 +136,6 @@ export function MenuDisplay({
                     e.stopPropagation(); // Stop click from creating a second pin on top of this one
                     onCoordinateDragStarted(pin.id);
                     setDraggingPinId(pin.id);
-                    //XsetHoveredPinId(null); // 🧹 Rule: Collapse expanded frame immediately when dragging starts
                   }}
                   /* 🔥 Crucial Fix: Changed pointer-events-none to auto, added grip styling changes */
                   className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform ${

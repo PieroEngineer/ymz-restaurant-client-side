@@ -277,7 +277,7 @@ export function MenuManagerPage() {
         <div className="flex-1 pb-4 pt-4 min-h-0">
           <MenuDisplay 
             activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
-            currentPageIndex={activePageIndex}
+            currentPageId={activePageObject.pageId}
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
             onImagesUploaded={handleUploadedLocalFilesPipeline}
             onCoordinateAdded={handleAddNewCoordinatePin}

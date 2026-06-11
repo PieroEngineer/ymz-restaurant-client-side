@@ -99,23 +99,23 @@ export function DishChart({
   };
 
   return (
-    <div className="w-full h-full bg-white rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col p-6">
+    <div className="w-full h-full items-center bg-white rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col gap-5 p-6">
       
       {/* 🚀 TOP CENTER CLOUD WORKFORCE CONTROL SYSTEM BAR HEADER ZONE */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+      <div className="top-4 left-1/2 flex items-center gap-3 z-20">
         <SyncStatusIndicator status={syncStatus} />
         
         <button
           type="button"
           onClick={onSyncRequested}
           disabled={syncStatus === 'Synchronized' || syncStatus === 'Loading'}
-          className={`px-4 py-1 rounded-full text-xs font-sans font-bold transition-all shadow-sm flex items-center gap-1 border ${
+          className={`px-4 py-1 rounded-full text-md font-sans font-bold transition-all shadow-sm flex items-center gap-1 border ${
             syncStatus === 'Synchronized' || syncStatus === 'Loading'
               ? 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed shadow-none'
               : 'bg-brand-primary text-white border-brand-primary hover:bg-[#e06114] active:scale-95 cursor-pointer'
           }`}
         >
-          📤 Sync Cloud
+          📤 Subir Menú
         </button>
       </div>
 
