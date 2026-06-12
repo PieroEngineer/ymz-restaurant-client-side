@@ -158,6 +158,8 @@ export function MenuManagerPage() {
 
   // 🎯 LOGIC: Intercept canvas clicks and auto-focus the new row's name field
   const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => {
+    if (!activePageObject) return;
+
     const newId = crypto.randomUUID();
     const newDishRecord: DishItem = {
       ...coords,
@@ -221,6 +223,8 @@ export function MenuManagerPage() {
   // Run the data array compilation engine
   const computedDishesDataset = getSortedDishesWithNumbers();
 
+  console.log('🔎  activePageObject', activePageObject)
+
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
       <input
@@ -277,7 +281,7 @@ export function MenuManagerPage() {
         <div className="flex-1 pb-4 pt-4 min-h-0">
           <MenuDisplay 
             activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
-            currentPageId={activePageObject.pageId}
+            currentPageId={activePageObject?.pageId ?? null}
             dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
             onImagesUploaded={handleUploadedLocalFilesPipeline}
             onCoordinateAdded={handleAddNewCoordinatePin}

@@ -19,6 +19,7 @@ export function useMenuSync(
 
   // 📥 Phase 1: Lifecycle Initialization Pull
   useEffect(() => {
+
     async function loadInitialDatabaseState() {
       try {
         setSyncStatus('Loading');
@@ -43,10 +44,13 @@ export function useMenuSync(
           createdAt: Date.now()
         }));
 
+        console.log('🔎  These maps came from backend', mappedPages)
+        console.log('🔎  These dishes came from backend', mappedDishes)
+
         onInitializeData(mappedPages, mappedDishes);
         setSyncStatus('Synchronized');
       } catch (err) {
-        console.error('Failed to load menu database baseline:', err);
+        console.error('🔴 Failed to load menu database baseline:', err);
         setSyncStatus('Unsynchronized');
       }
     }
@@ -174,8 +178,8 @@ export function useMenuSync(
           id: d.id,
           name: d.name,
           imageUrl: '',
-          priceCents: Math.round(parseFloat(d.cost || '0') * 100),
-          prepTime: parseInt(d.prepTime || '0', 10),
+          priceCents: Math.round(parseFloat(d.cost || '0') * 100),  // TODO: Take care setting the dish for free
+          prepTime: parseInt(d.prepTime || '0', 10),               //        and avoid instant preparation 
           isOutOfStock: true,
           menuPageId: d.pageId,
           coordinateXInMenu: d.xPercent,

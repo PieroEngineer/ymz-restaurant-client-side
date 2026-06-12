@@ -7,7 +7,7 @@ import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 
 interface MenuDisplayProps {
   activeImageSrc: string | null;
-  currentPageId: string;
+  currentPageId: string | null;
   // 🔢 Array of dishes already injected with their dynamically calculated N° values
   dishesWithNumbers: (DishItem & { orderNumber: number })[];
   onImagesUploaded: (localFileEvent: ChangeEvent<HTMLInputElement>) => void;
@@ -175,7 +175,6 @@ export function MenuDisplay({
                     <button
                       type="button"
                       onClick={(e) => {
-                        console.log("Trying to delete: ", pin.id)
                         e.stopPropagation(); // Avoid event triggering canvas adjustments
                         onCoordinateDeleted(pin.id);
                         setHoveredPinId(null);
