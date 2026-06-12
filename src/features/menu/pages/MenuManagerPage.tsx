@@ -157,7 +157,7 @@ export function MenuManagerPage() {
   };
 
   // 🎯 LOGIC: Intercept canvas clicks and auto-focus the new row's name field
-  const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt'>) => {
+  const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'>) => {
     if (!activePageObject) return;
 
     const newId = crypto.randomUUID();
@@ -165,6 +165,7 @@ export function MenuManagerPage() {
       ...coords,
       id: newId,
       pageId: activePageObject.pageId,
+      imageUrl: '',
       name: '',
       cost: '',
       prepTime: '',

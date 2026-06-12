@@ -36,8 +36,9 @@ export function useMenuSync(
         const mappedDishes: DishItem[] = data.dishes.map(d => ({
           id: d.id,
           pageId: d.menuPageId,
-          xPercent: d.coordinateXInMenu,
-          yPercent: d.coordinateYInMenu,
+          imageUrl: d.imageUrl,
+          xPercent: d.coordinateXInMenu*100,
+          yPercent: d.coordinateYInMenu*100,
           name: d.name,
           cost: (d.priceCents / 100).toFixed(2),
           prepTime: d.prepTime.toString(),
@@ -80,8 +81,8 @@ export function useMenuSync(
         return snap.name !== cd.name ||
           snap.priceCents !== priceCents ||
           snap.prepTime !== prepTime ||
-          snap.coordinateXInMenu !== cd.xPercent ||
-          snap.coordinateYInMenu !== cd.yPercent ||
+          snap.coordinateXInMenu !== cd.xPercent/100 ||
+          snap.coordinateYInMenu !== cd.yPercent/100 ||
           snap.menuPageId !== cd.pageId;
       });
 
@@ -138,13 +139,13 @@ export function useMenuSync(
             id: cd.id,
             action: 'save',
             name: cd.name,
-            imageUrl: '', 
+            imageUrl: cd.imageUrl, 
             priceCents,
             prepTime,
             isOutOfStock: true, // Preset parameter enforcement rule
             menuPageId: cd.pageId,
-            coordinateXInMenu: cd.xPercent,
-            coordinateYInMenu: cd.yPercent,
+            coordinateXInMenu: cd.xPercent/100,
+            coordinateYInMenu: cd.yPercent/100,
             description: '' // Preset parameter enforcement rule
           });
         } else {
@@ -152,8 +153,8 @@ export function useMenuSync(
           if (original.name !== cd.name) updatedFields.name = cd.name;
           if (original.priceCents !== priceCents) updatedFields.priceCents = priceCents;
           if (original.prepTime !== prepTime) updatedFields.prepTime = prepTime;
-          if (original.coordinateXInMenu !== cd.xPercent) updatedFields.coordinateXInMenu = cd.xPercent;
-          if (original.coordinateYInMenu !== cd.yPercent) updatedFields.coordinateYInMenu = cd.yPercent;
+          if (original.coordinateXInMenu !== cd.xPercent/100) updatedFields.coordinateXInMenu = cd.xPercent/100;
+          if (original.coordinateYInMenu !== cd.yPercent/100) updatedFields.coordinateYInMenu = cd.yPercent/100;
           if (original.menuPageId !== cd.pageId) updatedFields.menuPageId = cd.pageId;
 
           if (Object.keys(updatedFields).length > 0) {
@@ -184,8 +185,8 @@ export function useMenuSync(
           prepTime: parseInt(d.prepTime || '0', 10),               //        and avoid instant preparation 
           isOutOfStock: true,
           menuPageId: d.pageId,
-          coordinateXInMenu: d.xPercent,
-          coordinateYInMenu: d.yPercent,
+          coordinateXInMenu: d.xPercent/100,
+          coordinateYInMenu: d.yPercent/100,
           description: ''
         }))
       };

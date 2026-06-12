@@ -7,6 +7,7 @@ export interface MenuPage {
 
 export interface DishItem {
   id: string;
+  imageUrl: string;
   pageId: string; // References MenuPage.pageId
   xPercent: number;
   yPercent: number;
