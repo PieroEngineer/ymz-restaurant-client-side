@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { MenuPage, DishItem, CloudMenuGetPayload, CloudMenuDiffPayload, CloudDishPayload } from '@/features/menu/types/sync.types';
 import { menuApi } from '@/features/menu/api/menuApi';
 
-export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TODO: Change "Unsynchronized" by "Failed Sync"; it's better for the situation
+export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TODO: Expand to more states like "Uploading", "downloading", etc. The change is easy in the "SyncStatusIndicator", just add the state design.
 
 export function useMenuSync(
   currentPages: MenuPage[],
@@ -44,8 +44,8 @@ export function useMenuSync(
           createdAt: Date.now()
         }));
 
-        console.log('🔎  These maps came from backend', mappedPages)
-        console.log('🔎  These dishes came from backend', mappedDishes)
+        // console.log('🔎  These maps came from backend', mappedPages)
+        // console.log('🔎  These dishes came from backend', mappedDishes)
 
         onInitializeData(mappedPages, mappedDishes);
         setSyncStatus('Synchronized');
@@ -168,6 +168,8 @@ export function useMenuSync(
         }
       });
 
+      console.log('🔎  Sent diff', diffPayload)
+
       // Commit transaction package to infrastructure
       await menuApi.pushMenuDeltaChanges(diffPayload);
 
@@ -191,8 +193,11 @@ export function useMenuSync(
       setDbSnapshot(nextSnapshot);
       setSyncStatus('Synchronized');
     } catch (err) {
-      console.error('Critical database upload synchronization failure:', err);
+      console.error('🔴  Critical database upload synchronization failure:', err);
       setSyncStatus('Unsynchronized');
+
+      // 💡 Note: We do NOT clear or touch currentPages or currentDishes. 
+      // The restaurant operator's local modifications remain safely on their screen!
     }
   };
 

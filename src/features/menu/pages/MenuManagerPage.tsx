@@ -223,7 +223,7 @@ export function MenuManagerPage() {
   // Run the data array compilation engine
   const computedDishesDataset = getSortedDishesWithNumbers();
 
-  console.log('🔎  activePageObject', activePageObject)
+  // console.log('🔎  activePageObject', activePageObject)
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
