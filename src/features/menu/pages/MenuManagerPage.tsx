@@ -238,34 +238,72 @@ export function MenuManagerPage() {
       />
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
-      <div className="w-18 flex flex-col gap-4 pt-30 shrink-0 h-full items-center">
-        {/* Component 0: Add page button */}
+      <div className="w-24 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
+        
+        <div className = "flex-none w-full">
+          {/* Component 1: Page Changer */}
+          <PageChanger 
+            currentPage={menuPages.length > 0 ? activePageIndex + 1 : 0}
+            totalPages={menuPages.length}
+            onPageUp={handlePagePrevious}
+            onPageDown={handlePageNext}
+          />
+        </div>
+        
+        {/* Add page button */}
         <button
           type="button"
           onClick={() => addPagesInputRef.current?.click()}
-          className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-3 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
+          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
           >
-          <span className="font-heading font-bold text-md text-brand-primary uppercase tracking-tighter leading-tight">
-              Añadir <br /> página
+          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
+              Añadir
           </span>
+
+          {/* Icon */}
+
+        </button>
+
+        {/* Update page button */}
+        <button
+          type="button"
+          onClick={() => addPagesInputRef.current?.click()}
+          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
+          >
+          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
+              Actualizar
+          </span>
+
+          {/* Icon */}
+
+        </button>
+
+        {/* Remove page button */}
+        <button
+          type="button"
+          onClick={() => addPagesInputRef.current?.click()}
+          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
+          >
+          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
+              Borrar
+          </span>
+          
+          {/* Icon */}
+
         </button>
         
-        {/* Component 1: Page Changer */}
-        <PageChanger 
-          currentPage={menuPages.length > 0 ? activePageIndex + 1 : 0}
-          totalPages={menuPages.length}
-          onPageUp={handlePagePrevious}
-          onPageDown={handlePageNext}
-        />
         {/* Component 2: Group Label Button */}
         <button
             type="button"
             onClick={() => console.log('Inject code: Shift layout to page 2 view state')}
-            className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-3 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
+            className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
             >
-            <span className="font-heading font-bold text-md text-brand-primary uppercase tracking-tighter leading-tight">
-                Grupos de etiquetas
+            <span className="font-heading font-bold text-sm text- uppercase tracking-tighter leading-tight">
+                Etiquetas
             </span>
+            
+          {/* Icon */}
+
         </button>
       </div>
 
