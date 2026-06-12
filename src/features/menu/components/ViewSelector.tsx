@@ -28,7 +28,7 @@ export function ViewSelector({ inEditMode = true, onToggleView }: ViewSelectorPr
       </button>
 
       {/* Display Descriptor String Element */}
-      <span className="font-heading font-bold text-brand-primary tracking-wide text-sm whitespace-nowrap min-w-25 text-center uppercase">
+      <span className="font-heading font-bold text-brand-primary tracking-wide text-md whitespace-nowrap min-w-25 text-center uppercase">
         {inEditMode ? "Vista editable" : "Vista de usuario"}  {/*TODO: When it's customer view, it show the current snapshot*/}
       </span>
     </div>

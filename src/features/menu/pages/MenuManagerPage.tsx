@@ -245,7 +245,7 @@ export function MenuManagerPage() {
           onClick={() => addPagesInputRef.current?.click()}
           className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-3 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
           >
-          <span className="font-heading font-bold text-[14px] text-brand-primary uppercase tracking-tighter leading-tight">
+          <span className="font-heading font-bold text-md text-brand-primary uppercase tracking-tighter leading-tight">
               Añadir <br /> página
           </span>
         </button>
@@ -263,7 +263,7 @@ export function MenuManagerPage() {
             onClick={() => console.log('Inject code: Shift layout to page 2 view state')}
             className="w-full h-16 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex flex-col items-center justify-center p-3 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
             >
-            <span className="font-heading font-bold text-[14px] text-brand-primary uppercase tracking-tighter leading-tight">
+            <span className="font-heading font-bold text-md text-brand-primary uppercase tracking-tighter leading-tight">
                 Grupos de etiquetas
             </span>
         </button>
