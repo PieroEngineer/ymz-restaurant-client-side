@@ -13,7 +13,7 @@ export function PageChanger({ onPageUp, onPageDown, currentPage, totalPages}: Pa
   const isAtLastPage = currentPage === totalPages || totalPages === 0;
   
   return (
-    <div className="w-full bg-white rounded-xl shadow-yummizi flex flex-col items-center justify-center py-4 gap-4 border border-brand-navy/5">
+    <div className="w-full bg-white rounded-xl shadow-yummizi flex flex-col items-center justify-center py-2 gap-4 border border-brand-navy/5">
       {/* Upper Navigation Arrow Trigger Placeholder */}
       <button 
         type="button" 

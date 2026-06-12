@@ -2,9 +2,11 @@ import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'reac
 
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
+import { MenuActionButton } from '@/features/menu/components/MenuActionButton';
 import { MenuDisplay } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
+import { ArrowIcon } from '@/features/menu/components/icons/ArrowIcon';
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
 import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
@@ -109,6 +111,22 @@ export function MenuManagerPage() {
 
   const handlePagePrevious = () => {
     if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
+  };
+
+  const handleOpenAddPages = () => {
+    addPagesInputRef.current?.click();
+  };
+
+  const handleUpdatePages = () => {
+    // TODO: implement page update behavior
+  };
+
+  const handleRemovePages = () => {
+    // TODO: implement page removal behavior
+  };
+
+  const handleOpenLabels = () => {
+    // TODO: implement label management behavior
   };
 
   const handleUploadedLocalFilesPipeline = (event: ChangeEvent<HTMLInputElement>) => { /// For the local upload of image in the Menu display 
@@ -238,9 +256,9 @@ export function MenuManagerPage() {
       />
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
-      <div className="w-24 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
+      <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
         
-        <div className = "flex-none w-full">
+        <div className = "flex-none w-3/4">
           {/* Component 1: Page Changer */}
           <PageChanger 
             currentPage={menuPages.length > 0 ? activePageIndex + 1 : 0}
@@ -250,61 +268,33 @@ export function MenuManagerPage() {
           />
         </div>
         
-        {/* Add page button */}
-        <button
-          type="button"
-          onClick={() => addPagesInputRef.current?.click()}
-          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
-          >
-          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
-              Añadir
-          </span>
+        <MenuActionButton
+          text="Añadir"
+          color="bg-white"
+          onClick={handleOpenAddPages}
+          icon={<ArrowIcon className="size-5" />}
+        />
 
-          {/* Icon */}
+        <MenuActionButton
+          text="Actualizar"
+          color="bg-white"
+          onClick={handleUpdatePages}
+          icon={<ArrowIcon className="size-5" />}
+        />
 
-        </button>
+        <MenuActionButton
+          text="Borrar"
+          color="bg-white"
+          onClick={handleRemovePages}
+          icon={<ArrowIcon className="size-5" />}
+        />
 
-        {/* Update page button */}
-        <button
-          type="button"
-          onClick={() => addPagesInputRef.current?.click()}
-          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
-          >
-          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
-              Actualizar
-          </span>
-
-          {/* Icon */}
-
-        </button>
-
-        {/* Remove page button */}
-        <button
-          type="button"
-          onClick={() => addPagesInputRef.current?.click()}
-          className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
-          >
-          <span className="font-heading font-bold text-sm text-brand-primary uppercase tracking-tighter leading-tight">
-              Borrar
-          </span>
-          
-          {/* Icon */}
-
-        </button>
-        
-        {/* Component 2: Group Label Button */}
-        <button
-            type="button"
-            onClick={() => console.log('Inject code: Shift layout to page 2 view state')}
-            className="w-full flex-1 bg-white rounded-xl shadow-yummizi border border-brand-navy/5 flex items-center justify-center px-2 py-1 text-center hover:scale-[1.02] cursor-pointer active:scale-[0.98] transition-all group"
-            >
-            <span className="font-heading font-bold text-sm text- uppercase tracking-tighter leading-tight">
-                Etiquetas
-            </span>
-            
-          {/* Icon */}
-
-        </button>
+        <MenuActionButton
+          text="Etiquetas"
+          color="bg-white"
+          onClick={handleOpenLabels}
+          icon={<ArrowIcon className="size-5" />}
+        />
       </div>
 
       {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}
