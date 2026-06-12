@@ -308,7 +308,7 @@ export function MenuManagerPage() {
       </div>
 
       {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}
-      <div className="flex-1 flex flex-col items-center h-screen min-w-[320px]">
+      <div className="flex-1 flex flex-col gap-2 pb-3 items-center h-screen min-w-[320px]">
         {/* Component 3: View Selector (Touches extreme top bounds) */}
         <div className="h-16 shrink-0 flex justify-center">
           <ViewSelector // TODO: Move it to the right of the Menu display and become it vertical
@@ -317,7 +317,7 @@ export function MenuManagerPage() {
         </div>
         {/* Component 4: Dynamic Interactive Menu Display Context */}
         {/** <div className="h-[90%]">  It worked previously, is it a bad practices? */}
-        <div className="flex-1 pb-4 pt-4 min-h-0">
+        <div className="flex-1 min-h-0">
           <MenuDisplay 
             activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
             currentPageId={activePageObject?.pageId ?? null}

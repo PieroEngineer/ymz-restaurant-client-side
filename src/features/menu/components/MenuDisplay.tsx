@@ -93,7 +93,7 @@ export function MenuDisplay({
 
   return (
     <div 
-      className="w-auto h-full bg-white border-2 border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden" /// |-> X group transition-all
+      className="w-auto h-full bg-white border-3 shadow-yummizi border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden"
       onMouseMove={handleCanvasMouseMove}
       onMouseUp={handleCanvasMouseUp}
       onMouseLeave={handleCanvasMouseUp} // Auto-drop if mouse slips entirely out of the display box
