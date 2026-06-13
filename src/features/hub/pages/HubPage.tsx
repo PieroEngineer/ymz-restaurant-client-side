@@ -17,7 +17,7 @@ export function HubPage() {
     <div className="w-screen h-screen bg-brand-background relative flex flex-col items-center justify-center px-12 overflow-hidden">
       
       {/* 1. TOP-RIGHT BRANDING LOGO WATERMARK WITH SHADOW */}
-      <div className="absolute top-6 right-6 select-none">  {/*TODO: Change its absolute position by a position that doesn't cross the button in small screens*/}
+      <div className="absolute top-6 right-6 select-none z-10">  {/*TODO: Change its absolute position by a position that doesn't cross the button in small screens*/}
         <img 
           src={yummizilogo} 
           alt="Yummizi logo" 
@@ -55,8 +55,8 @@ export function HubPage() {
 
         {/* COLUMN 3: Stacked Buttons Container */}
         <div className="grid grid-rows-2 gap-8 h-3/4">
-          <HubButton label="Mis Dispositivos" imageSrc={deviceswithyummizi} />
-          <HubButton label="Mis Estadísticas" imageSrc={analytics} />
+          <HubButton label="Mis Dispositivos" comingSoonCover = {true} imageSrc={deviceswithyummizi} />
+          <HubButton label="Mis Estadísticas" comingSoonCover = {true} imageSrc={analytics} />
         </div>
 
         {/* COLUMN 4: Stacked Buttons Container */}

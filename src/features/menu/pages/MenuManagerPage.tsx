@@ -270,29 +270,26 @@ export function MenuManagerPage() {
         
         <MenuActionButton
           text="Añadir"
-          color="bg-white"
           onClick={handleOpenAddPages}
           icon={<ArrowIcon className="size-5" />}
         />
 
         <MenuActionButton
           text="Actualizar"
-          color="bg-white"
           onClick={handleUpdatePages}
           icon={<ArrowIcon className="size-5" />}
         />
 
         <MenuActionButton
           text="Borrar"
-          color="bg-white"
           onClick={handleRemovePages}
           icon={<ArrowIcon className="size-5" />}
         />
 
         <MenuActionButton
           text="Etiquetas"
-          color="bg-white"
           onClick={handleOpenLabels}
+          comingSoonCover = {true}
           icon={<ArrowIcon className="size-5" />}
         />
       </div>
