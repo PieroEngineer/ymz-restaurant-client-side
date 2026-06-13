@@ -20,14 +20,14 @@ export interface DishItem {
 // ☁️ Cloud Sync Payload Specifications
 export interface CloudMenuPagePayload {
   pageId: string;
-  imageUrl: string;
+  imageUrl: string; // TODO: Maybe this shouln'd be url but key
   pageNumber: number;
 }
 
 export interface CloudDishPayload {
   id: string;
   name: string;
-  imageUrl: string;
+  imageUrl: string; // TODO: Maybe this shouln'd be url but key
   priceCents: number;
   prepTime: number;
   isOutOfStock: boolean;

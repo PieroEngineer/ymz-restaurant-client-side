@@ -7,15 +7,16 @@ export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TO
 export function useMenuSync(
   currentPages: MenuPage[],
   currentDishes: DishItem[],
+
+  // 📂 Live local files mapping reference index tracked in the UI page layer
+  localPageFilesMap: Record<string, File>, 
+
   onInitializeData: (pages: MenuPage[], dishes: DishItem[]) => void
 ) {
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>('Loading');
   
   // 💾 Core Immutable Baseline Storage Snapshot
-  const [dbSnapshot, setDbSnapshot] = useState<CloudMenuGetPayload>({
-    menuPages: [],
-    dishes: []
-  });
+  const [dbSnapshot, setDbSnapshot] = useState<CloudMenuGetPayload>({ menuPages: [], dishes: [] });
 
   // 📥 Phase 1: Lifecycle Initialization Pull
   useEffect(() => {
@@ -98,11 +99,36 @@ export function useMenuSync(
     if (syncStatus !== 'Unsynchronized') return;
     setSyncStatus('Loading');
 
+    // 🎒 Track S3 remote endpoints generated during this execution thread block for fallback access
+    const successfulS3Uploads: string[] = [];
+
     try {
+
+      // 🗺️ STEP 1: Process and Upload New Images to S3 First
+      // We remap our working state links from local object URLs to actual remote S3 URLs
+      const optimizedPagesWithS3Links = await Promise.all(
+        currentPages.map(async (page) => {
+          const rawFile = localPageFilesMap[page.pageId];
+          
+          // If there's a raw File object, it means this page is brand new and needs uploading
+          if (rawFile) {
+            try {
+              const s3Url = await menuApi.uploadImageToS3(rawFile);
+              successfulS3Uploads.push(s3Url); // Log link location for potential rollbacks
+              return { ...page, imageUrl: s3Url };
+            } catch (s3Error) {
+              throw new Error(`S3 Asset Upload Block Failure: ${s3Error instanceof Error ? s3Error.message : ''}`);
+            }
+          }
+          return page; // Retain existing remote imageUrl if no fresh file object is found
+        })
+      );
+
+      // 📝 STEP 2: Build the Delta JSON Diff Document using the new S3 links
       const diffPayload: CloudMenuDiffPayload = { menuPages: [], dishes: [] };
 
       // 🗺️ A. Calculate Menu Pages Diff
-      currentPages.forEach((cp) => {
+      optimizedPagesWithS3Links.forEach((cp) => {
         const original = dbSnapshot.menuPages.find(p => p.pageId === cp.pageId);
         if (!original) {
           diffPayload.menuPages.push({
@@ -123,7 +149,7 @@ export function useMenuSync(
       });
 
       dbSnapshot.menuPages.forEach((op) => {
-        if (!currentPages.some(p => p.pageId === op.pageId)) {
+        if (!optimizedPagesWithS3Links.some(p => p.pageId === op.pageId)) {
           diffPayload.menuPages.push({ pageId: op.pageId, action: 'delete' });
         }
       });
@@ -134,7 +160,7 @@ export function useMenuSync(
         const priceCents = Math.round(parseFloat(cd.cost || '0') * 100);
         const prepTime = parseInt(cd.prepTime || '0', 10);
 
-        if (!original) {
+        if (!original) {  // For a dish totally new
           diffPayload.dishes.push({
             id: cd.id,
             action: 'save',
@@ -148,14 +174,14 @@ export function useMenuSync(
             coordinateYInMenu: cd.yPercent/100,
             description: '' // Preset parameter enforcement rule
           });
-        } else {
+        } else {  // For a dish partially new
           const updatedFields: Partial<CloudDishPayload> = {};
           if (original.name !== cd.name) updatedFields.name = cd.name;
           if (original.priceCents !== priceCents) updatedFields.priceCents = priceCents;
           if (original.prepTime !== prepTime) updatedFields.prepTime = prepTime;
           if (original.coordinateXInMenu !== cd.xPercent/100) updatedFields.coordinateXInMenu = cd.xPercent/100;
           if (original.coordinateYInMenu !== cd.yPercent/100) updatedFields.coordinateYInMenu = cd.yPercent/100;
-          if (original.menuPageId !== cd.pageId) updatedFields.menuPageId = cd.pageId;
+          if (original.menuPageId !== cd.pageId) updatedFields.menuPageId = cd.pageId;  /// Is it possible? perhaps this line is unnecessary
 
           if (Object.keys(updatedFields).length > 0) {
             diffPayload.dishes.push({ id: cd.id, action: 'update', updatedFields });
@@ -176,7 +202,7 @@ export function useMenuSync(
 
       // 🔄 C. Re-normalize baseline snapshots on operational success
       const nextSnapshot: CloudMenuGetPayload = {
-        menuPages: currentPages.map(p => ({ pageId: p.pageId, imageUrl: p.imageUrl, pageNumber: p.pageNumber })),
+        menuPages: optimizedPagesWithS3Links.map(p => ({ pageId: p.pageId, imageUrl: p.imageUrl, pageNumber: p.pageNumber })),
         dishes: currentDishes.map(d => ({
           id: d.id,
           name: d.name,
@@ -195,10 +221,32 @@ export function useMenuSync(
       setSyncStatus('Synchronized');
     } catch (err) {
       console.error('🔴  Critical database upload synchronization failure:', err);
-      setSyncStatus('Unsynchronized');
 
       // 💡 Note: We do NOT clear or touch currentPages or currentDishes. 
       // The restaurant operator's local modifications remain safely on their screen!
+
+      // 🚨 COMPENSATING TRANSACTION: Clear uploaded files out of S3 to avoid orphaned assets
+      if (successfulS3Uploads.length > 0) {
+        console.log('🔄 Reversing transaction: purging items out of S3 storage...');
+        await Promise.all(
+          successfulS3Uploads.map(async (url) => {
+            try {
+              await menuApi.deleteImageFromS3(url);
+            } catch (cleanupError) {
+              console.error(`🚨 Fatal: Failed to clear asset ${url} during automatic rollback:`, cleanupError); /// Maybe I can it to send me some message to see the ghost data
+            }
+          })
+        );
+      }
+
+      /* * TODO: Move to Option 2 (Backend-Managed Transaction).
+       * Client-side transaction coordination is fragile. Refactor the endpoint to accept a multipart 
+       * form data payload containing both the JSON payload string and file binaries so that the 
+       * server can orchestrate this transaction natively.
+       */
+      
+      setSyncStatus('Unsynchronized'); // Retain screen input options for retry executions
+
     }
   };
 

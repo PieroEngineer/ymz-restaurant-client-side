@@ -119,7 +119,7 @@ export function DishChart({
         </button>
       </div>
 
-      <div className="w-full flex-1 overflow-y-scroll">
+      <div className="w-full flex-1 overflow-y-scroll overflow-x-auto">
         <table className="w-full border-collapse text-left font-heading text-brand-navy">
           
           <thead>

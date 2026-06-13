@@ -1,4 +1,4 @@
-import { type ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
@@ -13,9 +13,10 @@ import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
-const createMenuImageUrls = (files: FileList | null) => {
-  return Array.from(files || []).map((file) => URL.createObjectURL(file));
-};
+//X
+// const createMenuImageUrls = (files: FileList | null) => {
+//   return Array.from(files || []).map((file) => URL.createObjectURL(file));
+// };
 
 const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
   if (left.length !== right.length) return false;
@@ -40,13 +41,15 @@ export function MenuManagerPage() {
   // FDD State Layer Matrix Storage Units
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
-  //X const [menuPages, setMenuPages] = useState<string[]>([]);
     
+  // 📂 Local file storage record mapping (Id -> Raw File Binary)
+  const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
+
   // 💾 Master FDD Data Storage Unit for all interactive items
   const {
     value: dishes,
     setValue: setDishes,
-    reset: resetDishesHistory,
+    // reset: resetDishesHistory,
     undo: undoDishAction,
     redo: redoDishAction,
     canUndo,
@@ -89,22 +92,24 @@ export function MenuManagerPage() {
     return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
   }, [handleRedoDishAction, handleUndoDishAction]);
 
-   // 🔌 Data Sync Integration Pipe Engine Connections
+  // 🔌 Data Sync Integration Pipe Engine Connections
   const handleDatabaseInitCallback = (initialPages: MenuPage[], initialDishes: DishItem[]) => {
     setMenuPages(initialPages);
     setDishes(initialDishes);
     setActivePageIndex(0);
+    setLocalPageFilesMap({}); // Clear file pointers on clean boot data load
   };
 
   const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
     menuPages,
     dishes,
+    localPageFilesMap,
     handleDatabaseInitCallback
   );
 
   const activePageObject = menuPages[activePageIndex];
 
-  // Logic handlers for tracking horizontal menu layout page indexing operations
+  // 🔢 Logic handlers for tracking horizontal menu layout page indexing operations
   const handlePageNext = () => {
     if (activePageIndex < menuPages.length - 1) setActivePageIndex((prev) => prev + 1);
   };
@@ -113,46 +118,130 @@ export function MenuManagerPage() {
     if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
   };
 
+  // 🖌️ Logic handlers for modifying the menu images
   const handleOpenAddPages = () => {
     addPagesInputRef.current?.click();
   };
 
-  const handleUpdatePages = () => {
-    // TODO: implement page update behavior
-  };
-
-  const handleRemovePages = () => {
-    // TODO: implement page removal behavior
-  };
-
-  const handleOpenLabels = () => {
-    // TODO: implement label management behavior
-  };
-
-  const handleUploadedLocalFilesPipeline = (event: ChangeEvent<HTMLInputElement>) => { /// For the local upload of image in the Menu display 
+  /**
+   * 🆕 1. APPEND NEW PAGES (CREATION)
+   * Refactored to properly calculate sequential numbers based on existing pages
+   */
+  const handleUploadedLocalFilesPipeline = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
+    if (!files || files.length === 0) return;
+
+    const newFileEntries: Record<string, File> = {};
     
-    if (files && files.length > 0) {
-      // Transform the urls 
-      const transformedNewPages: MenuPage[] = createMenuImageUrls(files).map((url, index) => ({ //TODO: Convert this transformer into a function
-        pageId: crypto.randomUUID(),  //TODO: Here is ok that a new UUID is generated because it's a new image, but later pass the UUID generation to the backend
-        imageUrl: url,
+    // 💡 Capture current page length immediately to use as our append offset base
+    const existingPageCount = menuPages.length;
+
+    const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
+      
+      const pageId = crypto.randomUUID();
+      const imageUrl = URL.createObjectURL(file).slice(5); // Psdt: Slicing 5 because "blob:"" appeared
+      const pageNumber = existingPageCount + index + 1
+      console.log('imageUrl is\n', imageUrl) 
+
+      newFileEntries[pageId] = file;
+
+      return {
+        pageId,
+        imageUrl,
+        // 🔢 Append sequentially (e.g., if 2 exist, new batch starts at 3)
+        pageNumber
+      };
+    });
+
+    if (transformedNewPages.length === 0) return;
+
+    // Append new pages to state
+    setMenuPages((prev) => [...(prev || []), ...transformedNewPages]);
+    setLocalPageFilesMap((prev) => ({ ...prev, ...newFileEntries }));
+    
+    // Set focus to the first page of the newly uploaded batch
+    setActivePageIndex(existingPageCount);
+
+    // Clean up UI focus states
+    setActiveEditCell(null);
+    if (dragHistoryBaseRef) dragHistoryBaseRef.current = null;
+
+    //XresetDishesHistory([]); // Wipe previous data frames for fresh uploads
+    
+    // Clear the input value so the same file can be uploaded again if needed
+    event.target.value = '';
+  };
+
+  /**
+   * 🗑️ 2. REMOVE CURRENT ACTIVE PAGE (DELETION WITH CASCADE)
+   */
+  const handleRemoveCurrentPage = () => {
+    if (menuPages.length === 0) return;
+    
+    const pageToDestroy = menuPages[activePageIndex];
+    const pageIdToDestroy = pageToDestroy.pageId;
+
+    // A. Cascade delete all dishes assigned to this specific page
+    setDishes((prevDishes) => prevDishes.filter((dish) => dish.pageId !== pageIdToDestroy));
+
+    // B. Remove the page binary from our local staging map file upload tracker
+    setLocalPageFilesMap((prevMap) => {
+      const updatedMap = { ...prevMap };
+      delete updatedMap[pageIdToDestroy];
+      return updatedMap;
+    });
+
+    // C. Remove page from state and recalculate sequential page numbers for the rest
+    setMenuPages((prevPages) => {
+      const filtered = prevPages.filter((page) => page.pageId !== pageIdToDestroy);
+      
+      // 🛠️ Re-index numbers so they remain sequential (1, 2, 3...) with no gaps
+      return filtered.map((page, index) => ({
+        ...page,
         pageNumber: index + 1
       }));
-  
-      if (transformedNewPages.length === 0) return;
-  
-      setMenuPages((prev) => [...prev || [], ...transformedNewPages]);
-  
-      setActivePageIndex(menuPages.length);
-      resetDishesHistory([]); // Wipe previous data frames for fresh uploads
-      setActiveEditCell(null);
-      dragHistoryBaseRef.current = null;
-  
-      //XsetDishes([]);  /// Does it remove all dishes when a new image is uploaded?
-  
-      event.target.value = '';
-    }
+    });
+
+    // D. Adjust active view navigation pointer safely
+    setActivePageIndex((prevIndex) => {
+      if (prevIndex === 0) return 0;
+      // If we deleted the last page, step backward by 1
+      if (prevIndex >= menuPages.length - 1) return menuPages.length - 2;
+      return prevIndex;
+    });
+
+    setActiveEditCell(null);
+  };
+
+  /**
+   * 🔄 3. UPDATE PAGE ORDER (SHIFT ACTIVE PAGE UP OR DOWN)
+   * @param direction 'up' to move closer to page 1, 'down' to move to the end
+   */
+  const handleShiftPageOrder = (direction: 'up' | 'down') => {
+    if (menuPages.length <= 1) return; // Nowhere to move
+    
+    const targetIndex = direction === 'up' ? activePageIndex - 1 : activePageIndex + 1;
+    
+    // Guard check boundary overflow limits
+    if (targetIndex < 0 || targetIndex >= menuPages.length) return;
+
+    setMenuPages((prevPages) => {
+      const updatedPages = [...prevPages];
+      
+      // Swap the elements in the array layout
+      const temp = updatedPages[activePageIndex];
+      updatedPages[activePageIndex] = updatedPages[targetIndex];
+      updatedPages[targetIndex] = temp;
+
+      // 🔢 Correct their assigned page Numbers to match their new array positions
+      return updatedPages.map((page, index) => ({
+        ...page,
+        pageNumber: index + 1
+      }));
+    });
+
+    // Move our viewport focus indicator along with the swapped page
+    setActivePageIndex(targetIndex);
   };
 
   // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
@@ -246,14 +335,14 @@ export function MenuManagerPage() {
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
-      <input
+      {/* <input
         ref={addPagesInputRef}
         type="file"
         multiple
         accept="image/*"
         onChange={handleUploadedLocalFilesPipeline}
         className="hidden"
-      />
+      /> */}
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
       <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
@@ -268,29 +357,48 @@ export function MenuManagerPage() {
           />
         </div>
         
+        <hr className="w-full border-slate-200 my-1" />
+
+        {/* Button 1: Add/Append New Local Files (Creation Trigger) */}
         <MenuActionButton
-          text="Añadir"
+          text="Add Pages"
           onClick={handleOpenAddPages}
+          icon={<ArrowIcon className="size-5" />} // Replace with your actual icon component
+        />
+
+        {/* Button 2: Shift Order Up (Update Variant A) */}
+        <MenuActionButton
+          text="Move Up"
+          onClick={() => handleShiftPageOrder('up')}
+          disabled={activePageIndex === 0 || menuPages.length <= 1}
           icon={<ArrowIcon className="size-5" />}
         />
 
+        {/* Button 3: Shift Order Down (Update Variant B) */}
         <MenuActionButton
-          text="Actualizar"
-          onClick={handleUpdatePages}
+          text="Move Down"
+          onClick={() => handleShiftPageOrder('down')}
+          disabled={activePageIndex === menuPages.length - 1 || menuPages.length <= 1}
           icon={<ArrowIcon className="size-5" />}
         />
 
+        {/* Button 4: Delete Page (Destruction Trigger) */}
         <MenuActionButton
-          text="Borrar"
-          onClick={handleRemovePages}
+          text="Delete Page"
+          onClick={handleRemoveCurrentPage}
+          disabled={menuPages.length === 0}
+          // className="text-red-500 hover:bg-red-50 border-red-100"
           icon={<ArrowIcon className="size-5" />}
         />
 
-        <MenuActionButton
-          text="Etiquetas"
-          onClick={handleOpenLabels}
-          comingSoonCover = {true}
-          icon={<ArrowIcon className="size-5" />}
+        {/* Hidden file input engine hook bridge line */}
+        <input
+          ref={addPagesInputRef}
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleUploadedLocalFilesPipeline}
+          className="hidden"
         />
       </div>
 
