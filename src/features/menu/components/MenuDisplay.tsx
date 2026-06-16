@@ -58,8 +58,8 @@ export function MenuDisplay({
     if (!imageRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
-    const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
-    const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+    const xPercent = ((e.clientX - rect.left) / rect.width);
+    const yPercent = ((e.clientY - rect.top) / rect.height);
 
     onCoordinateAdded({ xPercent, yPercent });
   };
@@ -72,8 +72,8 @@ export function MenuDisplay({
     const rect = imageRef.current.getBoundingClientRect();
     
     // 📏 Boundary Protection Rule: Force calculations to lock between 0% and 100% boundary limits
-    const boundedX = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-    const boundedY = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    const boundedX = Math.max(0, Math.min(1, ((e.clientX - rect.left) / rect.width)));
+    const boundedY = Math.max(0, Math.min(1, ((e.clientY - rect.top) / rect.height)));
 
     onCoordinateUpdated(draggingPinId, boundedX, boundedY);
   };
@@ -90,6 +90,8 @@ export function MenuDisplay({
   // Filter out pin markers belonging strictly to the menu page being viewed right now
 
   const activePagePins = dishesWithNumbers.filter(dish => dish.pageId === currentPageId);
+
+  //TODO: Verify if it's ok that the menu recompose everytime some letter is written in the dish chart. I found it by placing a log in the possition of this comment
 
   return (
     <div 
@@ -124,7 +126,7 @@ export function MenuDisplay({
 
             {activePagePins.map((pin) => {
               const isHovered = hoveredPinId === pin.id;
-              const isRightSide = pin.xPercent < 50;
+              const isRightSide = pin.xPercent < .5;
 
               return (
                 <div
@@ -141,7 +143,7 @@ export function MenuDisplay({
                   className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform ${
                     draggingPinId === pin.id ? 'cursor-grabbing scale-125 z-40' : 'cursor-grab hover:scale-110 z-30'
                   }`}
-                  style={{ left: `${pin.xPercent}%`, top: `${pin.yPercent}%` }}
+                  style={{ left: `${pin.xPercent*100}%`, top: `${pin.yPercent*100}%` }}
                 >
                   {/* Custom Graphic Marker Asset */}
                   <img

@@ -59,6 +59,7 @@ export function MenuManagerPage() {
   // 🔌 Selection tracker across input component frames
   const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
   const addPagesInputRef = useRef<HTMLInputElement>(null);
+  const replacePageInputRef = useRef<HTMLInputElement>(null);
   const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
 
   const handleUndoDishAction = useCallback(() => {
@@ -118,6 +119,11 @@ export function MenuManagerPage() {
     if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
   };
 
+  const handleOpenReplacePage = () => {
+    if (menuPages.length === 0) return;
+    replacePageInputRef.current?.click();
+  };
+  
   // 🖌️ Logic handlers for modifying the menu images
   const handleOpenAddPages = () => {
     addPagesInputRef.current?.click();
@@ -139,9 +145,10 @@ export function MenuManagerPage() {
     const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
       
       const pageId = crypto.randomUUID();
-      const imageUrl = URL.createObjectURL(file).slice(5); // Psdt: Slicing 5 because "blob:"" appeared
+      const imageUrl = URL.createObjectURL(file); // Psdt: Slicing 5 because "blob:"" appeared
       const pageNumber = existingPageCount + index + 1
-      console.log('imageUrl is\n', imageUrl) 
+      console.log('🔎  imageUrl is\n', imageUrl) 
+      console.log('🔎  pageId is\n', pageId) 
 
       newFileEntries[pageId] = file;
 
@@ -214,34 +221,38 @@ export function MenuManagerPage() {
   };
 
   /**
-   * 🔄 3. UPDATE PAGE ORDER (SHIFT ACTIVE PAGE UP OR DOWN)
-   * @param direction 'up' to move closer to page 1, 'down' to move to the end
+   * 🔄 UPDATING AN EXISTING PAGE IMAGE (VARIANT B)
+   * Replaces the background image of the current active page index 
+   * while keeping its pageId, pageNumber, and attached dishes completely safe.
    */
-  const handleShiftPageOrder = (direction: 'up' | 'down') => {
-    if (menuPages.length <= 1) return; // Nowhere to move
-    
-    const targetIndex = direction === 'up' ? activePageIndex - 1 : activePageIndex + 1;
-    
-    // Guard check boundary overflow limits
-    if (targetIndex < 0 || targetIndex >= menuPages.length) return;
+  const handleReplaceCurrentPageImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target;
+    if (!files || files.length === 0) return;
 
-    setMenuPages((prevPages) => {
-      const updatedPages = [...prevPages];
-      
-      // Swap the elements in the array layout
-      const temp = updatedPages[activePageIndex];
-      updatedPages[activePageIndex] = updatedPages[targetIndex];
-      updatedPages[targetIndex] = temp;
+    const targetFile = files[0]; // We only need a single file to replace the current page image
+    const targetPage = menuPages[activePageIndex];
+    if (!targetPage) return;
 
-      // 🔢 Correct their assigned page Numbers to match their new array positions
-      return updatedPages.map((page, index) => ({
-        ...page,
-        pageNumber: index + 1
-      }));
-    });
+    const targetPageId = targetPage.pageId;
+    const newLocalUrl = URL.createObjectURL(targetFile);
 
-    // Move our viewport focus indicator along with the swapped page
-    setActivePageIndex(targetIndex);
+    // A. Update the binary map file tracker with the fresh file reference under the SAME page ID
+    setLocalPageFilesMap((prevMap) => ({
+      ...prevMap,
+      [targetPageId]: targetFile
+    }));
+
+    // B. Update the visual imageUrl pointer inside the menuPages array state
+    setMenuPages((prevPages) => 
+      prevPages.map((page) => 
+        page.pageId === targetPageId 
+          ? { ...page, imageUrl: newLocalUrl } 
+          : page
+      )
+    );
+
+    // Clean up input value so the same file can be chosen again if needed
+    event.target.value = '';
   };
 
   // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
@@ -331,18 +342,8 @@ export function MenuManagerPage() {
   // Run the data array compilation engine
   const computedDishesDataset = getSortedDishesWithNumbers();
 
-  // console.log('🔎  activePageObject', activePageObject)
-
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
-      {/* <input
-        ref={addPagesInputRef}
-        type="file"
-        multiple
-        accept="image/*"
-        onChange={handleUploadedLocalFilesPipeline}
-        className="hidden"
-      /> */}
       
       {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
       <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
@@ -366,23 +367,15 @@ export function MenuManagerPage() {
           icon={<ArrowIcon className="size-5" />} // Replace with your actual icon component
         />
 
-        {/* Button 2: Shift Order Up (Update Variant A) */}
+        {/* Button 2: Update Image Trigger */}
         <MenuActionButton
-          text="Move Up"
-          onClick={() => handleShiftPageOrder('up')}
-          disabled={activePageIndex === 0 || menuPages.length <= 1}
-          icon={<ArrowIcon className="size-5" />}
+          text="Update Image"
+          onClick={handleOpenReplacePage}
+          disabled={menuPages.length === 0}
+          icon={<ArrowIcon className="size-5" />} // Swap out for a refresh/swap icon component
         />
 
-        {/* Button 3: Shift Order Down (Update Variant B) */}
-        <MenuActionButton
-          text="Move Down"
-          onClick={() => handleShiftPageOrder('down')}
-          disabled={activePageIndex === menuPages.length - 1 || menuPages.length <= 1}
-          icon={<ArrowIcon className="size-5" />}
-        />
-
-        {/* Button 4: Delete Page (Destruction Trigger) */}
+        {/* Button 3: Delete Page (Destruction Trigger) */}
         <MenuActionButton
           text="Delete Page"
           onClick={handleRemoveCurrentPage}
@@ -398,6 +391,15 @@ export function MenuManagerPage() {
           multiple
           accept="image/*"
           onChange={handleUploadedLocalFilesPipeline}
+          className="hidden"
+        />
+
+        {/* 🔌 Hidden File Input Engine 2: Replacing Single Existing Image Asset */}
+        <input
+          ref={replacePageInputRef}
+          type="file"
+          accept="image/*" // No 'multiple' parameter here since we are only replacing one page at a time
+          onChange={handleReplaceCurrentPageImage}
           className="hidden"
         />
       </div>
