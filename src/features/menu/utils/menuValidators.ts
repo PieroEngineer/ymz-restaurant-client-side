@@ -53,18 +53,18 @@ export const validateDishFields = (pages: MenuPage[], dishes: DishItem[]): DishV
     const missingFields: string[] = [];
     
     // Check fields using clean trim assertions
-    if (!dish.name || dish.name.trim() === '') missingFields.push('Name');
-    if (!dish.cost || dish.cost.trim() === '' || parseFloat(dish.cost) === 0) missingFields.push('Price');
-    if (!dish.prepTime || dish.prepTime.trim() === '' || parseInt(dish.prepTime, 10) === 0) missingFields.push('Prep Time');
+    if (!dish.name || dish.name.trim() === '') missingFields.push('Nombre');
+    if (!dish.cost || dish.cost.trim() === '' || parseFloat(dish.cost) === 0) missingFields.push('Precio');
+    if (!dish.prepTime || dish.prepTime.trim() === '' || parseInt(dish.prepTime, 10) === 0) missingFields.push('Tiempo de preparación');
 
     if (missingFields.length > 0) {
       // If ALL fields are missing, we will capture a clean label to avoid text overload
-      const isCompletelyEmpty = missingFields.length === 3;
+      const isCompletelyEmpty = missingFields.length === 3; // TODO: try to avoid the harcoding of the number of editable columns
       
       invalidDishes.push({
-        dishName: isCompletelyEmpty ? 'Unfilled Dish Pin' : (dish.name || 'Unnamed Dish'),
+        dishName: dish.name || '',  // TODO: put the order number here
         pageNumber: pageNum,
-        missingFields: isCompletelyEmpty ? ['All fields are empty'] : missingFields,
+        missingFields: isCompletelyEmpty ? ['Todos los campos están vacíos'] : missingFields,
       });
     }
   });

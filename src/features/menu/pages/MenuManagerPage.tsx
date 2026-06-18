@@ -15,15 +15,10 @@ import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
 import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
-import { MenuValidationModal } from '@/features/menu/components/MenuValidationModal';
+import { MenuActionModal, type MenuModalMode } from '@/features/menu/components/MenuValidationModal';
 import { validateEmptyPages, validateDishFields, type InvalidDishDetail } from '@/features/menu/utils/menuValidators';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
-
-//X
-// const createMenuImageUrls = (files: FileList | null) => {
-//   return Array.from(files || []).map((file) => URL.createObjectURL(file));
-// };
 
 const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
   if (left.length !== right.length) return false;
@@ -52,9 +47,11 @@ export function MenuManagerPage() {
   // 📂 Local file storage record mapping (Id -> Raw File Binary)
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
 
-  // ⚱️ Local Verification State Machines Structures
+  // 🧩 Modal State Machine Management
   const [modalOpen, setModalOpen] = useState(false);
-  const [validationMode, setValidationMode] = useState<'EMPTY_PAGES' | 'INVALID_DISHES' | null>(null);
+  const [modalMode, setModalMode] = useState<MenuModalMode>(null);
+  
+  // Validation tracking stores
   const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
   const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
 
@@ -133,37 +130,55 @@ export function MenuManagerPage() {
     handleImageStateCallback
   );
 
-  /**
-   * 🛡️ PRE-FLIGHT ORCHESTRATION GATEKEEPER
-   * Intercepts the submit action to perform local data evaluation
+   /**
+   * ☁️ INTERCEPT: Sync Cloud Button Click (Runs validation logic steps)
    */
-  const handlePreFlightSyncCheck = () => {
-    // A. Check for blocking Rule 1: Missing field validation inside dish cards
+  const handleTriggerSyncValidationFlow = () => {
+    // Phase 1: Catch blocking empty text inputs inside dish charts
     const dishCheck = validateDishFields(menuPages, dishes);
     if (!dishCheck.isValid) {
       setInvalidDishesData(dishCheck.invalidDishes);
-      setValidationMode('INVALID_DISHES');
+      setModalMode('INVALID_DISHES');
       setModalOpen(true);
-      return; // 🛑 Hard stop execution block: User CANNOT bypass this restriction.
+      return;
     }
 
-    // B. Check for warning Rule 2: Pages with zero dishes mapped
+    // Phase 2: Catch structural warnings regarding empty background display sheets
     const pageCheck = validateEmptyPages(menuPages, dishes);
     if (!pageCheck.isValid) {
       setEmptyPagesData(pageCheck.emptyPageNumbers);
-      setValidationMode('EMPTY_PAGES');
+      setModalMode('EMPTY_PAGES');
       setModalOpen(true);
-      return; // ⚠️ Warning pause block: User can bypass this if they hit "Upload Anyway"
+      return;
     }
 
-    // 🎉 Clean flight path: execute synchronization immediately if all structures are verified
-    synchronizeDatasetChanges();
+    // Phase 3: Clean validation pass! Prompt standard confirmation check
+    setModalMode('CONFIRM_SYNC');
+    setModalOpen(true);
   };
 
-  const handleBypassWarningProceed = () => {
+  /**
+   * ⚙️ CORE DISPATCH ROUTER: Executes the targeted logic when the user confirms
+   */
+  const handleExecuteConfirmedAction = () => {
+    // Temporarily close modal overlay
     setModalOpen(false);
-    // Execute the direct sync function, bypassing the empty page warning checks entirely
-    synchronizeDatasetChanges();
+
+    switch (modalMode) {
+      case 'CONFIRM_DELETE':
+        // Execute your core sequential deletion pipeline block here
+        handleRemoveCurrentPage(); 
+        break;
+
+      case 'CONFIRM_SYNC':
+      case 'EMPTY_PAGES':
+        // Both states represent structural consensus to push shifts to LocalStack/S3
+        synchronizeDatasetChanges();
+        break;
+
+      default:
+        break;
+    }
   };
 
   const activePageObject = menuPages[activePageIndex];
@@ -231,10 +246,17 @@ export function MenuManagerPage() {
     setActiveEditCell(null);
     if (dragHistoryBaseRef) dragHistoryBaseRef.current = null;
 
-    //XresetDishesHistory([]); // Wipe previous data frames for fresh uploads
-    
     // Clear the input value so the same file can be uploaded again if needed
     event.target.value = '';
+  };
+
+  /**
+   * 🗑️ INTERCEPT: Delete Button Click
+   */
+  const handleTriggerDeleteConfirmation = () => {
+    if (menuPages.length === 0) return;
+    setModalMode('CONFIRM_DELETE');
+    setModalOpen(true);
   };
 
   /**
@@ -359,7 +381,7 @@ export function MenuManagerPage() {
     dragHistoryBaseRef.current = dishes;
   }, [dishes]);
 
-  const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {
+  const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {  //TODO: Update the way of how draggin is being handled. Avoid re-render and move to re-painting (In Geminini assistant is the analysis, look for "Re-rendering vs. Repainting")
     setDishes(
       (prev) => prev.map((dish) => (dish.id === id ? { ...dish, coordinateXInMenu: xPercent, coordinateYInMenu: yPercent } : dish)),
       { record: false }
@@ -436,7 +458,7 @@ export function MenuManagerPage() {
         {/* Button 3: Delete Page (Destruction Trigger) */}
         <MenuActionButton
           text="Borrar página"
-          onClick={handleRemoveCurrentPage}
+          onClick={handleTriggerDeleteConfirmation}
           disabled={menuPages.length === 0}
           // className="text-red-500 hover:bg-red-50 border-red-100"
           icon={<RemovePageIcon className="size-15" />}
@@ -511,9 +533,9 @@ export function MenuManagerPage() {
             onUpdateItem={handleUpdateDishDataField}
             /* 🔌 Added sync listener hooks */
             onRowClicked={handleSyncCanvasToRowPage}
-              /* 🔌 Added sync properties */
+            /* 🔌 Added sync properties */
             syncStatus={syncStatus}
-            onSyncRequested={handlePreFlightSyncCheck}
+            onSyncRequested={handleTriggerSyncValidationFlow}
           />
         </div>
       </div>
@@ -521,13 +543,14 @@ export function MenuManagerPage() {
       {/* ================================================================= 
          🛠️ MOUNT THE OVERLAY ENVELOPE MODAL IN SCREEN PORTAL WRAPPERS
        ================================================================= */}
-      <MenuValidationModal
+      <MenuActionModal
         isOpen={modalOpen}
-        mode={validationMode}
+        mode={modalMode}
         emptyPageNumbers={emptyPagesData}
         invalidDishes={invalidDishesData}
+        activePageNumber={menuPages[activePageIndex]?.pageNumber} // Explicitly forward target context
         onClose={() => setModalOpen(false)}
-        onProceedAnyway={handleBypassWarningProceed}
+        onProceedAnyway={handleExecuteConfirmedAction}
       />
 
     </div>

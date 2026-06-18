@@ -125,9 +125,9 @@ export function DishChart({
           <thead>
             <tr className="border-b-2 border-brand-navy/10">
               <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase px-4">N°</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Name</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Cost</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Prep. time</th>
+              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Nombre</th>
+              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Costo</th>
+              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Tiempo de prep.</th>
             </tr>
           </thead>
           
