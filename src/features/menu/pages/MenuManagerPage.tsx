@@ -11,6 +11,9 @@ import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
 import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
+import { MenuValidationModal } from '@/features/menu/components/MenuValidationModal';
+import { validateEmptyPages, validateDishFields, type InvalidDishDetail } from '@/features/menu/utils/menuValidators';
+
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
 //X
@@ -44,6 +47,12 @@ export function MenuManagerPage() {
     
   // 📂 Local file storage record mapping (Id -> Raw File Binary)
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
+
+  // ⚱️ Local Verification State Machines Structures
+  const [modalOpen, setModalOpen] = useState(false);
+  const [validationMode, setValidationMode] = useState<'EMPTY_PAGES' | 'INVALID_DISHES' | null>(null);
+  const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
+  const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
 
   // 💾 Master FDD Data Storage Unit for all interactive items
   const {
@@ -119,6 +128,39 @@ export function MenuManagerPage() {
     handleDatabaseInitCallback,
     handleImageStateCallback
   );
+
+  /**
+   * 🛡️ PRE-FLIGHT ORCHESTRATION GATEKEEPER
+   * Intercepts the submit action to perform local data evaluation
+   */
+  const handlePreFlightSyncCheck = () => {
+    // A. Check for blocking Rule 1: Missing field validation inside dish cards
+    const dishCheck = validateDishFields(menuPages, dishes);
+    if (!dishCheck.isValid) {
+      setInvalidDishesData(dishCheck.invalidDishes);
+      setValidationMode('INVALID_DISHES');
+      setModalOpen(true);
+      return; // 🛑 Hard stop execution block: User CANNOT bypass this restriction.
+    }
+
+    // B. Check for warning Rule 2: Pages with zero dishes mapped
+    const pageCheck = validateEmptyPages(menuPages, dishes);
+    if (!pageCheck.isValid) {
+      setEmptyPagesData(pageCheck.emptyPageNumbers);
+      setValidationMode('EMPTY_PAGES');
+      setModalOpen(true);
+      return; // ⚠️ Warning pause block: User can bypass this if they hit "Upload Anyway"
+    }
+
+    // 🎉 Clean flight path: execute synchronization immediately if all structures are verified
+    synchronizeDatasetChanges();
+  };
+
+  const handleBypassWarningProceed = () => {
+    setModalOpen(false);
+    // Execute the direct sync function, bypassing the empty page warning checks entirely
+    synchronizeDatasetChanges();
+  };
 
   const activePageObject = menuPages[activePageIndex];
 
@@ -467,10 +509,22 @@ export function MenuManagerPage() {
             onRowClicked={handleSyncCanvasToRowPage}
               /* 🔌 Added sync properties */
             syncStatus={syncStatus}
-            onSyncRequested={synchronizeDatasetChanges}
+            onSyncRequested={handlePreFlightSyncCheck}
           />
         </div>
       </div>
+
+      {/* ================================================================= 
+         🛠️ MOUNT THE OVERLAY ENVELOPE MODAL IN SCREEN PORTAL WRAPPERS
+       ================================================================= */}
+      <MenuValidationModal
+        isOpen={modalOpen}
+        mode={validationMode}
+        emptyPageNumbers={emptyPagesData}
+        invalidDishes={invalidDishesData}
+        onClose={() => setModalOpen(false)}
+        onProceedAnyway={handleBypassWarningProceed}
+      />
 
     </div>
   );
