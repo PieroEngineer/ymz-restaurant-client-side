@@ -489,6 +489,7 @@ export function MenuManagerPage() {
         {/* Component 3: View Selector (Touches extreme top bounds) */}
         <div className="h-16 shrink-0 flex justify-center">
           <ViewSelector // TODO: Move it to the right of the Menu display and become it vertical
+            comingSoonCover = {true}
             onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
           />
         </div>

@@ -32,8 +32,7 @@ export function HubButton({ label, imageSrc, comingSoonCover = false, altText, c
                 Próximamente
             </span>
         </div>
-      )
-      }
+      )}
     </button>
   );
 }
