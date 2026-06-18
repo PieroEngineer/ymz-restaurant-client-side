@@ -11,7 +11,9 @@ export function useMenuSync(
   // 📂 Live local files mapping reference index tracked in the UI page layer
   localPageFilesMap: Record<string, File>, 
 
-  onInitializeData: (pages: MenuPage[], dishes: DishItem[]) => void
+  onInitializeData: (pages: MenuPage[], dishes: DishItem[]) => void,
+  // 🆕 Add a callback parameter to notify the parent page of successful cloud commits
+  onImportedImageStateNeeded: (updatedPages: MenuPage[]) => void
 ) {
   const [syncStatus, setSyncStatus] = useState<SyncStatusType>('Loading');
   
@@ -38,8 +40,8 @@ export function useMenuSync(
           id: d.id,
           pageId: d.menuPageId,
           imageUrl: d.imageUrl,
-          xPercent: d.coordinateXInMenu,
-          yPercent: d.coordinateYInMenu,
+          coordinateXInMenu: d.coordinateXInMenu,
+          coordinateYInMenu: d.coordinateYInMenu,
           name: d.name,
           cost: (d.priceCents / 100).toFixed(2),
           prepTime: d.prepTime.toString(),
@@ -84,13 +86,13 @@ export function useMenuSync(
         return snap.name !== cd.name ||
           snap.priceCents !== priceCents ||
           snap.prepTime !== prepTime ||
-          snap.coordinateXInMenu !== cd.xPercent || //TODO: Verify if "1" it's a good threshold (It's better if everyone works with the same normalization "%")
-          snap.coordinateYInMenu !== cd.yPercent ||
-          snap.menuPageId !== cd.pageId;
+          snap.coordinateXInMenu !== cd.coordinateXInMenu || //TODO: Verify if "1" it's a good threshold (It's better if everyone works with the same normalization "%")
+          snap.coordinateYInMenu !== cd.coordinateYInMenu ||
+          snap.menuPageId !== cd.pageId;  /// Is this line necessary? Maybe it's always false
       });
 
-      // console.log('isPagesChanged?', isPagesChanged)
-      // console.log('isDishesChanged?', isDishesChanged)
+      console.log('isPagesChanged?', isPagesChanged)
+      console.log('isDishesChanged?', isDishesChanged)
 
       setSyncStatus(isPagesChanged || isDishesChanged ? 'Unsynchronized' : 'Synchronized');
 
@@ -138,7 +140,7 @@ export function useMenuSync(
       const priceCents = Math.round(parseFloat(cd.cost || '0') * 100);
       const prepTime = parseInt(cd.prepTime || '0', 10);
 
-      if (!original) {  // For a dish totally new
+      if (!original) {  // For a dish totally modified
         diffPayload.dishes.push({
           id: cd.id,
           action: 'save',
@@ -148,17 +150,17 @@ export function useMenuSync(
           prepTime,
           isOutOfStock: true, // Preset parameter enforcement rule
           menuPageId: cd.pageId,
-          coordinateXInMenu: cd.xPercent,
-          coordinateYInMenu: cd.yPercent,
+          coordinateXInMenu: cd.coordinateXInMenu,
+          coordinateYInMenu: cd.coordinateYInMenu,
           description: '' // Preset parameter enforcement rule
         });
-      } else {  // For a dish partially new
+      } else {  // For a dish partially modified
         const updatedFields: Partial<CloudDishPayload> = {};
         if (original.name !== cd.name) updatedFields.name = cd.name;
         if (original.priceCents !== priceCents) updatedFields.priceCents = priceCents;
         if (original.prepTime !== prepTime) updatedFields.prepTime = prepTime;
-        if (original.coordinateXInMenu !== cd.xPercent) updatedFields.coordinateXInMenu = cd.xPercent;
-        if (original.coordinateYInMenu !== cd.yPercent) updatedFields.coordinateYInMenu = cd.yPercent;
+        if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
+        if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;
         if (original.menuPageId !== cd.pageId) updatedFields.menuPageId = cd.pageId;  /// Is it possible? perhaps this line is unnecessary
 
         if (Object.keys(updatedFields).length > 0) {
@@ -181,7 +183,7 @@ export function useMenuSync(
       // 🗺️ HOP 1: Update structural schemas in DynamoDB first & retrieve upload tokens
       syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
 
-      console.log('🔎  Received response', syncResponseData);
+      console.log('🔎  Received response with presigned URLs', syncResponseData);
 
       // ☁️ HOP 2: Process binary media streaming to S3 concurrently for ultra-high performance
       if (syncResponseData.presignedUrls && syncResponseData.presignedUrls.length > 0) {
@@ -196,12 +198,14 @@ export function useMenuSync(
             console.log('🔎  Image URL for uploading', mapping.uploadUrl);
 
             try {
-              await menuApi.uploadImageToS3(mapping.uploadUrl.replaceAll("172.18.0.2", "localhost"), fileToUpload);
+              await menuApi.uploadImageToS3(mapping.uploadUrl.replaceAll("172.18.0.2", "localhost"), fileToUpload); // TODO: Move that replacement fix to the backend, it shouldn't be here
             } catch (s3UploadError) {
               throw new Error(`S3_UPLOAD_FAILURE|${mapping.pageId}|${s3UploadError instanceof Error ? s3UploadError.message : ''}`);
             }
           })
         );
+
+      console.log('✅🖼️  All images where successfully processed');
       }
 
       // 🎉 TRANSACTION ENTIRELY SUCCESSFUL: Update local snapshot memory references
@@ -219,12 +223,18 @@ export function useMenuSync(
         menuPages: finalSnapshotPages.map(p => ({ pageId: p.pageId, imageUrl: p.imageUrl, pageNumber: p.pageNumber })),
         dishes: currentDishes.map(d => ({
           id: d.id, name: d.name, imageUrl: '', priceCents: Math.round(parseFloat(d.cost || '0') * 100),                                                                        // TODO: Take care setting the dish for free
-          prepTime: parseInt(d.prepTime || '0', 10), isOutOfStock: true, menuPageId: d.pageId, coordinateXInMenu: d.xPercent, coordinateYInMenu: d.yPercent, description: ''   //        and avoid instant preparation 
+          prepTime: parseInt(d.prepTime || '0', 10), isOutOfStock: true, menuPageId: d.pageId, coordinateXInMenu: d.coordinateXInMenu, coordinateYInMenu: d.coordinateYInMenu, description: ''   //        and avoid instant preparation 
         }))
       };
 
+      onImportedImageStateNeeded(finalSnapshotPages)
+
       setDbSnapshot(nextSnapshot);
       setSyncStatus('Synchronized');
+
+      console.log('🔎  New Snapshot', dbSnapshot)
+      console.log('🔎  Page data now', currentPages)
+      console.log('🔎  Dishe data now', currentDishes)
 
     } catch (err) {
       console.error('🔴  Critical database upload synchronization failure:', err);

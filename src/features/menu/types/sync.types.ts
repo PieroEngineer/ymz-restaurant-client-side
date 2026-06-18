@@ -9,8 +9,8 @@ export interface DishItem {
   id: string;
   imageUrl: string;
   pageId: string; // References MenuPage.pageId
-  xPercent: number;
-  yPercent: number;
+  coordinateXInMenu: number;
+  coordinateYInMenu: number;
   name: string;
   cost: string; // Managed as a string text input inside UI (e.g., "14.99")
   prepTime: string; // Managed as a string text input inside UI (e.g., "15")
@@ -46,7 +46,7 @@ export interface CloudMenuGetPayload {
 export interface CloudMenuDiffPayload {
   menuPages: Array<
     | { pageId: string; action: 'save'; pageNumber: number; imageUrl: string }
-    | { id: string; action: 'update'; updatedFields: Partial<CloudMenuPagePayload> }
+    | { id: string; action: 'update'; updatedFields: Partial<CloudMenuPagePayload> }  /// is it possible to change the name "id" by "PageId"?
     | { pageId: string; action: 'delete' }
   >;
   dishes: Array<

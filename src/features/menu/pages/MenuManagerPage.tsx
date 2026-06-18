@@ -27,8 +27,8 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
     return (
       leftDish.id === rightDish.id &&
       leftDish.pageId === rightDish.pageId &&
-      leftDish.xPercent === rightDish.xPercent &&
-      leftDish.yPercent === rightDish.yPercent &&
+      leftDish.coordinateXInMenu === rightDish.coordinateXInMenu &&
+      leftDish.coordinateYInMenu === rightDish.coordinateYInMenu &&
       leftDish.name === rightDish.name &&
       leftDish.cost === rightDish.cost &&
       leftDish.prepTime === rightDish.prepTime &&
@@ -101,11 +101,23 @@ export function MenuManagerPage() {
     setLocalPageFilesMap({}); // Clear file pointers on clean boot data load
   };
 
+  // 🖼️ handle
+  const handleImageStateCallback = (updatedPages: MenuPage[]) => {
+    console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
+    
+    // 1. Overwrite your local working state with the verified public cloud URLs
+    setMenuPages(updatedPages);
+    
+    // 2. Clear out the staging file binaries map since these files are no longer "pending upload"
+    setLocalPageFilesMap({});
+  };
+
   const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
     menuPages,
     dishes,
     localPageFilesMap,
-    handleDatabaseInitCallback
+    handleDatabaseInitCallback,
+    handleImageStateCallback
   );
 
   const activePageObject = menuPages[activePageIndex];
@@ -263,7 +275,7 @@ export function MenuManagerPage() {
         const pageA = menuPages.find(p => p.pageId === a.pageId)?.pageNumber || 0;
         const pageB = menuPages.find(p => p.pageId === b.pageId)?.pageNumber || 0;
         if (pageA !== pageB) return pageA - pageB;
-        if (a.yPercent !== b.yPercent) return a.yPercent - b.yPercent;
+        if (a.coordinateYInMenu !== b.coordinateYInMenu) return a.coordinateYInMenu - b.coordinateYInMenu;
 
         // Tie-Breaker sorting by exact creation timestamp
         return a.createdAt - b.createdAt;
@@ -303,7 +315,7 @@ export function MenuManagerPage() {
 
   const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {
     setDishes(
-      (prev) => prev.map((dish) => (dish.id === id ? { ...dish, xPercent, yPercent } : dish)),
+      (prev) => prev.map((dish) => (dish.id === id ? { ...dish, coordinateXInMenu: xPercent, coordinateYInMenu: yPercent } : dish)),
       { record: false }
     );
   };

@@ -61,7 +61,7 @@ export function MenuDisplay({
     const xPercent = ((e.clientX - rect.left) / rect.width);
     const yPercent = ((e.clientY - rect.top) / rect.height);
 
-    onCoordinateAdded({ xPercent, yPercent });
+    onCoordinateAdded({ coordinateXInMenu: xPercent, coordinateYInMenu: yPercent });
   };
 
   // 🪵 Gesture Dragging Engine: Updates coordinates in real-time as mouse moves across container canvas bounds
@@ -126,7 +126,7 @@ export function MenuDisplay({
 
             {activePagePins.map((pin) => {
               const isHovered = hoveredPinId === pin.id;
-              const isRightSide = pin.xPercent < .5;
+              const isRightSide = pin.coordinateXInMenu < .5;
 
               return (
                 <div
@@ -143,7 +143,7 @@ export function MenuDisplay({
                   className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform ${
                     draggingPinId === pin.id ? 'cursor-grabbing scale-125 z-40' : 'cursor-grab hover:scale-110 z-30'
                   }`}
-                  style={{ left: `${pin.xPercent*100}%`, top: `${pin.yPercent*100}%` }}
+                  style={{ left: `${pin.coordinateXInMenu*100}%`, top: `${pin.coordinateYInMenu*100}%` }}
                 >
                   {/* Custom Graphic Marker Asset */}
                   <img

@@ -2,7 +2,7 @@ import type { CloudMenuGetPayload, CloudMenuDiffPayload } from '@/features/menu/
 
 // 🧪 Testing Parameters Configuration Placeholders
 const TEMP_RESTAURANT_ID = '4258e0fa-6b3c-43bc-a6d8-82c5835d608d';
-const BASE_API_URL = `http://localhost:4566/_aws/execute-api/evaoj7jrmc/prod/restaurants/${TEMP_RESTAURANT_ID}/menu`;
+const BASE_API_URL = `http://localhost:4566/_aws/execute-api/asgpxpxjyt/prod/restaurants/${TEMP_RESTAURANT_ID}/menu`;
 
 // 📦 Added structural types specifically for the new multi-hop transaction response
 export interface PresignedUrlMapping {
