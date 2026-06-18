@@ -30,7 +30,7 @@ export const MenuValidationModal: React.FC<MenuValidationModalProps> = ({
         <div className="flex items-center gap-3">
           <span className="text-2xl">😯</span>
           <h3 className="text-xl font-bold tracking-tight">
-            {mode === 'EMPTY_PAGES' ? 'Review Menu Structure' : 'Missing Information Required'}
+            {mode === 'EMPTY_PAGES' ? 'Páginas sin comidas asignadas' : 'Datos faltantes en tabla'}
           </h3>
         </div>
 
@@ -38,22 +38,22 @@ export const MenuValidationModal: React.FC<MenuValidationModalProps> = ({
         <div className="text-sm leading-relaxed text-orange-50 font-medium overflow-y-auto max-h-60 pr-1">
           {mode === 'EMPTY_PAGES' ? (
             <p className="text-base">
-              The <span className="font-extrabold underline">{formatPageNumbersList(emptyPageNumbers)}</span> currently do not have any dish pins mapped on the chart display canvas.
+              <span className="font-extrabold">{formatPageNumbersList(emptyPageNumbers)}</span> comidas asignadas
             </p>
           ) : (
             <div className="flex flex-col gap-3">
               <p className="text-sm font-semibold border-b border-white/20 pb-2">
-                The following dishes must be completed before cloud syncing can occur:
+                Las siguientes comidas deben tener sus datos completos antes de guardar cambios 
               </p>
               <ul className="flex flex-col gap-3 mt-1">
                 {invalidDishes.map((dish, idx) => (
                   <li key={idx} className="bg-white/10 rounded-lg p-3 flex flex-col gap-1">
                     <div className="flex justify-between items-center font-bold text-white text-sm">
                       <span>🍽️ {dish.dishName}</span>
-                      <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Page {dish.pageNumber}</span>
+                      <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Página {dish.pageNumber}</span>
                     </div>
                     <div className="text-xs text-orange-100 flex gap-1.5 mt-0.5 flex-wrap">
-                      <span className="font-semibold text-white">👉  Missing:</span>
+                      <span className="font-semibold text-white">👉  Faltante:</span>
                       {dish.missingFields.join(', ')}
                     </div>
                   </li>
@@ -65,22 +65,24 @@ export const MenuValidationModal: React.FC<MenuValidationModalProps> = ({
 
         {/* Modal Operational Footer Controls (Action Button Grid Blocks) */}
         <div className="flex gap-3 justify-end mt-2 pt-3 border-t border-white/10">
+        
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-bold rounded-lg border border-white/30 hover:bg-white/10 transition-all duration-200 cursor-pointer"
+            className="px-4 py-2 text-sm font-bold rounded-lg bg-white text-brand-secondary hover:bg-orange-50 active:scale-95 transition-all duration-200 shadow-md cursor-pointer"
           >
-            {mode === 'EMPTY_PAGES' ? 'Cancel & Go Back' : 'Close and Fix'}
+            {mode === 'EMPTY_PAGES' ? 'Cancelar' : 'Cancelar'}
           </button>
 
           {/* Conditional Variant Upload Trigger (Only rendered if warning type allows bypass overrides) */}
           {mode === 'EMPTY_PAGES' && (
             <button
               onClick={onProceedAnyway}
-              className="px-4 py-2 text-sm font-bold rounded-lg bg-white text-brand-secondary hover:bg-orange-50 active:scale-95 transition-all duration-200 shadow-md cursor-pointer"
+              className="px-4 py-2 text-sm font-bold rounded-lg border border-white/30 hover:bg-white/10 transition-all duration-200 cursor-pointer"
             >
-              Upload Anyway
+              Guardar de todas formas
             </button>
           )}
+
         </div>
       </div>
     </div>

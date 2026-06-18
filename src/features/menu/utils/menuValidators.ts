@@ -14,6 +14,7 @@ export interface InvalidDishDetail {
   dishName: string;
   pageNumber: number;
   missingFields: string[];
+//   orderNumber: number;   TODO: find the way to add the order number too
 }
 
 
@@ -78,11 +79,13 @@ export const validateDishFields = (pages: MenuPage[], dishes: DishItem[]): DishV
  * 📝 Helper utility to format numbers into a grammatically correct string list 
  * e.g., [2] -> "Page 2" | [2, 3] -> "Pages 2 and 3" | [2, 3, 4] -> "Pages 2, 3 and 4"
  */
-export const formatPageNumbersList = (numbers: number[]): string => {
+export const formatPageNumbersList = (numbers: number[]): string => {   // TODO: improve it (See in page to see how it looks)
   if (numbers.length === 0) return '';
-  if (numbers.length === 1) return `Page ${numbers[0]}`;
+  if (numbers.length === 1) return `La página ${numbers[0]} no tiene`;
   
   const last = numbers[numbers.length - 1];
   const rest = numbers.slice(0, -1);
-  return `Pages ${rest.join(', ')} and ${last}`;
+  return `Las páginas ${rest.join(', ')} y ${last} no tienen`;
 };
+
+//TODO: Add for dish message too

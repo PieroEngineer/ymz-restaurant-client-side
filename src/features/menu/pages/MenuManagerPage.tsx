@@ -6,7 +6,11 @@ import { MenuActionButton } from '@/features/menu/components/MenuActionButton';
 import { MenuDisplay } from '@/features/menu/components/MenuDisplay';
 import { SupportFrame } from '@/features/menu/components/SupportFrame';
 import { DishChart } from '@/features/menu/components/DishChart';
-import { ArrowIcon } from '@/features/menu/components/icons/ArrowIcon';
+
+import { AddPageIcon } from '@/features/menu/components/icons/AddPageIcon';
+import { RemovePageIcon } from '@/features/menu/components/icons/RemovePageIcon';
+import { UpdatePageIcon } from '@/features/menu/components/icons/UpdatePageIcon';
+
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
 import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
@@ -416,26 +420,26 @@ export function MenuManagerPage() {
 
         {/* Button 1: Add/Append New Local Files (Creation Trigger) */}
         <MenuActionButton
-          text="Add Pages"
+          text="Añadir páginas"
           onClick={handleOpenAddPages}
-          icon={<ArrowIcon className="size-5" />} // Replace with your actual icon component
+          icon={<AddPageIcon className="size-15" />} // Replace with your actual icon component
         />
 
         {/* Button 2: Update Image Trigger */}
         <MenuActionButton
-          text="Update Image"
+          text="Actualizar imagen"
           onClick={handleOpenReplacePage}
           disabled={menuPages.length === 0}
-          icon={<ArrowIcon className="size-5" />} // Swap out for a refresh/swap icon component
+          icon={<UpdatePageIcon className="size-15" />} // Swap out for a refresh/swap icon component
         />
 
         {/* Button 3: Delete Page (Destruction Trigger) */}
         <MenuActionButton
-          text="Delete Page"
+          text="Borrar página"
           onClick={handleRemoveCurrentPage}
           disabled={menuPages.length === 0}
           // className="text-red-500 hover:bg-red-50 border-red-100"
-          icon={<ArrowIcon className="size-5" />}
+          icon={<RemovePageIcon className="size-15" />}
         />
 
         {/* Hidden file input engine hook bridge line */}
