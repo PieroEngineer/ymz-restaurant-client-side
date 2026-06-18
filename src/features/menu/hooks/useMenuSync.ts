@@ -48,6 +48,8 @@ export function useMenuSync(
           createdAt: Date.now()
         }));
 
+        console.log('Mapped dishes', mappedDishes)
+
         onInitializeData(mappedPages, mappedDishes);
         setSyncStatus('Synchronized');
       } catch (err) {
@@ -123,7 +125,7 @@ export function useMenuSync(
         if (original.imageUrl !== cp.imageUrl) updatedFields.imageUrl = cp.imageUrl;
 
         if (Object.keys(updatedFields).length > 0) {
-          diffPayload.menuPages.push({ id: cp.pageId, action: 'update', updatedFields });
+          diffPayload.menuPages.push({ pageId: cp.pageId, action: 'update', updatedFields });
         }
       }
     });

@@ -46,7 +46,7 @@ export interface CloudMenuGetPayload {
 export interface CloudMenuDiffPayload {
   menuPages: Array<
     | { pageId: string; action: 'save'; pageNumber: number; imageUrl: string }
-    | { id: string; action: 'update'; updatedFields: Partial<CloudMenuPagePayload> }  /// is it possible to change the name "id" by "PageId"?
+    | { pageId: string; action: 'update'; updatedFields: Partial<CloudMenuPagePayload> }
     | { pageId: string; action: 'delete' }
   >;
   dishes: Array<
