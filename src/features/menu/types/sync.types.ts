@@ -38,7 +38,7 @@ export interface CloudDishPayload {
 }
 
 export interface CloudMenuGetPayload {
-  menuPages: CloudMenuPagePayload[];
+  menuPages: CloudMenuPagePayload[];  // TODO: Don't send imageUrl when updating
   dishes: CloudDishPayload[];
 }
 

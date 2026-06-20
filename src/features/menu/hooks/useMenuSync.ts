@@ -49,6 +49,7 @@ export function useMenuSync(
         }));
 
         console.log('Mapped dishes', mappedDishes)
+        console.log('Mapped pages', mappedPages)
 
         onInitializeData(mappedPages, mappedDishes);
         setSyncStatus('Synchronized');

@@ -11,7 +11,7 @@ import { CookingIcon } from '@/features/requests/components/icons/CookingIcon';
 export function TableRequestsPage() {
   // Local state to track the image alterations for the top-right widget block
   const [explorationMode, setExplorationMode] = useState(false);
-//   const [toggleSlotB, setToggleSlotB] = useState(false);
+  //   const [toggleSlotB, setToggleSlotB] = useState(false);
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
