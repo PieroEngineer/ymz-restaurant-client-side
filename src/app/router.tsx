@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { HubPage } from '@/features/hub/pages/HubPage';
-import { TableRequestsPage } from '@/features/requests/pages/TableRequestsPage';
+import { TableRequestsPage } from '@/features/table-requests/pages/TableRequestsPage';
 import { SectionLayout } from '@/layouts/SectionLayout';
 import { MenuManagerPage } from '@/features/menu/pages/MenuManagerPage';
 

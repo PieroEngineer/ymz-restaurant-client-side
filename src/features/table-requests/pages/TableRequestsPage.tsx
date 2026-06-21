@@ -1,25 +1,30 @@
 import { useState } from 'react';
-import { ColoredExplorationIcon } from '@/features/requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
-import { LightExplorationIcon } from '@/features/requests/components/icons/LightExplorationIcon';    // toggle the color by 
-import { ColoredMgfGlassIcon } from '@/features/requests/components/icons/ColoredMgfGlassIcon';     // clicking, so only 2
-import { LightMgfGlassIcon } from '@/features/requests/components/icons/LightMgfGlassIcon';        // images necessary here
-import { DoorIcon } from '@/features/requests/components/icons/DoorIcon';
-import { QueueIcon } from '@/features/requests/components/icons/QueueIcon';
-import { CookingIcon } from '@/features/requests/components/icons/CookingIcon';
+
+// Import Feature Layers
+import { RequestDashboard } from '@/features/table-requests/components/RequestDashboard';
+import { MOCK_TABLE_REQUESTS } from '@/features/table-requests/constants/mockRequests';
+
+import { ColoredExplorationIcon } from '@/features/table-requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
+import { LightExplorationIcon } from '@/features/table-requests/components/icons/LightExplorationIcon';    // toggle the color by 
+import { ColoredMgfGlassIcon } from '@/features/table-requests/components/icons/ColoredMgfGlassIcon';     // clicking, so only 2
+import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/LightMgfGlassIcon';        // images necessary here
+import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
+import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
+import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
 
 
 export function TableRequestsPage() {
   // Local state to track the image alterations for the top-right widget block
   const [explorationMode, setExplorationMode] = useState(false);
-  //   const [toggleSlotB, setToggleSlotB] = useState(false);
+  // Inject mock data to drive initial layout rendering state
+  const [requests] = useState(MOCK_TABLE_REQUESTS);
+
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
       
       {/* 1. TOP-CENTER TITLE BANNER RECTANGLE */}
-      <div 
-        className="absolute top-0 left-1/2 -translate-x-1/2 bg-brand-navy px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue"
-      >
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-brand-navy px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue">
         <h1 className="font-heading mx-30 my-5 font-bold text-white text-2xl lg:text-5xl tracking-wide whitespace-nowrap">
           Solicitudes en cola
         </h1>
@@ -86,22 +91,8 @@ export function TableRequestsPage() {
       <main className="w-full h-full pt-28 pl-24 pr-4 pb-4 overflow-hidden">
         <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-8 transition-colors duration-300">
           
-          <div className="text-center max-w-sm animate-fade-in">
-            {/* Real-time incoming indicator animation ring */}
-            <div className="relative w-12 h-12 mx-auto mb-4">
-              <span className="absolute inset-0 rounded-full bg-brand-primary/20 animate-ping" />
-              <span className="relative w-12 h-12 rounded-full bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center">
-                <span className="w-3 h-3 rounded-full bg-brand-primary" />
-              </span>
-            </div>
-            
-            <h3 className="font-heading font-bold text-brand-navy text-lg mb-1">
-              Live Stream Workspace Active
-            </h3>
-            <p className="text-brand-navy/50 font-sans text-xs leading-relaxed">
-              This structural viewport grid container frame is waiting to stream dynamic client order modules from LocalStack.
-            </p>
-          </div>
+          {/* Scalable Container Delivery */}
+          <RequestDashboard requests={requests} />
 
         </div>
       </main>
