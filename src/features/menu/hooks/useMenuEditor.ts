@@ -24,21 +24,29 @@ import {
 } from '@/features/menu/utils/menuValidators';
 
 export function useMenuEditor() {
+  // ===== UI State =====
+  // Menu pages and navigation
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState(0);
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
   const [activeEditCell, setActiveEditCell] = useState<ActiveEditCell | null>(null);
 
+  // Modal management
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<MenuModalMode>(null);
   const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
   const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
 
+  // ===== Refs =====
+  // File input references for page upload/replace
   const addPagesInputRef = useRef<HTMLInputElement>(null);
   const replacePageInputRef = useRef<HTMLInputElement>(null);
+  // Tracks base state for drag operations to enable undo/redo
   const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
+  // Prevents duplicate hydration from cloud data
   const hasHydratedRef = useRef(false);
 
+  // ===== Dish State with Undo/Redo Support =====
   const {
     value: dishes,
     setValue: setDishes,
@@ -49,11 +57,15 @@ export function useMenuEditor() {
     canRedo,
   } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
 
+  // ===== Data Fetching & Mutations =====
   const { data: dbSnapshot, isLoading, isError } = useMenuDatasetQuery();
   const syncMutation = useMenuSyncMutation();
 
+  // ===== Derived State =====
+  // Currently selected page object
   const activePageObject = menuPages[activePageIndex];
 
+  // Compute sync status based on current draft and database state
   const syncStatus = useMenuSyncStatus({
     draftPages: menuPages,
     draftDishes: dishes,
@@ -63,11 +75,14 @@ export function useMenuEditor() {
     isSyncPending: syncMutation.isPending,
   });
 
+  // Memoized sorted dishes for display
   const computedDishesDataset = useMemo(
     () => sortDishesWithOrderNumbers(dishes, menuPages),
     [dishes, menuPages],
   );
 
+  // ===== Effects =====
+  // Hydrate editor state from cloud snapshot on first load
   useEffect(() => {
     if (!dbSnapshot || hasHydratedRef.current) return;
 
@@ -84,12 +99,15 @@ export function useMenuEditor() {
     setLocalPageFilesMap({});
   }, [dbSnapshot, resetDishes]);
 
+  // ===== Sync Handlers =====
+  // Update UI with confirmed synced URLs from cloud
   const applySyncedPageUrls = useCallback((updatedPages: MenuPage[]) => {
     console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
     setMenuPages(updatedPages);
     setLocalPageFilesMap({});
   }, []);
 
+  // Initiate cloud sync if changes exist
   const synchronizeDatasetChanges = useCallback(() => {
     if (!dbSnapshot) return;
     if (!checkMinimalDiff(menuPages, dishes, dbSnapshot)) return;
@@ -109,6 +127,7 @@ export function useMenuEditor() {
     );
   }, [dbSnapshot, menuPages, dishes, localPageFilesMap, syncMutation, applySyncedPageUrls]);
 
+  // ===== Undo/Redo Handlers =====
   const handleUndoDishAction = useCallback(() => {
     undoDishAction();
     setActiveEditCell(null);
@@ -119,6 +138,7 @@ export function useMenuEditor() {
     setActiveEditCell(null);
   }, [redoDishAction]);
 
+  // Listen for keyboard undo/redo shortcuts (Ctrl+Z / Ctrl+Y)
   useEffect(() => {
     const handleKeyboardHistoryCommand = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
@@ -139,6 +159,7 @@ export function useMenuEditor() {
     return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
   }, [handleRedoDishAction, handleUndoDishAction]);
 
+  // ===== Page Navigation Handlers =====
   const handlePageNext = useCallback(() => {
     setActivePageIndex((prev) => (prev < menuPages.length - 1 ? prev + 1 : prev));
   }, [menuPages.length]);
@@ -147,6 +168,7 @@ export function useMenuEditor() {
     setActivePageIndex((prev) => (prev > 0 ? prev - 1 : prev));
   }, []);
 
+  // ===== File Input Handlers =====
   const handleOpenAddPages = useCallback(() => {
     addPagesInputRef.current?.click();
   }, []);
@@ -156,6 +178,7 @@ export function useMenuEditor() {
     replacePageInputRef.current?.click();
   }, [menuPages.length]);
 
+  // Process uploaded page files and add to menu
   const handleUploadedLocalFilesPipeline = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
@@ -164,6 +187,7 @@ export function useMenuEditor() {
       const newFileEntries: Record<string, File> = {};
       const existingPageCount = menuPages.length;
 
+      // Create page objects with blob URLs for preview
       const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
         const pageId = crypto.randomUUID();
         const imageUrl = URL.createObjectURL(file);
@@ -189,6 +213,8 @@ export function useMenuEditor() {
     [menuPages.length],
   );
 
+  // ===== Page Management Handlers =====
+  // Remove current page and associated dishes, update page numbers
   const handleRemoveCurrentPage = useCallback(() => {
     if (menuPages.length === 0) return;
 
@@ -220,6 +246,7 @@ export function useMenuEditor() {
     setActiveEditCell(null);
   }, [menuPages, activePageIndex, setDishes]);
 
+  // Replace current page image with new file
   const handleReplaceCurrentPageImage = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const { files } = event.target;
@@ -248,6 +275,8 @@ export function useMenuEditor() {
     [menuPages, activePageIndex],
   );
 
+  // ===== Validation & Modal Handlers =====
+  // Validate dishes and pages before sync, show appropriate modal
   const handleTriggerSyncValidationFlow = useCallback(() => {
     const dishCheck = validateDishFields(menuPages, dishes);
     if (!dishCheck.isValid) {
@@ -269,6 +298,7 @@ export function useMenuEditor() {
     setModalOpen(true);
   }, [menuPages, dishes]);
 
+  // Execute action based on modal mode
   const handleExecuteConfirmedAction = useCallback(() => {
     setModalOpen(false);
 
@@ -291,6 +321,8 @@ export function useMenuEditor() {
     setModalOpen(true);
   }, [menuPages.length]);
 
+  // ===== Coordinate Pin & Dish Handlers =====
+  // Add new dish pin at coordinates on active page
   const handleAddNewCoordinatePin = useCallback(
     (
       coords: Omit<
@@ -318,6 +350,7 @@ export function useMenuEditor() {
     [activePageObject, setDishes],
   );
 
+  // Remove dish by id
   const handleDeleteCoordinateRecord = useCallback(
     (id: string) => {
       setDishes((prev) => prev.filter((dish) => dish.id !== id));
@@ -326,10 +359,13 @@ export function useMenuEditor() {
     [setDishes],
   );
 
+  // ===== Coordinate Drag Handlers =====
+  // Record initial state before drag starts
   const handleStartCoordinateDrag = useCallback(() => {
     dragHistoryBaseRef.current = dishes;
   }, [dishes]);
 
+  // Update dish coordinates during drag (without recording history)
   const handleUpdateCoordinatePosition = useCallback(
     (id: string, xPercent: number, yPercent: number) => {
       setDishes(
@@ -345,6 +381,7 @@ export function useMenuEditor() {
     [setDishes],
   );
 
+  // Commit drag operation to history for undo/redo
   const handleCommitCoordinateDrag = useCallback(() => {
     if (!dragHistoryBaseRef.current) return;
 
@@ -352,6 +389,8 @@ export function useMenuEditor() {
     dragHistoryBaseRef.current = null;
   }, [setDishes]);
 
+  // ===== Dish Edit Handlers =====
+  // Update dish field (name, cost, prepTime, imageUrl)
   const handleUpdateDishDataField = useCallback(
     (id: string, field: EditableDishField, value: string) => {
       setDishes((prev) =>
@@ -361,6 +400,8 @@ export function useMenuEditor() {
     [setDishes],
   );
 
+  // ===== Sync & Navigation Handlers =====
+  // Sync canvas view to show a specific page from data table
   const handleSyncCanvasToRowPage = useCallback(
     (targetPageId: string) => {
       const targetIdx = menuPages.findIndex((page) => page.pageId === targetPageId);
@@ -369,24 +410,31 @@ export function useMenuEditor() {
     [menuPages],
   );
 
+  // Set focus to dish edit cell for quick editing
   const handleRequestRowFocus = useCallback((id: string) => {
     setActiveEditCell({ id, field: 'name' });
   }, []);
 
   const closeModal = useCallback(() => setModalOpen(false), []);
 
+  // ===== Export API =====
   return {
+    // Page state
     menuPages,
     activePageIndex,
     activePageObject,
+    // Dish state
     computedDishesDataset,
     activeEditCell,
     setActiveEditCell,
+    // Sync status
     syncStatus,
     canUndo,
     canRedo,
+    // File input refs
     addPagesInputRef,
     replacePageInputRef,
+    // Modal management
     modal: {
       isOpen: modalOpen,
       mode: modalMode,
@@ -396,6 +444,7 @@ export function useMenuEditor() {
       close: closeModal,
       onProceed: handleExecuteConfirmedAction,
     },
+    // Event handlers
     handlers: {
       undo: handleUndoDishAction,
       redo: handleRedoDishAction,
