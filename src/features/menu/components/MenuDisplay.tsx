@@ -8,15 +8,19 @@ import SelectionIcon from "@/features/menu/assets/SelectionIcon.webp"
 interface MenuDisplayProps {
   activeImageSrc: string | null;
   currentPageId: string | null;
+
   // 🔢 Array of dishes already injected with their dynamically calculated N° values
   dishesWithNumbers: (DishItem & { orderNumber: number })[];
+
   onImagesUploaded: (localFileEvent: ChangeEvent<HTMLInputElement>) => void;
+
   onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'>) => void;
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
   onCoordinateDragStarted: (id: string) => void;
   onCoordinateDragCommitted: () => void;
   onCoordinateDeleted: (id: string) => void;
+  
     // 🔌 Action callback to target a table row directly from a marker pin
   onTargetRowFocusRequested: (id: string) => void;
 }
@@ -24,13 +28,17 @@ interface MenuDisplayProps {
 export function MenuDisplay({ 
   activeImageSrc, 
   currentPageId, 
+
   dishesWithNumbers, 
+
   onImagesUploaded, 
+
   onCoordinateAdded,
   onCoordinateUpdated,
   onCoordinateDragStarted,
   onCoordinateDragCommitted,
   onCoordinateDeleted,
+
   onTargetRowFocusRequested
 
 }: MenuDisplayProps) {

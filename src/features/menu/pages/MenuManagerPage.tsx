@@ -42,7 +42,7 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
 export function MenuManagerPage() { 
 
   /* ==========================================
-   STATE MANAGEMENT
+   STATE CREATION
    ========================================== */
 
   // 🔢 Direct states region
@@ -50,6 +50,8 @@ export function MenuManagerPage() {
   // FDD State Layer Matrix Storage Units
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
+
+  const activePageObject = menuPages[activePageIndex];
     
   // Local file storage record mapping (Id -> Raw File Binary)
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
@@ -73,11 +75,19 @@ export function MenuManagerPage() {
     canRedo,
   } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
   
-  // 🔌 Selection tracker across input component frames
+  // Selection tracker across input component frames
   const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
+
+  // 🔌 References region
   const addPagesInputRef = useRef<HTMLInputElement>(null);
   const replacePageInputRef = useRef<HTMLInputElement>(null);
   const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
+
+
+
+  /* ==========================================
+   UNDO & REDO MANAGEMENT
+   ========================================== */
 
   const handleUndoDishAction = useCallback(() => {
     undoDishAction();
@@ -110,7 +120,15 @@ export function MenuManagerPage() {
     return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
   }, [handleRedoDishAction, handleUndoDishAction]);
 
-  // 🔌 Data Sync Integration Pipe Engine Connections
+
+
+  /* ==========================================
+   MENU MANAGEMENT
+   ========================================== */
+
+  // 🎛️ State handlers region
+
+  // Data Sync Integration Pipe Engine Connections
   const handleDatabaseInitCallback = (initialPages: MenuPage[], initialDishes: DishItem[]) => {
     setMenuPages(initialPages);
     setDishes(initialDishes);
@@ -118,17 +136,17 @@ export function MenuManagerPage() {
     setLocalPageFilesMap({}); // Clear file pointers on clean boot data load
   };
 
-  // 🖼️ handle
+  // Update the menu pages (For now it's used only to update the URL)
   const handleImageStateCallback = (updatedPages: MenuPage[]) => {
     console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
     
-    // 1. Overwrite your local working state with the verified public cloud URLs
     setMenuPages(updatedPages);
     
-    // 2. Clear out the staging file binaries map since these files are no longer "pending upload"
+    // Clear out the staging file binaries map since these files are no longer "pending upload"
     setLocalPageFilesMap({});
   };
 
+  //
   const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
     menuPages,
     dishes,
@@ -137,9 +155,125 @@ export function MenuManagerPage() {
     handleImageStateCallback
   );
 
-   /**
-   * ☁️ INTERCEPT: Sync Cloud Button Click (Runs validation logic steps)
+  // 🎛️ Mobility handlers region
+
+  // Logic handlers for tracking horizontal menu layout page indexing operations
+  const handlePageNext = () => {
+    if (activePageIndex < menuPages.length - 1) setActivePageIndex((prev) => prev + 1);
+  };
+
+  const handlePagePrevious = () => {
+    if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
+  };
+  
+  // 🖼️  Asset control region
+
+  const handleOpenReplacePage = () => {
+    if (menuPages.length === 0) return;
+    replacePageInputRef.current?.click();
+  };
+  
+  // 🖌️ Logic handlers for modifying the menu images
+  const handleOpenAddPages = () => {
+    addPagesInputRef.current?.click();
+  };
+
+  /**
+   * APPEND NEW PAGES (CREATION)
+   * Refactored to properly calculate sequential numbers based on existing pages
    */
+  const handleUploadedLocalFilesPipeline = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target;
+    if (!files || files.length === 0) return;
+
+    const newFileEntries: Record<string, File> = {};
+    
+    // 💡 Capture current page length immediately to use as our append offset base
+    const existingPageCount = menuPages.length;
+
+    const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
+      
+      const pageId = crypto.randomUUID();
+      const imageUrl = URL.createObjectURL(file); // Psdt: Slicing 5 because "blob:"" appeared
+      const pageNumber = existingPageCount + index + 1
+      console.log('🔎  imageUrl is\n', imageUrl) 
+      console.log('🔎  pageId is\n', pageId) 
+
+      newFileEntries[pageId] = file;
+
+      return {
+        pageId,
+        imageUrl,
+        // 🔢 Append sequentially (e.g., if 2 exist, new batch starts at 3)
+        pageNumber
+      };
+    });
+
+    if (transformedNewPages.length === 0) return;
+
+    // Append new pages to state
+    setMenuPages((prev) => [...(prev || []), ...transformedNewPages]);
+    setLocalPageFilesMap((prev) => ({ ...prev, ...newFileEntries }));
+    
+    // Set focus to the first page of the newly uploaded batch
+    setActivePageIndex(existingPageCount);
+
+    // Clean up UI focus states
+    setActiveEditCell(null);
+    if (dragHistoryBaseRef) dragHistoryBaseRef.current = null;
+
+    // Clear the input value so the same file can be uploaded again if needed
+    event.target.value = '';
+  };
+
+  /**
+   * 🗑️ 2. REMOVE CURRENT ACTIVE PAGE (DELETION WITH CASCADE)
+   */
+  const handleRemoveCurrentPage = () => {
+    if (menuPages.length === 0) return;
+    
+    const pageToDestroy = menuPages[activePageIndex];
+    const pageIdToDestroy = pageToDestroy.pageId;
+
+    // A. Cascade delete all dishes assigned to this specific page
+    setDishes((prevDishes) => prevDishes.filter((dish) => dish.pageId !== pageIdToDestroy));
+
+    // B. Remove the page binary from our local staging map file upload tracker
+    setLocalPageFilesMap((prevMap) => {
+      const updatedMap = { ...prevMap };
+      delete updatedMap[pageIdToDestroy];
+      return updatedMap;
+    });
+
+    // C. Remove page from state and recalculate sequential page numbers for the rest
+    setMenuPages((prevPages) => {
+      const filtered = prevPages.filter((page) => page.pageId !== pageIdToDestroy);
+      
+      // 🛠️ Re-index numbers so they remain sequential (1, 2, 3...) with no gaps
+      return filtered.map((page, index) => ({
+        ...page,
+        pageNumber: index + 1
+      }));
+    });
+
+    // D. Adjust active view navigation pointer safely
+    setActivePageIndex((prevIndex) => {
+      if (prevIndex === 0) return 0;
+      // If we deleted the last page, step backward by 1
+      if (prevIndex >= menuPages.length - 1) return menuPages.length - 2;
+      return prevIndex;
+    });
+
+    setActiveEditCell(null);
+  };
+
+  /* ==========================================
+  CONFIRMANTION FLOW MANAGEMENT
+  ========================================== */
+
+  /*
+  * ☁️ INTERCEPT: Sync Cloud Button Click (Runs validation logic steps)
+  */
   const handleTriggerSyncValidationFlow = () => {
     // Phase 1: Catch blocking empty text inputs inside dish charts
     const dishCheck = validateDishFields(menuPages, dishes);
@@ -188,75 +322,6 @@ export function MenuManagerPage() {
     }
   };
 
-  const activePageObject = menuPages[activePageIndex];
-
-  // 🔢 Logic handlers for tracking horizontal menu layout page indexing operations
-  const handlePageNext = () => {
-    if (activePageIndex < menuPages.length - 1) setActivePageIndex((prev) => prev + 1);
-  };
-
-  const handlePagePrevious = () => {
-    if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
-  };
-
-  const handleOpenReplacePage = () => {
-    if (menuPages.length === 0) return;
-    replacePageInputRef.current?.click();
-  };
-  
-  // 🖌️ Logic handlers for modifying the menu images
-  const handleOpenAddPages = () => {
-    addPagesInputRef.current?.click();
-  };
-
-  /**
-   * 🆕 1. APPEND NEW PAGES (CREATION)
-   * Refactored to properly calculate sequential numbers based on existing pages
-   */
-  const handleUploadedLocalFilesPipeline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = event.target;
-    if (!files || files.length === 0) return;
-
-    const newFileEntries: Record<string, File> = {};
-    
-    // 💡 Capture current page length immediately to use as our append offset base
-    const existingPageCount = menuPages.length;
-
-    const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
-      
-      const pageId = crypto.randomUUID();
-      const imageUrl = URL.createObjectURL(file); // Psdt: Slicing 5 because "blob:"" appeared
-      const pageNumber = existingPageCount + index + 1
-      console.log('🔎  imageUrl is\n', imageUrl) 
-      console.log('🔎  pageId is\n', pageId) 
-
-      newFileEntries[pageId] = file;
-
-      return {
-        pageId,
-        imageUrl,
-        // 🔢 Append sequentially (e.g., if 2 exist, new batch starts at 3)
-        pageNumber
-      };
-    });
-
-    if (transformedNewPages.length === 0) return;
-
-    // Append new pages to state
-    setMenuPages((prev) => [...(prev || []), ...transformedNewPages]);
-    setLocalPageFilesMap((prev) => ({ ...prev, ...newFileEntries }));
-    
-    // Set focus to the first page of the newly uploaded batch
-    setActivePageIndex(existingPageCount);
-
-    // Clean up UI focus states
-    setActiveEditCell(null);
-    if (dragHistoryBaseRef) dragHistoryBaseRef.current = null;
-
-    // Clear the input value so the same file can be uploaded again if needed
-    event.target.value = '';
-  };
-
   /**
    * 🗑️ INTERCEPT: Delete Button Click
    */
@@ -264,47 +329,6 @@ export function MenuManagerPage() {
     if (menuPages.length === 0) return;
     setModalMode('CONFIRM_DELETE');
     setModalOpen(true);
-  };
-
-  /**
-   * 🗑️ 2. REMOVE CURRENT ACTIVE PAGE (DELETION WITH CASCADE)
-   */
-  const handleRemoveCurrentPage = () => {
-    if (menuPages.length === 0) return;
-    
-    const pageToDestroy = menuPages[activePageIndex];
-    const pageIdToDestroy = pageToDestroy.pageId;
-
-    // A. Cascade delete all dishes assigned to this specific page
-    setDishes((prevDishes) => prevDishes.filter((dish) => dish.pageId !== pageIdToDestroy));
-
-    // B. Remove the page binary from our local staging map file upload tracker
-    setLocalPageFilesMap((prevMap) => {
-      const updatedMap = { ...prevMap };
-      delete updatedMap[pageIdToDestroy];
-      return updatedMap;
-    });
-
-    // C. Remove page from state and recalculate sequential page numbers for the rest
-    setMenuPages((prevPages) => {
-      const filtered = prevPages.filter((page) => page.pageId !== pageIdToDestroy);
-      
-      // 🛠️ Re-index numbers so they remain sequential (1, 2, 3...) with no gaps
-      return filtered.map((page, index) => ({
-        ...page,
-        pageNumber: index + 1
-      }));
-    });
-
-    // D. Adjust active view navigation pointer safely
-    setActivePageIndex((prevIndex) => {
-      if (prevIndex === 0) return 0;
-      // If we deleted the last page, step backward by 1
-      if (prevIndex >= menuPages.length - 1) return menuPages.length - 2;
-      return prevIndex;
-    });
-
-    setActiveEditCell(null);
   };
 
   /**
@@ -341,8 +365,15 @@ export function MenuManagerPage() {
     // Clean up input value so the same file can be chosen again if needed
     event.target.value = '';
   };
+  
 
-  // 🧮 LOGIC ENGINE: Dynamic multi-tier sorting model calculation
+  /* ==========================================
+  PIN LOGIC MANAGEMENT                                       // TODO: It should be moved later, because the logic 
+  ========================================== */
+ 
+  // -------- 🏁 Finalizer region --------
+
+  // LOGIC ENGINE: Dynamic multi-tier sorting model calculation
   // Resilient to page adjustments, tracking spatial coordinates and tie-breaker stamps
   const getSortedDishesWithNumbers = (): (DishItem & { orderNumber: number })[] => {
     return [...dishes]
@@ -357,11 +388,11 @@ export function MenuManagerPage() {
       })
       .map((dish, index) => ({
         ...dish,
-        orderNumber: index + 1 // 🔢 Output number derived dynamically based on current sorted array index
+        orderNumber: index + 1 // Output number derived dynamically based on current sorted array index
       }));
   };
 
-  // 🎯 LOGIC: Intercept canvas clicks and auto-focus the new row's name field
+  // LOGIC: Intercept canvas clicks and auto-focus the new row's name field
   const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'>) => {
     if (!activePageObject) return;
 
@@ -379,11 +410,22 @@ export function MenuManagerPage() {
 
     setDishes((prev) => [...prev, newDishRecord]);
     
-    // ⚡ Feature: Instantly focus the Name input field of the newly created item row
+    //  Feature: Instantly focus the Name input field of the newly created item row
     setActiveEditCell({ id: newId, field: 'name' });
   };
 
-    // 🚀 Logic: Dynamic adjustment of coordinates while dragging across the image matrix canvas
+  // Logic: Erase marker pin item record and clear related lines out of the grid layout
+  const handleDeleteCoordinateRecord = (id: string) => {
+    setDishes((prev) => prev.filter((dish) => dish.id !== id));
+    if (activeEditCell?.id === id) setActiveEditCell(null);
+  };
+
+  // Run the data array compilation engine
+  const computedDishesDataset = getSortedDishesWithNumbers();
+
+  // -------- 📥 Position region --------
+
+  // Logic: Dynamic adjustment of coordinates while dragging across the image matrix canvas
   const handleStartCoordinateDrag = useCallback(() => {
     dragHistoryBaseRef.current = dishes;
   }, [dishes]);
@@ -402,32 +444,31 @@ export function MenuManagerPage() {
     dragHistoryBaseRef.current = null;
   };
 
-  // 🧹 Logic: Erase marker pin item record and clear related lines out of the grid layout
-  const handleDeleteCoordinateRecord = (id: string) => {
-    setDishes((prev) => prev.filter((dish) => dish.id !== id));
-    if (activeEditCell?.id === id) setActiveEditCell(null);
-  };
+  // -------- 📂 Data region --------
 
-  // 📝 LOGIC: Handle live data edits across inline cells
+  // LOGIC: Handle live data edits across inline cells
   const handleUpdateDishDataField = (id: string, field: EditableDishField, value: string) => {
     setDishes((prev) => 
       prev.map((dish) => (dish.id === id ? { ...dish, [field]: value } : dish))
     );
   };
 
-  // 🧭 Logic: Sync active canvas viewport to match a selected table item's page index
+  // Logic: Sync active canvas viewport to match a selected table item's page index
   const handleSyncCanvasToRowPage = (targetPageId: string) => {
     const targetIdx = menuPages.findIndex(p => p.pageId === targetPageId);
     if (targetIdx !== -1) setActivePageIndex(targetIdx);
   };
 
-  // 👁️ Logic: Shift selection to target name input row field
+  // Logic: Shift selection to target name input row field
   const handleRequestRowFocus = (id: string) => {
     setActiveEditCell({ id, field: 'name' });
   };
 
-  // Run the data array compilation engine
-  const computedDishesDataset = getSortedDishesWithNumbers();
+  
+
+  /* ==========================================
+    UI
+  ========================================== */
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
