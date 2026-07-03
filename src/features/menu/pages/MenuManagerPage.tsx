@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-
 import { PageChanger } from '@/features/menu/components/PageChanger';
 import { ViewSelector } from '@/features/menu/components/ViewSelector';
 import { MenuActionButton } from '@/features/menu/components/MenuActionButton';
@@ -11,597 +9,134 @@ import { AddPageIcon } from '@/features/menu/components/icons/AddPageIcon';
 import { RemovePageIcon } from '@/features/menu/components/icons/RemovePageIcon';
 import { UpdatePageIcon } from '@/features/menu/components/icons/UpdatePageIcon';
 
-import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
-import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
-import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
+import { useMenuEditor } from '@/features/menu/hooks/useMenuEditor';
+import { MenuActionModal } from '@/features/menu/components/MenuValidationModal';
 
-import { MenuActionModal, type MenuModalMode } from '@/features/menu/components/MenuValidationModal';
-import { validateEmptyPages, validateDishFields, type InvalidDishDetail } from '@/features/menu/utils/menuValidators';
-
-type EditableDishField = 'name' | 'cost' | 'prepTime';
-
-const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
-  if (left.length !== right.length) return false;
-
-  return left.every((leftDish, index) => {
-    const rightDish = right[index];
-
-    return (
-      leftDish.id === rightDish.id &&
-      leftDish.pageId === rightDish.pageId &&
-      leftDish.coordinateXInMenu === rightDish.coordinateXInMenu &&
-      leftDish.coordinateYInMenu === rightDish.coordinateYInMenu &&
-      leftDish.name === rightDish.name &&
-      leftDish.cost === rightDish.cost &&
-      leftDish.prepTime === rightDish.prepTime &&
-      leftDish.createdAt === rightDish.createdAt
-    );
-  });
-};
-
-export function MenuManagerPage() { 
-
-  /* ==========================================
-   STATE CREATION
-   ========================================== */
-
-  // 🔢 Direct states region
-
-  // FDD State Layer Matrix Storage Units
-  const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
-  const [activePageIndex, setActivePageIndex] = useState<number>(0);
-
-  const activePageObject = menuPages[activePageIndex];
-    
-  // Local file storage record mapping (Id -> Raw File Binary)
-  const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
-
-  // Modal State Machine Management
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<MenuModalMode>(null);
-  
-  // Validation tracking stores
-  const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
-  const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
-
-  // 💾 State dishes control region
+export function MenuManagerPage() {
   const {
-    value: dishes,
-    setValue: setDishes,
-    // reset: resetDishesHistory,
-    undo: undoDishAction,
-    redo: redoDishAction,
+    menuPages,
+    activePageIndex,
+    activePageObject,
+    computedDishesDataset,
+    activeEditCell,
+    setActiveEditCell,
+    syncStatus,
     canUndo,
     canRedo,
-  } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
-  
-  // Selection tracker across input component frames
-  const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
-
-  // 🔌 References region
-  const addPagesInputRef = useRef<HTMLInputElement>(null);
-  const replacePageInputRef = useRef<HTMLInputElement>(null);
-  const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
-
-
-
-  /* ==========================================
-   UNDO & REDO MANAGEMENT
-   ========================================== */
-
-  const handleUndoDishAction = useCallback(() => {
-    undoDishAction();
-    setActiveEditCell(null);
-  }, [undoDishAction]);
-
-  const handleRedoDishAction = useCallback(() => {
-    redoDishAction();
-    setActiveEditCell(null);
-  }, [redoDishAction]);
-
-  useEffect(() => {
-    const handleKeyboardHistoryCommand = (event: KeyboardEvent) => {
-      const key = event.key.toLowerCase();
-
-      if (!event.ctrlKey) return;
-
-      if (key === 'z') {
-        event.preventDefault();
-        handleUndoDishAction();
-      }
-
-      if (key === 'y') {
-        event.preventDefault();
-        handleRedoDishAction();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyboardHistoryCommand);
-    return () => window.removeEventListener('keydown', handleKeyboardHistoryCommand);
-  }, [handleRedoDishAction, handleUndoDishAction]);
-
-
-
-  /* ==========================================
-   MENU MANAGEMENT
-   ========================================== */
-
-  // 🎛️ State handlers region
-
-  // Data Sync Integration Pipe Engine Connections
-  const handleDatabaseInitCallback = (initialPages: MenuPage[], initialDishes: DishItem[]) => {
-    setMenuPages(initialPages);
-    setDishes(initialDishes);
-    setActivePageIndex(0);
-    setLocalPageFilesMap({}); // Clear file pointers on clean boot data load
-  };
-
-  // Update the menu pages (For now it's used only to update the URL)
-  const handleImageStateCallback = (updatedPages: MenuPage[]) => {
-    console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
-    
-    setMenuPages(updatedPages);
-    
-    // Clear out the staging file binaries map since these files are no longer "pending upload"
-    setLocalPageFilesMap({});
-  };
-
-  //
-  const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
-    menuPages,
-    dishes,
-    localPageFilesMap,
-    handleDatabaseInitCallback,
-    handleImageStateCallback
-  );
-
-  // 🎛️ Mobility handlers region
-
-  // Logic handlers for tracking horizontal menu layout page indexing operations
-  const handlePageNext = () => {
-    if (activePageIndex < menuPages.length - 1) setActivePageIndex((prev) => prev + 1);
-  };
-
-  const handlePagePrevious = () => {
-    if (activePageIndex > 0) setActivePageIndex((prev) => prev - 1);
-  };
-  
-  // 🖼️  Asset control region
-
-  const handleOpenReplacePage = () => {
-    if (menuPages.length === 0) return;
-    replacePageInputRef.current?.click();
-  };
-  
-  // 🖌️ Logic handlers for modifying the menu images
-  const handleOpenAddPages = () => {
-    addPagesInputRef.current?.click();
-  };
-
-  /**
-   * APPEND NEW PAGES (CREATION)
-   * Refactored to properly calculate sequential numbers based on existing pages
-   */
-  const handleUploadedLocalFilesPipeline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = event.target;
-    if (!files || files.length === 0) return;
-
-    const newFileEntries: Record<string, File> = {};
-    
-    // 💡 Capture current page length immediately to use as our append offset base
-    const existingPageCount = menuPages.length;
-
-    const transformedNewPages: MenuPage[] = Array.from(files).map((file, index) => {
-      
-      const pageId = crypto.randomUUID();
-      const imageUrl = URL.createObjectURL(file); // Psdt: Slicing 5 because "blob:"" appeared
-      const pageNumber = existingPageCount + index + 1
-      console.log('🔎  imageUrl is\n', imageUrl) 
-      console.log('🔎  pageId is\n', pageId) 
-
-      newFileEntries[pageId] = file;
-
-      return {
-        pageId,
-        imageUrl,
-        // 🔢 Append sequentially (e.g., if 2 exist, new batch starts at 3)
-        pageNumber
-      };
-    });
-
-    if (transformedNewPages.length === 0) return;
-
-    // Append new pages to state
-    setMenuPages((prev) => [...(prev || []), ...transformedNewPages]);
-    setLocalPageFilesMap((prev) => ({ ...prev, ...newFileEntries }));
-    
-    // Set focus to the first page of the newly uploaded batch
-    setActivePageIndex(existingPageCount);
-
-    // Clean up UI focus states
-    setActiveEditCell(null);
-    if (dragHistoryBaseRef) dragHistoryBaseRef.current = null;
-
-    // Clear the input value so the same file can be uploaded again if needed
-    event.target.value = '';
-  };
-
-  /**
-   * 🗑️ 2. REMOVE CURRENT ACTIVE PAGE (DELETION WITH CASCADE)
-   */
-  const handleRemoveCurrentPage = () => {
-    if (menuPages.length === 0) return;
-    
-    const pageToDestroy = menuPages[activePageIndex];
-    const pageIdToDestroy = pageToDestroy.pageId;
-
-    // A. Cascade delete all dishes assigned to this specific page
-    setDishes((prevDishes) => prevDishes.filter((dish) => dish.pageId !== pageIdToDestroy));
-
-    // B. Remove the page binary from our local staging map file upload tracker
-    setLocalPageFilesMap((prevMap) => {
-      const updatedMap = { ...prevMap };
-      delete updatedMap[pageIdToDestroy];
-      return updatedMap;
-    });
-
-    // C. Remove page from state and recalculate sequential page numbers for the rest
-    setMenuPages((prevPages) => {
-      const filtered = prevPages.filter((page) => page.pageId !== pageIdToDestroy);
-      
-      // 🛠️ Re-index numbers so they remain sequential (1, 2, 3...) with no gaps
-      return filtered.map((page, index) => ({
-        ...page,
-        pageNumber: index + 1
-      }));
-    });
-
-    // D. Adjust active view navigation pointer safely
-    setActivePageIndex((prevIndex) => {
-      if (prevIndex === 0) return 0;
-      // If we deleted the last page, step backward by 1
-      if (prevIndex >= menuPages.length - 1) return menuPages.length - 2;
-      return prevIndex;
-    });
-
-    setActiveEditCell(null);
-  };
-
-  /* ==========================================
-  CONFIRMANTION FLOW MANAGEMENT
-  ========================================== */
-
-  /*
-  * ☁️ INTERCEPT: Sync Cloud Button Click (Runs validation logic steps)
-  */
-  const handleTriggerSyncValidationFlow = () => {
-    // Phase 1: Catch blocking empty text inputs inside dish charts
-    const dishCheck = validateDishFields(menuPages, dishes);
-    if (!dishCheck.isValid) {
-      setInvalidDishesData(dishCheck.invalidDishes);
-      setModalMode('INVALID_DISHES');
-      setModalOpen(true);
-      return;
-    }
-
-    // Phase 2: Catch structural warnings regarding empty background display sheets
-    const pageCheck = validateEmptyPages(menuPages, dishes);
-    if (!pageCheck.isValid) {
-      setEmptyPagesData(pageCheck.emptyPageNumbers);
-      setModalMode('EMPTY_PAGES');
-      setModalOpen(true);
-      return;
-    }
-
-    // Phase 3: Clean validation pass! Prompt standard confirmation check
-    setModalMode('CONFIRM_SYNC');
-    setModalOpen(true);
-  };
-
-  /**
-   * ⚙️ CORE DISPATCH ROUTER: Executes the targeted logic when the user confirms
-   */
-  const handleExecuteConfirmedAction = () => {
-    // Temporarily close modal overlay
-    setModalOpen(false);
-
-    switch (modalMode) {
-      case 'CONFIRM_DELETE':
-        // Execute your core sequential deletion pipeline block here
-        handleRemoveCurrentPage(); 
-        break;
-
-      case 'CONFIRM_SYNC':
-      case 'EMPTY_PAGES':
-        // Both states represent structural consensus to push shifts to LocalStack/S3
-        synchronizeDatasetChanges();
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  /**
-   * 🗑️ INTERCEPT: Delete Button Click
-   */
-  const handleTriggerDeleteConfirmation = () => {
-    if (menuPages.length === 0) return;
-    setModalMode('CONFIRM_DELETE');
-    setModalOpen(true);
-  };
-
-  /**
-   * 🔄 UPDATING AN EXISTING PAGE IMAGE (VARIANT B)
-   * Replaces the background image of the current active page index 
-   * while keeping its pageId, pageNumber, and attached dishes completely safe.
-   */
-  const handleReplaceCurrentPageImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = event.target;
-    if (!files || files.length === 0) return;
-
-    const targetFile = files[0]; // We only need a single file to replace the current page image
-    const targetPage = menuPages[activePageIndex];
-    if (!targetPage) return;
-
-    const targetPageId = targetPage.pageId;
-    const newLocalUrl = URL.createObjectURL(targetFile);
-
-    // A. Update the binary map file tracker with the fresh file reference under the SAME page ID
-    setLocalPageFilesMap((prevMap) => ({
-      ...prevMap,
-      [targetPageId]: targetFile
-    }));
-
-    // B. Update the visual imageUrl pointer inside the menuPages array state
-    setMenuPages((prevPages) => 
-      prevPages.map((page) => 
-        page.pageId === targetPageId 
-          ? { ...page, imageUrl: newLocalUrl } 
-          : page
-      )
-    );
-
-    // Clean up input value so the same file can be chosen again if needed
-    event.target.value = '';
-  };
-  
-
-  /* ==========================================
-  PIN LOGIC MANAGEMENT                                       // TODO: It should be moved later, because the logic 
-  ========================================== */
- 
-  // -------- 🏁 Finalizer region --------
-
-  // LOGIC ENGINE: Dynamic multi-tier sorting model calculation
-  // Resilient to page adjustments, tracking spatial coordinates and tie-breaker stamps
-  const getSortedDishesWithNumbers = (): (DishItem & { orderNumber: number })[] => {
-    return [...dishes]
-      .sort((a, b) => {
-        const pageA = menuPages.find(p => p.pageId === a.pageId)?.pageNumber || 0;
-        const pageB = menuPages.find(p => p.pageId === b.pageId)?.pageNumber || 0;
-        if (pageA !== pageB) return pageA - pageB;
-        if (a.coordinateYInMenu !== b.coordinateYInMenu) return a.coordinateYInMenu - b.coordinateYInMenu;
-
-        // Tie-Breaker sorting by exact creation timestamp
-        return a.createdAt - b.createdAt;
-      })
-      .map((dish, index) => ({
-        ...dish,
-        orderNumber: index + 1 // Output number derived dynamically based on current sorted array index
-      }));
-  };
-
-  // LOGIC: Intercept canvas clicks and auto-focus the new row's name field
-  const handleAddNewCoordinatePin = (coords: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'>) => {
-    if (!activePageObject) return;
-
-    const newId = crypto.randomUUID();
-    const newDishRecord: DishItem = {
-      ...coords,
-      id: newId,
-      pageId: activePageObject.pageId,
-      imageUrl: '',
-      name: '',
-      cost: '',
-      prepTime: '',
-      createdAt: Date.now() // ⏳ Stamp execution timestamp for sorting precision
-    };
-
-    setDishes((prev) => [...prev, newDishRecord]);
-    
-    //  Feature: Instantly focus the Name input field of the newly created item row
-    setActiveEditCell({ id: newId, field: 'name' });
-  };
-
-  // Logic: Erase marker pin item record and clear related lines out of the grid layout
-  const handleDeleteCoordinateRecord = (id: string) => {
-    setDishes((prev) => prev.filter((dish) => dish.id !== id));
-    if (activeEditCell?.id === id) setActiveEditCell(null);
-  };
-
-  // Run the data array compilation engine
-  const computedDishesDataset = getSortedDishesWithNumbers();
-
-  // -------- 📥 Position region --------
-
-  // Logic: Dynamic adjustment of coordinates while dragging across the image matrix canvas
-  const handleStartCoordinateDrag = useCallback(() => {
-    dragHistoryBaseRef.current = dishes;
-  }, [dishes]);
-
-  const handleUpdateCoordinatePosition = (id: string, xPercent: number, yPercent: number) => {  //TODO: Update the way of how draggin is being handled. Avoid re-render and move to re-painting (In Geminini assistant is the analysis, look for "Re-rendering vs. Repainting")
-    setDishes(
-      (prev) => prev.map((dish) => (dish.id === id ? { ...dish, coordinateXInMenu: xPercent, coordinateYInMenu: yPercent } : dish)),
-      { record: false }
-    );
-  };
-
-  const handleCommitCoordinateDrag = () => {
-    if (!dragHistoryBaseRef.current) return;
-
-    setDishes((current) => current, { historyBase: dragHistoryBaseRef.current });
-    dragHistoryBaseRef.current = null;
-  };
-
-  // -------- 📂 Data region --------
-
-  // LOGIC: Handle live data edits across inline cells
-  const handleUpdateDishDataField = (id: string, field: EditableDishField, value: string) => {
-    setDishes((prev) => 
-      prev.map((dish) => (dish.id === id ? { ...dish, [field]: value } : dish))
-    );
-  };
-
-  // Logic: Sync active canvas viewport to match a selected table item's page index
-  const handleSyncCanvasToRowPage = (targetPageId: string) => {
-    const targetIdx = menuPages.findIndex(p => p.pageId === targetPageId);
-    if (targetIdx !== -1) setActivePageIndex(targetIdx);
-  };
-
-  // Logic: Shift selection to target name input row field
-  const handleRequestRowFocus = (id: string) => {
-    setActiveEditCell({ id, field: 'name' });
-  };
-
-  
-
-  /* ==========================================
-    UI
-  ========================================== */
+    addPagesInputRef,
+    replacePageInputRef,
+    modal,
+    handlers,
+  } = useMenuEditor();
 
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
-      
-      {/* COLUMN 1: LEFT COMPACT OPERATIONS COLUMN (Sits below sidebar action zone footprint) */}
       <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
-        
-        <div className = "flex-none w-3/4">
-          {/* Component 1: Page Changer */}
-          <PageChanger 
+        <div className="flex-none w-3/4">
+          <PageChanger
             currentPage={menuPages.length > 0 ? activePageIndex + 1 : 0}
             totalPages={menuPages.length}
-            onPageUp={handlePagePrevious}
-            onPageDown={handlePageNext}
+            onPageUp={handlers.pagePrevious}
+            onPageDown={handlers.pageNext}
           />
         </div>
-        
+
         <hr className="w-full border-slate-200 my-1" />
 
-        {/* Button 1: Add/Append New Local Files (Creation Trigger) */}
         <MenuActionButton
           text="Añadir páginas"
-          onClick={handleOpenAddPages}
-          icon={<AddPageIcon className="size-15" />} // Replace with your actual icon component
+          onClick={handlers.openAddPages}
+          icon={<AddPageIcon className="size-15" />}
         />
 
-        {/* Button 2: Update Image Trigger */}
         <MenuActionButton
           text="Actualizar imagen"
-          onClick={handleOpenReplacePage}
+          onClick={handlers.openReplacePage}
           disabled={menuPages.length === 0}
-          icon={<UpdatePageIcon className="size-15" />} // Swap out for a refresh/swap icon component
+          icon={<UpdatePageIcon className="size-15" />}
         />
 
-        {/* Button 3: Delete Page (Destruction Trigger) */}
         <MenuActionButton
           text="Borrar página"
-          onClick={handleTriggerDeleteConfirmation}
+          onClick={handlers.triggerDeleteConfirmation}
           disabled={menuPages.length === 0}
-          // className="text-red-500 hover:bg-red-50 border-red-100"
           icon={<RemovePageIcon className="size-15" />}
         />
 
-        {/* Hidden file input engine hook bridge line */}
         <input
           ref={addPagesInputRef}
           type="file"
           multiple
           accept="image/*"
-          onChange={handleUploadedLocalFilesPipeline}
+          onChange={handlers.uploadLocalFiles}
           className="hidden"
         />
 
-        {/* 🔌 Hidden File Input Engine 2: Replacing Single Existing Image Asset */}
         <input
           ref={replacePageInputRef}
           type="file"
-          accept="image/*" // No 'multiple' parameter here since we are only replacing one page at a time
-          onChange={handleReplaceCurrentPageImage}
+          accept="image/*"
+          onChange={handlers.replaceCurrentPageImage}
           className="hidden"
         />
       </div>
 
-      {/* COLUMN 2: CENTRAL INTERACTIVE VIEWPORT COLUMN */}
       <div className="flex-1 flex flex-col gap-2 pb-3 items-center h-screen min-w-[320px]">
-        {/* Component 3: View Selector (Touches extreme top bounds) */}
         <div className="h-16 shrink-0 flex justify-center">
-          <ViewSelector // TODO: Move it to the right of the Menu display and become it vertical
-            comingSoonCover = {true}
+          <ViewSelector
+            comingSoonCover={true}
             onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
           />
         </div>
-        {/* Component 4: Dynamic Interactive Menu Display Context */}
-        {/** <div className="h-[90%]">  It worked previously, is it a bad practices? */}
+
         <div className="flex-1 min-h-0">
-          <MenuDisplay 
+          <MenuDisplay
             activeImageSrc={activePageObject ? activePageObject.imageUrl : null}
             currentPageId={activePageObject?.pageId ?? null}
-            dishesWithNumbers={computedDishesDataset} // 🔌 Passing live dataset with computed numbers
-            onImagesUploaded={handleUploadedLocalFilesPipeline}
-            onCoordinateAdded={handleAddNewCoordinatePin}
-            /* 🔌 Added interactive handlers */
-            onCoordinateUpdated={handleUpdateCoordinatePosition}
-            onCoordinateDragStarted={handleStartCoordinateDrag}
-            onCoordinateDragCommitted={handleCommitCoordinateDrag}
-            onCoordinateDeleted={handleDeleteCoordinateRecord}
-            /* 🔌 Actions connection string parameter */
-            onTargetRowFocusRequested={handleRequestRowFocus}
+            dishesWithNumbers={computedDishesDataset}
+            onImagesUploaded={handlers.uploadLocalFiles}
+            onCoordinateAdded={handlers.addCoordinatePin}
+            onCoordinateUpdated={handlers.updateCoordinatePosition}
+            onCoordinateDragStarted={handlers.startCoordinateDrag}
+            onCoordinateDragCommitted={handlers.commitCoordinateDrag}
+            onCoordinateDeleted={handlers.deleteCoordinateRecord}
+            onTargetRowFocusRequested={handlers.requestRowFocus}
           />
         </div>
       </div>
 
-      {/* COLUMN 3: RIGHT ANALYTICS & RECTIFICATION DATA COLUMN */}
       <div className="w-112.5 lg:w-130 flex flex-col items-stretch h-screen shrink-0">
-        {/* Component 5: Support Frame (Touches extreme top bounds) */}
         <div className="h-16 shrink-0 flex justify-center">
-          <SupportFrame 
-            onUndo={handleUndoDishAction}
-            onRedo={handleRedoDishAction}
+          <SupportFrame
+            onUndo={handlers.undo}
+            onRedo={handlers.redo}
             canUndo={canUndo}
             canRedo={canRedo}
           />
         </div>
-        {/* Component 6: Dish Chart Data Table Matrix Grid Wrapper */}
+
         <div className="flex-1 pb-4 pt-4 min-h-0">
-          {/* 📊 Integrated Inline Editable Grid Table */}
-          <DishChart 
+          <DishChart
             items={computedDishesDataset}
             activeEditCell={activeEditCell}
             setActiveEditCell={setActiveEditCell}
-            onUpdateItem={handleUpdateDishDataField}
-            /* 🔌 Added sync listener hooks */
-            onRowClicked={handleSyncCanvasToRowPage}
-            /* 🔌 Added sync properties */
+            onUpdateItem={handlers.updateDishDataField}
+            onRowClicked={handlers.syncCanvasToRowPage}
             syncStatus={syncStatus}
-            onSyncRequested={handleTriggerSyncValidationFlow}
+            onSyncRequested={handlers.triggerSyncValidation}
           />
         </div>
       </div>
 
-      {/* ================================================================= 
-         🛠️ MOUNT THE OVERLAY ENVELOPE MODAL IN SCREEN PORTAL WRAPPERS
-       ================================================================= */}
       <MenuActionModal
-        isOpen={modalOpen}
-        mode={modalMode}
-        emptyPageNumbers={emptyPagesData}
-        invalidDishes={invalidDishesData}
-        activePageNumber={menuPages[activePageIndex]?.pageNumber} // Explicitly forward target context
-        onClose={() => setModalOpen(false)}
-        onProceedAnyway={handleExecuteConfirmedAction}
+        isOpen={modal.isOpen}
+        mode={modal.mode}
+        emptyPageNumbers={modal.emptyPageNumbers}
+        invalidDishes={modal.invalidDishes}
+        activePageNumber={modal.activePageNumber}
+        onClose={modal.close}
+        onProceedAnyway={modal.onProceed}
       />
-
     </div>
   );
 }

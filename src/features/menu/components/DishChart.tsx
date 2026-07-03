@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import type { DishItem } from '@/features/menu/types/sync.types';
-import { type SyncStatusType } from '@/features/menu/hooks/useMenuSync';
+import type { SyncStatusType } from '@/features/menu/types/syncStatus.types';
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 
 interface DishChartProps {
