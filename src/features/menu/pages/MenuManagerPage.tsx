@@ -45,8 +45,8 @@ export function MenuManagerPage() {
    STATE MANAGEMENT
    ========================================== */
 
-   
-   
+  // 🔢 Direct states region
+
   // FDD State Layer Matrix Storage Units
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
@@ -62,7 +62,7 @@ export function MenuManagerPage() {
   const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
   const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
 
-  // 💾 Master FDD Data Storage Unit for all interactive items
+  // 💾 State dishes control region
   const {
     value: dishes,
     setValue: setDishes,
