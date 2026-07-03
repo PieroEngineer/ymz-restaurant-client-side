@@ -40,14 +40,21 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
 };
 
 export function MenuManagerPage() { 
+
+  /* ==========================================
+   STATE MANAGEMENT
+   ========================================== */
+
+   
+   
   // FDD State Layer Matrix Storage Units
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
     
-  // 📂 Local file storage record mapping (Id -> Raw File Binary)
+  // Local file storage record mapping (Id -> Raw File Binary)
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
 
-  // 🧩 Modal State Machine Management
+  // Modal State Machine Management
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<MenuModalMode>(null);
   
