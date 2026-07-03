@@ -42,6 +42,7 @@ export function useMenuEditor() {
   const {
     value: dishes,
     setValue: setDishes,
+    reset: resetDishes,
     undo: undoDishAction,
     redo: redoDishAction,
     canUndo,
@@ -78,10 +79,10 @@ export function useMenuEditor() {
     console.log('Mapped pages', pages);
 
     setMenuPages(pages);
-    setDishes(initialDishes);
+    resetDishes(initialDishes);
     setActivePageIndex(0);
     setLocalPageFilesMap({});
-  }, [dbSnapshot, setDishes]);
+  }, [dbSnapshot, resetDishes]);
 
   const applySyncedPageUrls = useCallback((updatedPages: MenuPage[]) => {
     console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
