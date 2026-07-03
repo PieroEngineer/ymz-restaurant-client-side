@@ -18,7 +18,7 @@ interface QueryProviderProps {
 
 export function QueryProvider({ children }: QueryProviderProps) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>  {/* Continue here: Ask to AI where does the websockets wrapper goes if the Queryclient is already wrapping (Maybe reformulate question) */}
       {children}
     </QueryClientProvider>
   );

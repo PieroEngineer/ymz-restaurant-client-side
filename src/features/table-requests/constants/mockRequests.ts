@@ -26,7 +26,7 @@ export const MOCK_TABLE_REQUESTS: TableRequest[] = [
       { label: 'Distance', value: '1.2 km' },
       { label: 'Notes', value: 'Requires high chair' } // Extra field to show dynamic height resilience
     ],
-    statusText: 'Waiting for the customer'
+    statusText: ''
   },
   {
     id: 'req-3',
@@ -39,6 +39,6 @@ export const MOCK_TABLE_REQUESTS: TableRequest[] = [
       { label: 'Expected arrival', value: '5 min' },
       { label: 'Distance', value: '800 m' }
     ],
-    statusText: 'Waiting for the customer'
+    statusText: ''
   }
 ];

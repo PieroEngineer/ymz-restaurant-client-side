@@ -12,11 +12,14 @@ import { RemovePageIcon } from '@/features/menu/components/icons/RemovePageIcon'
 import { UpdatePageIcon } from '@/features/menu/components/icons/UpdatePageIcon';
 
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
-import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
+import type { MenuPage, DishItem, CloudMenuGetPayload, CompositeMenu } from '@/features/menu/types/sync.types';
 import { useMenuSync } from '@/features/menu/hooks/useMenuSync';
 
 import { MenuActionModal, type MenuModalMode } from '@/features/menu/components/MenuValidationModal';
-import { validateEmptyPages, validateDishFields, type InvalidDishDetail } from '@/features/menu/utils/menuValidators';
+import { validateEmptyPages, validateDishFields, type InvalidDishDetail } from '@/features/menu/helpers/menuValidators';
+import { useMenu } from "@/features/menu/hooks/useMenu";
+import { generateDiffPayload } from '@/features/menu/helpers/menuComparators';
+import type { PresignedUrlMapping } from '@/features/menu/api/menuApi';
 
 type EditableDishField = 'name' | 'cost' | 'prepTime';
 
@@ -39,11 +42,18 @@ const areDishCollectionsEqual = (left: DishItem[], right: DishItem[]) => {
   });
 };
 
+export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TODO: Change to 'Synchronized' | 'Downloading' | 'Uploading' | 'Unsynchronized''
+
 export function MenuManagerPage() { 
+  const { firstSnapshot, isLoading, isError, isUploading, uploadPatch } = useMenu();
+
   // FDD State Layer Matrix Storage Units
-  const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
+  const [menuPages, setMenuPages] = useState<MenuPage[]>(firstSnapshot?.menuPages ?? []);
   const [activePageIndex, setActivePageIndex] = useState<number>(0);
-    
+
+  // Handle the real current remote state
+  const [dbSnapshot, setDbSnapshot] = useState<CompositeMenu | null>(firstSnapshot ?? null);
+  
   // 📂 Local file storage record mapping (Id -> Raw File Binary)
   const [localPageFilesMap, setLocalPageFilesMap] = useState<Record<string, File>>({});
 
@@ -55,6 +65,16 @@ export function MenuManagerPage() {
   const [emptyPagesData, setEmptyPagesData] = useState<number[]>([]);
   const [invalidDishesData, setInvalidDishesData] = useState<InvalidDishDetail[]>([]);
 
+  // Sync status tracking
+  const [syncStatus, setSyncStatus] = useState<SyncStatusType>('Loading');
+
+  if (isLoading || isUploading) {setSyncStatus('Loading');};  // TODO: Change the Loading by downloading and uploading
+  if (isError || !firstSnapshot) {
+      console.error('🔴 Failed to load menu database baseline:');
+      setSyncStatus('Unsynchronized');
+  };
+
+
   // 💾 Master FDD Data Storage Unit for all interactive items
   const {
     value: dishes,
@@ -64,7 +84,7 @@ export function MenuManagerPage() {
     redo: redoDishAction,
     canUndo,
     canRedo,
-  } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
+  } = useUndoableState<DishItem[]>(firstSnapshot?.dishes??[], { isEqual: areDishCollectionsEqual });
   
   // 🔌 Selection tracker across input component frames
   const [activeEditCell, setActiveEditCell] = useState<{ id: string; field: EditableDishField } | null>(null);
@@ -111,7 +131,7 @@ export function MenuManagerPage() {
     setLocalPageFilesMap({}); // Clear file pointers on clean boot data load
   };
 
-  // 🖼️ handle
+  // 🖼️ Handle
   const handleImageStateCallback = (updatedPages: MenuPage[]) => {
     console.log('🟢 Cloud sync confirmed. Updating working UI states with public S3 URLs...');
     
@@ -122,13 +142,48 @@ export function MenuManagerPage() {
     setLocalPageFilesMap({});
   };
 
-  const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
-    menuPages,
-    dishes,
-    localPageFilesMap,
-    handleDatabaseInitCallback,
-    handleImageStateCallback
-  );
+  // const { syncStatus, synchronizeDatasetChanges } = useMenuSync(
+  //   menuPages,
+  //   dishes,
+  //   localPageFilesMap,
+  //   handleDatabaseInitCallback,
+  //   handleImageStateCallback
+  // );
+
+  const handleDatasetChangesSync = async () => {
+    try {
+      const diffPayload = generateDiffPayload(menuPages, dishes,  dbSnapshot);
+      
+      let syncResponseData: { presignedUrls: PresignedUrlMapping[] } | null = null;
+      
+      // Execute mutation and handle screen-specific effects here
+      syncResponseData = await uploadPatch({diffPayload, localPageFilesMap});
+
+       // 🎉 TRANSACTION ENTIRELY SUCCESSFUL: Update local snapshot memory references
+      const finalSnapshotPages = menuPages.map((page) => {
+        // Map the permanent public S3 URL back into our runtime state references
+        const tokenMatch = syncResponseData?.presignedUrls.find(u => u.pageId === page.pageId);
+        return {
+          pageId: page.pageId,
+          imageUrl: tokenMatch ? tokenMatch.publicUrl : page.imageUrl,
+          pageNumber: page.pageNumber
+        };
+      });
+
+      const nextSnapshot: CloudMenuGetPayload = {
+        menuPages: finalSnapshotPages.map(p => ({ pageId: p.pageId, imageUrl: p.imageUrl, pageNumber: p.pageNumber })),
+        dishes: dishes.map(d => ({
+          id: d.id, name: d.name, imageUrl: '', priceCents: Math.round(parseFloat(d.cost || '0') * 100),                                                                        // TODO: Take care setting the dish for free
+          prepTime: parseInt(d.prepTime || '0', 10), isOutOfStock: true, menuPageId: d.pageId, coordinateXInMenu: d.coordinateXInMenu, coordinateYInMenu: d.coordinateYInMenu, description: ''   //        and avoid instant preparation 
+        }))
+      };
+
+      setDbSnapshot(nextSnapshot)
+      
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
+  };
 
    /**
    * ☁️ INTERCEPT: Sync Cloud Button Click (Runs validation logic steps)
@@ -173,7 +228,7 @@ export function MenuManagerPage() {
       case 'CONFIRM_SYNC':
       case 'EMPTY_PAGES':
         // Both states represent structural consensus to push shifts to LocalStack/S3
-        synchronizeDatasetChanges();
+        handleDatasetChangesSync();
         break;
 
       default:

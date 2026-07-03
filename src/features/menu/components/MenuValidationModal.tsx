@@ -1,4 +1,4 @@
-import { type InvalidDishDetail, formatPageNumbersList } from '@/features/menu/utils/menuValidators';
+import { type InvalidDishDetail, formatPageNumbersList } from '@/features/menu/helpers/menuValidators';
 
 // 🆕 Expanded modes to house the new operational confirmation situations
 export type MenuModalMode = 'EMPTY_PAGES' | 'INVALID_DISHES' | 'CONFIRM_DELETE' | 'CONFIRM_SYNC' | null;

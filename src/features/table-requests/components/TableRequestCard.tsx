@@ -7,7 +7,7 @@ interface TableRequestCardProps {
   onDecline?: (id: string) => void;
 }
 
-export const TableRequestCard: React.FC<TableRequestCardProps> = ({
+export const TableRequestCard: React.FC<TableRequestCardProps> = ({ // TODO: remove the "React.FC" and use the modern way
   request,
   onAccept,
   onDecline
@@ -54,7 +54,7 @@ export const TableRequestCard: React.FC<TableRequestCardProps> = ({
         {info.map((item, index) => (
           <div key={index} className="w-full flex flex-col items-center">
             <p className="font-sans text-sm text-brand-navy/80 font-medium">
-              {item.label} <span className="text-brand-navy font-bold">*{item.value}*</span>
+              {item.label} <span className="text-brand-navy font-bold">{item.value}</span>
             </p>
             {/* Soft, thin horizontal line under each field */}
             <div className="w-3/4 h-px bg-slate-100 mt-2" />

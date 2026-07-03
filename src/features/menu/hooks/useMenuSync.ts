@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { MenuPage, DishItem, CloudMenuGetPayload, CloudMenuDiffPayload, CloudDishPayload } from '@/features/menu/types/sync.types';
 import { menuApi, type PresignedUrlMapping } from '@/features/menu/api/menuApi';
 
-export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TODO: Expand to more states like "Uploading", "downloading", etc. The change is easy in the "SyncStatusIndicator", just add the state design.
+// export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized'; //TODO: Change to 'Synchronized' | 'Downloading' | 'Uploading' | 'Unsynchronized''
 
 export function useMenuSync(
   currentPages: MenuPage[],
@@ -13,9 +13,9 @@ export function useMenuSync(
 
   onInitializeData: (pages: MenuPage[], dishes: DishItem[]) => void,
   // 🆕 Add a callback parameter to notify the parent page of successful cloud commits
-  onImportedImageStateNeeded: (updatedPages: MenuPage[]) => void
+  onImportedImageWithRemoteUrlsNeeded: (updatedPages: MenuPage[]) => void
 ) {
-  const [syncStatus, setSyncStatus] = useState<SyncStatusType>('Loading');
+  const [syncStatus, setSyncStatus] = useState<SyncStatusType>('Loading');  // Continue here: pass the next lines to the other file
   
   // 💾 Core Immutable Baseline Storage Snapshot
   const [dbSnapshot, setDbSnapshot] = useState<CloudMenuGetPayload>({ menuPages: [], dishes: [] });
@@ -105,7 +105,6 @@ export function useMenuSync(
   const synchronizeDatasetChanges = async () => {
     if (syncStatus !== 'Unsynchronized') return;
     setSyncStatus('Loading');
-
 
     // 📝 STEP 2: Build the Delta JSON Diff Document using the new S3 links
     const diffPayload: CloudMenuDiffPayload = { menuPages: [], dishes: [] };
@@ -211,6 +210,8 @@ export function useMenuSync(
       console.log('✅🖼️  All images where successfully processed');
       }
 
+
+
       // 🎉 TRANSACTION ENTIRELY SUCCESSFUL: Update local snapshot memory references
       const finalSnapshotPages = currentPages.map((page) => {
         // Map the permanent public S3 URL back into our runtime state references
@@ -230,7 +231,7 @@ export function useMenuSync(
         }))
       };
 
-      onImportedImageStateNeeded(finalSnapshotPages)
+      onImportedImageWithRemoteUrlsNeeded(finalSnapshotPages)
 
       setDbSnapshot(nextSnapshot);
       setSyncStatus('Synchronized');

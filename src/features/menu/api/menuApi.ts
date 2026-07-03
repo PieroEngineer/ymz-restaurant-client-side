@@ -1,4 +1,4 @@
-import type { CloudMenuGetPayload, CloudMenuDiffPayload } from '@/features/menu/types/sync.types';
+import type { CloudDishPayload, CloudMenuGetPayload, CloudMenuDiffPayload, DishItem, MenuPage, CloudMenuPagePayload } from '@/features/menu/types/sync.types';
 import { api } from '@/shared/api/axiosClient';
 
 // 🧪 Testing Parameters Configuration Placeholders
@@ -23,11 +23,14 @@ export const menuApi = {
   /**
    * Pulls the current saved state payload profile out of the cloud database
    */
-  async fetchMenuDataset(): Promise<CloudMenuGetPayload> {
+  async fetchMenuDataset(): Promise<{ pages: MenuPage[]; dishes: DishItem[] }> {
   
     const response = await api.get<CloudMenuGetPayload>(`restaurants/${TEMP_RESTAURANT_ID}/menu`);
 
-    return response.data;
+    return { 
+      pages: mapToMenuPages(response.data.menuPages), 
+      dishes: mapTodishes(response.data.dishes) 
+    };
   },
 
   /**
@@ -58,3 +61,25 @@ export const menuApi = {
     }
   },
 };
+
+const mapToMenuPages = (cloudPages: CloudMenuPagePayload[]): MenuPage[] => {
+  return cloudPages.map(p => ({
+          pageId: p.pageId,
+          imageUrl: p.imageUrl,
+          pageNumber: p.pageNumber
+        }));
+} 
+
+const mapTodishes = (cloudDishes: CloudDishPayload[]): DishItem[] => {
+  return cloudDishes.map(d => ({
+          id: d.id,
+          pageId: d.menuPageId,
+          imageUrl: d.imageUrl,
+          coordinateXInMenu: d.coordinateXInMenu,
+          coordinateYInMenu: d.coordinateYInMenu,
+          name: d.name,
+          cost: (d.priceCents / 100).toFixed(2),
+          prepTime: d.prepTime.toString(),
+          createdAt: Date.now()
+        }));
+}  

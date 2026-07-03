@@ -43,7 +43,35 @@ export function MenuDisplay({
   const [hoveredPinId, setHoveredPinId] = useState<string | null>(null);
   const [draggingPinId, setDraggingPinId] = useState<string | null>(null);
 
-  // 🧹 Keyboard Listener: Collapse expanded action frames instantly when pressing Escape
+  const draggingPinIdRef = useRef<string | null>(null);
+  const dragPositionRef = useRef<{ xPercent: number; yPercent: number } | null>(null);
+  const pinElementRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const animationFrameRef = useRef<number | null>(null);
+
+  const setPinElementRef = (id: string) => (node: HTMLDivElement | null) => {
+    pinElementRefs.current[id] = node;
+  };
+
+  const updateDraggedPinStyle = () => {
+    animationFrameRef.current = null;
+
+    const activeDragId = draggingPinIdRef.current;
+    const currentPos = dragPositionRef.current;
+    if (!activeDragId || !currentPos) return;
+
+    const pinElement = pinElementRefs.current[activeDragId];
+    if (!pinElement) return;
+
+    pinElement.style.left = `${currentPos.xPercent * 100}%`;
+    pinElement.style.top = `${currentPos.yPercent * 100}%`;
+  };
+
+  const scheduleDraggedPinStyleUpdate = (xPercent: number, yPercent: number) => {
+    dragPositionRef.current = { xPercent, yPercent };
+    if (animationFrameRef.current != null) return;
+    animationFrameRef.current = requestAnimationFrame(updateDraggedPinStyle);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setHoveredPinId(null);
@@ -66,25 +94,36 @@ export function MenuDisplay({
 
   // 🪵 Gesture Dragging Engine: Updates coordinates in real-time as mouse moves across container canvas bounds
   const handleCanvasMouseMove = (e: React.MouseEvent) => {
-    if (!draggingPinId || !imageRef.current) return;
+    if (!draggingPinIdRef.current || !imageRef.current) return;
 
-    // Get exact runtime rendering spatial width/height/offsets of the image element
     const rect = imageRef.current.getBoundingClientRect();
-    
-    // 📏 Boundary Protection Rule: Force calculations to lock between 0% and 100% boundary limits
     const boundedX = Math.max(0, Math.min(1, ((e.clientX - rect.left) / rect.width)));
     const boundedY = Math.max(0, Math.min(1, ((e.clientY - rect.top) / rect.height)));
 
-    onCoordinateUpdated(draggingPinId, boundedX, boundedY);
+    scheduleDraggedPinStyleUpdate(boundedX, boundedY);
   };
 
 
   // 🛑 Gesture Drop Event Engine: Fires formal completion hook when user releases mouse hold click
   const handleCanvasMouseUp = () => {
-    if (!draggingPinId) return;
+    if (!draggingPinIdRef.current) return;
+
+    const activeDragId = draggingPinIdRef.current;
+    const dragPosition = dragPositionRef.current;
+
+    if (dragPosition) {
+      onCoordinateUpdated(activeDragId, dragPosition.xPercent, dragPosition.yPercent);
+    }
 
     onCoordinateDragCommitted();
     setDraggingPinId(null);
+    draggingPinIdRef.current = null;
+    dragPositionRef.current = null;
+
+    if (animationFrameRef.current != null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
   };
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
@@ -131,6 +170,7 @@ export function MenuDisplay({
               return (
                 <div
                   key={pin.id}
+                  ref={setPinElementRef(pin.id)}
                   /* 🔌 Mouse Event hooks injected to track shared bounding space */
                   onMouseEnter={() => setHoveredPinId(pin.id)}
                   onMouseLeave={() => setHoveredPinId(null)}
@@ -138,6 +178,7 @@ export function MenuDisplay({
                     e.stopPropagation(); // Stop click from creating a second pin on top of this one
                     onCoordinateDragStarted(pin.id);
                     setDraggingPinId(pin.id);
+                    draggingPinIdRef.current = pin.id;
                   }}
                   /* 🔥 Crucial Fix: Changed pointer-events-none to auto, added grip styling changes */
                   className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform ${

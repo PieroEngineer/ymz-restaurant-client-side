@@ -17,6 +17,11 @@ export interface DishItem {
   createdAt: number;
 }
 
+export interface CompositeMenu {
+  menuPages: MenuPage[];
+  dishes: DishItem[];
+}
+
 // ☁️ Cloud Sync Payload Specifications
 export interface CloudMenuPagePayload {
   pageId: string;
