@@ -29,6 +29,19 @@ export function MenuManagerPage() {
     handlers,
   } = useMenuEditor();
 
+  // // ===== Dish State with Undo/Redo Support =====
+  //   const {
+  //     value: dishes,
+  //     setValue: setDishes,
+  //     reset: resetDishes,
+  //     undo: undoDishAction,
+  //     redo: redoDishAction,
+  //     canUndo,
+  //     canRedo,
+  //   } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
+
+
+
   return (
     <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
       <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">

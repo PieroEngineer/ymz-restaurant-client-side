@@ -2,7 +2,7 @@ import { type TableRequest } from '@/features/table-requests/types';
 
 export const MOCK_TABLE_REQUESTS: TableRequest[] = [
   {
-    id: 'req-1',
+    requestId: 'req-1',
     title: 'Mesa 4',
     type: 'QUEUED',
     createdAt: new Date().toISOString(),
@@ -15,7 +15,7 @@ export const MOCK_TABLE_REQUESTS: TableRequest[] = [
     statusText: 'Waiting for the customer'
   },
   {
-    id: 'req-2',
+    requestId: 'req-2',
     title: 'Mesa 12',
     type: 'QUEUED',
     createdAt: new Date().toISOString(),
@@ -29,7 +29,7 @@ export const MOCK_TABLE_REQUESTS: TableRequest[] = [
     statusText: 'Waiting for the customer'
   },
   {
-    id: 'req-3',
+    requestId: 'req-3',
     title: 'Terraza 2',
     type: 'QUEUED',
     createdAt: new Date().toISOString(),

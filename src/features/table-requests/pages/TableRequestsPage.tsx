@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
+import { ChannelProvider } from 'ably/react';
+
 // Import Feature Layers
 import { RequestDashboard } from '@/features/table-requests/components/RequestDashboard';
-import { MOCK_TABLE_REQUESTS } from '@/features/table-requests/constants/mockRequests';
+// import { MOCK_TABLE_REQUESTS } from '@/features/table-requests/constants/mockRequests';
 
 import { ColoredExplorationIcon } from '@/features/table-requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
 import { LightExplorationIcon } from '@/features/table-requests/components/icons/LightExplorationIcon';    // toggle the color by 
@@ -11,14 +13,20 @@ import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/Li
 import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
 import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
+import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
+
+
+// import { useSuspenseQuery } from '@tanstack/react-query';
+// import { type TableRequestPayload } from '@/features/table-requests/types';
+// import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
+// import { axiosClient } from '@/shared/api/axiosClient';
 
 
 export function TableRequestsPage() {
   // Local state to track the image alterations for the top-right widget block
   const [explorationMode, setExplorationMode] = useState(false);
-  // Inject mock data to drive initial layout rendering state
-  const [requests] = useState(MOCK_TABLE_REQUESTS);
 
+  const channelName = `restaurant:${MOCK_MENU_RESTAURANT_ID}:ops`;
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
@@ -92,7 +100,10 @@ export function TableRequestsPage() {
         <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-8 transition-colors duration-300">
           
           {/* Scalable Container Delivery */}
-          <RequestDashboard requests={requests} />
+
+          <ChannelProvider channelName={channelName}>
+            <RequestDashboard/>      
+          </ChannelProvider>
 
         </div>
       </main>

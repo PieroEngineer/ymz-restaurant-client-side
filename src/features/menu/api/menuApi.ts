@@ -1,9 +1,9 @@
 import type { CloudMenuGetPayload, CloudMenuDiffPayload } from '@/features/menu/types/sync.types';
-import { api } from '@/shared/api/axiosClient';
+import { axiosClient } from '@/shared/api/axiosClient';
 
 // 🧪 Testing Parameters Configuration Placeholders
-export const MENU_RESTAURANT_ID = '4258e0fa-6b3c-43bc-a6d8-82c5835d608d';
-const TEMP_RESTAURANT_ID = MENU_RESTAURANT_ID;
+export const MOCK_MENU_RESTAURANT_ID = '4258e0fa-6b3c-43bc-a6d8-82c5835d608d';
+const TEMP_RESTAURANT_ID = MOCK_MENU_RESTAURANT_ID;
 //X const BASE_API_URL = `http://localhost:4566/_aws/execute-api/p0hhtkb1so/prod/restaurants/${TEMP_RESTAURANT_ID}/menu`;
 
 // 📦 Added structural types specifically for the new multi-hop transaction response
@@ -28,7 +28,7 @@ export const menuApi = {
 
     console.log('🔎📥  There was a request to fetch the menu dataset for restaurant:', TEMP_RESTAURANT_ID)
   
-    const response = await api.get<CloudMenuGetPayload>(`restaurants/${TEMP_RESTAURANT_ID}/menu`);
+    const response = await axiosClient.get<CloudMenuGetPayload>(`restaurants/${TEMP_RESTAURANT_ID}/menu`);
 
     return response.data;
   },
@@ -41,7 +41,7 @@ export const menuApi = {
     console.log('🔎📤  There was a request to push the menu delta changes for restaurant:', TEMP_RESTAURANT_ID)
 
     // Axios handles stringifying the JSON payload body automatically
-    const response = await api.post<SyncDataFirstResponse>(`restaurants/${TEMP_RESTAURANT_ID}/menu`, payload);
+    const response = await axiosClient.post<SyncDataFirstResponse>(`restaurants/${TEMP_RESTAURANT_ID}/menu`, payload);
 
     return response.data;
   },

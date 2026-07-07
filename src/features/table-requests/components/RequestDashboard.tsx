@@ -1,13 +1,32 @@
-import React from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { type TableRequestPayload } from '@/features/table-requests/types';
+import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
-import { type TableRequest } from '@/features/table-requests/types';
+import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
+import { axiosClient } from '@/shared/api/axiosClient';
 
-interface RequestDashboardProps {
-  requests: TableRequest[];
-}
+// type RequestDashboardProps = {
+//   tableRequests: TableRequestPayload[];
+// };
 
-export const RequestDashboard: React.FC<RequestDashboardProps> = ({ requests }) => {
-  
+export function RequestDashboard(/*{tableRequests}: RequestDashboardProps*/) {
+  const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
+
+  // Initial load fetches currently open requests via Axios
+  const { data: tableRequests } = useSuspenseQuery<TableRequestPayload[]>({
+    queryKey,
+    queryFn: async () => {
+      const response = await axiosClient.get(`requests/${MOCK_MENU_RESTAURANT_ID}`);
+      return response.data; // Expecting TableRequestPayload[]
+    },
+  });
+
+  console.log(`Snapshot of requests:\n ${tableRequests}`)
+
+
+  // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
+  /*const { updateRequestStatus } =*/ useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID);
+
   const handleAccept = (id: string) => {
     console.log(`Accepted request: ${id}`);
   };
@@ -16,7 +35,7 @@ export const RequestDashboard: React.FC<RequestDashboardProps> = ({ requests }) 
     console.log(`Declined request: ${id}`);
   };
 
-  if (requests.length === 0) {
+  if (tableRequests.length === 0) {
     return (
       <div className="text-center max-w-sm animate-fade-in">
         <div className="relative w-12 h-12 mx-auto mb-4">
@@ -42,10 +61,10 @@ export const RequestDashboard: React.FC<RequestDashboardProps> = ({ requests }) 
         without creating giant empty spaces beneath shorter cards.
       */}
       <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 [column-fill:auto]">
-        {requests.map((request) => (
+        {tableRequests.map((tableRequest) => (
           <TableRequestCard
-            key={request.id}
-            request={request}
+            key={tableRequest.requestId}
+            request={tableRequest}
             onAccept={handleAccept}
             onDecline={handleDecline}
           />

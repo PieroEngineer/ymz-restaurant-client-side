@@ -2,12 +2,12 @@ import axios from 'axios';
 
 // Default to LocalStack's standard edge port if no .env variable is configured yet
 const API_BASE_URL = 'http://localhost:4566/_aws/execute-api';
-const API_GATEWAY_ID = 'lxkrh2zhn9';
+const API_GATEWAY_ID = 'qt3mlvkhpj';
 const STAGE = 'prod';
 
 const BASE_URL = /*import.meta.env.VITE_API_BASE_URL ||*/ `${API_BASE_URL}/${API_GATEWAY_ID}/${STAGE}`;
 
-export const api = axios.create({
+export const axiosClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ export const api = axios.create({
 });
 
 // Response interceptor for unified error tracking across your restaurant features
-api.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error('🔴 Yummizi API Error Network Layer:', error.response?.data || error.message);

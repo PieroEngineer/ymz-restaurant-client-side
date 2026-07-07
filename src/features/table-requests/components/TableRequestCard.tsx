@@ -1,18 +1,18 @@
-import React from 'react';
-import { type TableRequest } from '@/features/table-requests/types';
+import { type TableRequestPayload } from '@/features/table-requests/types';
 
 interface TableRequestCardProps {
-  request: TableRequest;
+  request: TableRequestPayload;
   onAccept?: (id: string) => void;
   onDecline?: (id: string) => void;
 }
 
-export const TableRequestCard: React.FC<TableRequestCardProps> = ({
+//X export const TableRequestCard: React.FC<TableRequestCardProps> = ({
+export function TableRequestCard({
   request,
   onAccept,
   onDecline
-}) => {
-  const { title, type, referenceTimeMinutes, info, statusText, id } = request;
+}: TableRequestCardProps) {
+  const { title, type, referenceTimeMinutes, info, statusText, requestId: id } = request;
 
   // Configuration map for future scaling (ACCEPTED, PAID additions)
   const typeConfigs = {

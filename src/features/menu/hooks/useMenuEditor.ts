@@ -3,10 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { MenuModalMode } from '@/features/menu/components/MenuValidationModal';
 
 import { checkMinimalDiff } from '@/features/menu/helpers/menuComparators';
-import {
-  areDishCollectionsEqual,
-  sortDishesWithOrderNumbers,
-} from '@/features/menu/helpers/menuDishHelpers';
+import {areDishCollectionsEqual, sortDishesWithOrderNumbers} from '@/features/menu/helpers/menuDishHelpers';
 import { mapCloudPayloadToMenuState } from '@/features/menu/helpers/menuMappers';
 
 import { useMenuDatasetQuery } from '@/features/menu/hooks/useMenuDatasetQuery';
@@ -23,7 +20,7 @@ import {
   type InvalidDishDetail,
 } from '@/features/menu/utils/menuValidators';
 
-export function useMenuEditor() {
+export function useMenuEditor() { // TODO: break it in different hooks
   // ===== UI State =====
   // Menu pages and navigation
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);

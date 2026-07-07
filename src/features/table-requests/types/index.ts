@@ -5,8 +5,8 @@ export interface InfoItem {
   value: string;
 }
 
-export interface TableRequest {
-  id: string;
+export interface TableRequestPayload {
+  requestId: string;
   title: string;          // e.g., "Mesa 4" or "Request #102"
   type: TableRequestType;
   createdAt: string;      // ISO String timestamp from backend
