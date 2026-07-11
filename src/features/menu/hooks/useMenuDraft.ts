@@ -6,7 +6,7 @@ import { injectRemoteUrlInPages } from '@/features/menu/helpers/handleRemoteUrls
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelpers';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
-import { ensureCostFormat } from '@/features/menu/helpers/moneyValidators';
+import { decimalToCents, ensureCostFormat } from '@/features/menu/helpers/moneyValidators';
 
 export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
   
@@ -115,18 +115,18 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
       });
     },
 
-    onUpdateDishData: (id: string, field: EditableDishField, value: string, fallbackValue = 0) => {
-      console.log('🔎  The field to save is ', field, ' has the value ', value, ' whose type is ', typeof value);
+    onUpdateDishData: (id: string, field: EditableDishField, anyValue: string, fallbackValue = 0) => {
+      console.log('🔎  The field to save is ', field, ' has the value ', anyValue, ' whose type is ', typeof anyValue);
 
       let savedValue: string | number
       // Ensuring the field match with the type   // TODO: Find another path where the 
       switch(field){
         case "name":
         case "prepTime":
-          savedValue = value;
+          savedValue = anyValue;
           break;
         case "priceCents":
-          savedValue = parseFloat(ensureCostFormat(value)) || fallbackValue;
+          savedValue = decimalToCents(parseFloat(ensureCostFormat(anyValue)) || fallbackValue);
           break;
       }
 

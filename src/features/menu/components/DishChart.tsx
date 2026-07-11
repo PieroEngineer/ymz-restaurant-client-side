@@ -4,6 +4,7 @@ import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.ty
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
 import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
+import { centsToDecimal } from '../helpers/moneyValidators';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
@@ -177,7 +178,7 @@ export function DishChart({
                     <input
                       ref={activeInputRef}
                       type="text"
-                      defaultValue={dish.priceCents}
+                      defaultValue={centsToDecimal(dish.priceCents)}
                       onKeyDown={(e) => {
                         onUpdateItem(dish.id, 'priceCents', e.currentTarget.value, dish.priceCents);
                         handleKeyDownGridTraverse(e, dish.id, 'priceCents')
@@ -192,7 +193,7 @@ export function DishChart({
                     />
                   ) : (
                     <span className={`block text-sm font-mono ${!dish.priceCents && 'text-slate-300 font-normal italic'}`}>
-                      {dish.priceCents ? `$${dish.priceCents}` : '$0.00'}
+                      {dish.priceCents ? `$${centsToDecimal(dish.priceCents)}` : '$0.00'}
                     </span>
                   )}
                 </td>

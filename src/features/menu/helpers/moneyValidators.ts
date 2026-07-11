@@ -1,5 +1,5 @@
-export function centsToDecimal(cents: number): string {
-  return (cents / 100).toFixed(2);
+export function centsToDecimal(cents: number): number {
+  return +(cents / 100).toFixed(2);
 }
 
 export function decimalToCents(amount: number): number {
