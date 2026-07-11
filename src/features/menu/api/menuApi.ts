@@ -17,6 +17,8 @@ export const menuApi = {
   
     const response = await axiosClient.get<CloudMenuGetPayload>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/menu`);
 
+    console.log('🔎📥 Its answer was:\n', response)
+
     return toDomainMenu(response.data);
   },
 

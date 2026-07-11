@@ -32,7 +32,6 @@ export function MenuManagerPage() {
 
     const { data: dbSnapshot, isLoading: isDownloading, isError: isErrorInDownload } = UseMenuDatasetQuery();
 
-
     // ===== 🔢 Page hooks =====
 
     // Handle the map that records the local pages
@@ -47,8 +46,8 @@ export function MenuManagerPage() {
     // Control the current active page
     const activePage = useActivePage(menuDraft.draftMenuPages)
     
-    console.log('🔎  Active page handler in page', activePage)
-    console.log('🔎  Current active page in page', activePage.currentActivePage)
+    // console.log('🔎  Active page handler in page', activePage)
+    // console.log('🔎  Current active page in page', activePage.currentActivePage)
     
     const localPageFile = useLocalPageFile(
         addPagesInputRef,

@@ -3,21 +3,35 @@ import { menuApi } from '@/features/menu/api/menuApi';
 import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.types';
 import { generateDiffPayload } from '@/features/menu/helpers/menuComparators';
 import { injectRemoteUrlInPages } from '@/features/menu/helpers/handleRemoteUrls';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelpers';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
 import { ensureCostFormat } from '@/features/menu/helpers/moneyValidators';
 
 export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
-  const [draftMenuPages, setMenuPagesDraft] = useState(initialMenu?.menuPages ?? [])
-  const [draftDishItems, setDishItensDraft] = useState(initialMenu?.dishes ?? [])
   
+  const [draftMenuPages, setMenuPagesDraft] = useState<MenuPage[]>([])
+  const [draftDishItems, setDishItemsDraft] = useState<DishItem[]>([])
+  
+  const hasInitialized = useRef(false);
+  
+  useEffect(() => { // It's expected valid use of "useCase" only because the async source run once a mount
+    if (initialMenu !== undefined && !hasInitialized.current) {
+      setDishItemsDraft(initialMenu.dishes);
+      setMenuPagesDraft(initialMenu.menuPages);
+      hasInitialized.current = true; // ref, not state — this flag itself shouldn't trigger re-renders
+    }
+  }, [initialMenu]);
+
   const {mutate, isPending} = useMutation({
     mutationFn: async () => {
+      console.log('🔎⬆️  Trying to upload data')
       if(initialMenu ===undefined) return []
-
+      
       const diffPayload = generateDiffPayload(draftMenuPages, draftDishItems, initialMenu);
       
+      console.log('🔎⬆️  The diff to send is\n', diffPayload)
+
       let syncResponseData: Awaited<ReturnType<typeof menuApi.pushMenuDeltaChanges>> | null = null;
     
         syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
@@ -81,16 +95,16 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
 
     isUploading: isPending,
 
-    onUploadMenu: () => mutate,
+    onUploadMenu: () => mutate(),
 
-    onAddNewDish: (newDish: DishItem) => setDishItensDraft((prev) => [...prev, newDish]),
+    onAddNewDish: (newDish: DishItem) => setDishItemsDraft((prev) => [...prev, newDish]),
     
     onAddNewPages: (newPages: MenuPage[]) => setMenuPagesDraft((prev) => [...prev, ...newPages]),
 
-    onRemoveDish: (dishIdToDestroy: string) => setDishItensDraft((prevDishes) => prevDishes.filter((dish) => dish.id !== dishIdToDestroy)),
+    onRemoveDish: (dishIdToDestroy: string) => setDishItemsDraft((prevDishes) => prevDishes.filter((dish) => dish.id !== dishIdToDestroy)),
 
     onRemovePage: (pageIdToDestroy: string) => {
-      setDishItensDraft((prevDishes) => prevDishes.filter((dish) => dish.parentPageId !== pageIdToDestroy));
+      setDishItemsDraft((prevDishes) => prevDishes.filter((dish) => dish.parentPageId !== pageIdToDestroy));
 
       setMenuPagesDraft((prevPages) => {
         const filtered = prevPages.filter((page) => page.pageId !== pageIdToDestroy);
@@ -116,13 +130,13 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
           break;
       }
 
-      setDishItensDraft((prev) =>
+      setDishItemsDraft((prev) =>
         prev.map((dish) => (dish.id === id ? { ...dish, [field]: savedValue } : dish)),
       );
     },
 
     onUpdateDishCoordinates: (dishId: string, newX: number, newY: number) => {
-      setDishItensDraft(
+      setDishItemsDraft(
           (prev) =>
           prev.map((dish) =>
               dish.id === dishId
