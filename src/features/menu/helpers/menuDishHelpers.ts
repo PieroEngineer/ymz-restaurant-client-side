@@ -1,4 +1,4 @@
-import type { DishItem, MenuPage } from '@/features/menu/types/sync.types';
+import type { DishItem, MenuPage } from '@/features/menu/types/domain.types';
 
 export function areDishCollectionsEqual(left: DishItem[], right: DishItem[]): boolean {
   if (left.length !== right.length) return false;
@@ -8,12 +8,12 @@ export function areDishCollectionsEqual(left: DishItem[], right: DishItem[]): bo
 
     return (
       leftDish.id === rightDish.id &&
-      leftDish.pageId === rightDish.pageId &&
+      leftDish.name === rightDish.name &&
+      leftDish.priceCents === rightDish.priceCents &&
+      leftDish.prepTime === rightDish.prepTime &&
+      leftDish.parentPageId === rightDish.parentPageId &&
       leftDish.coordinateXInMenu === rightDish.coordinateXInMenu &&
       leftDish.coordinateYInMenu === rightDish.coordinateYInMenu &&
-      leftDish.name === rightDish.name &&
-      leftDish.cost === rightDish.cost &&
-      leftDish.prepTime === rightDish.prepTime &&
       leftDish.createdAt === rightDish.createdAt
     );
   });
@@ -25,8 +25,8 @@ export function sortDishesWithOrderNumbers(
 ): (DishItem & { orderNumber: number })[] {
   return [...dishes]
     .sort((a, b) => {
-      const pageA = menuPages.find((page) => page.pageId === a.pageId)?.pageNumber ?? 0;
-      const pageB = menuPages.find((page) => page.pageId === b.pageId)?.pageNumber ?? 0;
+      const pageA = menuPages.find((page) => page.pageId === a.parentPageId)?.pageNumber ?? 0;
+      const pageB = menuPages.find((page) => page.pageId === b.parentPageId)?.pageNumber ?? 0;
       if (pageA !== pageB) return pageA - pageB;
       if (a.coordinateYInMenu !== b.coordinateYInMenu) return a.coordinateYInMenu - b.coordinateYInMenu;
       return a.createdAt - b.createdAt;

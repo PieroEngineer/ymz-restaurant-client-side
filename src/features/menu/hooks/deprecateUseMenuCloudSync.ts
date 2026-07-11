@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { checkMinimalDiff } from '@/features/menu/helpers/menuComparators';
-import { mapCloudPayloadToMenuState } from '@/features/menu/helpers/menuMappers';
-import { useMenuDatasetQuery } from '@/features/menu/hooks/useMenuDatasetQuery';
-import { useMenuSyncMutation } from '@/features/menu/hooks/useMenuSyncMutation';
+import { mapCloudPayloadToMenuState } from '@/features/menu/helpers/handleRemoteUrls';
+import { deprecateUseMenuDatasetQuery } from '@/features/menu/hooks/useMenuDatasetQuery';
+import { useMenuSyncMutation } from '@/features/menu/hooks/useMenuDraft';
 import { useMenuSyncStatus } from '@/features/menu/hooks/useMenuSyncStatus';
-import type { DishItem, MenuPage } from '@/features/menu/types/sync.types';
+import type { deprecateDish, MenuPage } from '@/features/menu/types/domain.types';
 
 /**
  * @deprecated Use `useMenuEditor` instead. This hook required passing draft state
  * and callbacks from the page, splitting ownership between the hook and its caller.
  */
-export function useMenuCloudSync(
+export function deprecateUseMenuCloudSync(
   currentPages: MenuPage[],
-  currentDishes: DishItem[],
+  currentDishes: deprecateDish[],
   localPageFilesMap: Record<string, File>,
-  onInitializeData: (pages: MenuPage[], dishes: DishItem[]) => void,
+  onInitializeData: (pages: MenuPage[], dishes: deprecateDish[]) => void,
   onImportedImageWithRemoteUrlsNeeded: (updatedPages: MenuPage[]) => void,
 ) {
-  const { data: dbSnapshot, isLoading, isError } = useMenuDatasetQuery();
+  const { data: dbSnapshot, isLoading, isError } = deprecateUseMenuDatasetQuery();
   const syncMutation = useMenuSyncMutation();
 
   const hasInitializedRef = useRef(false);

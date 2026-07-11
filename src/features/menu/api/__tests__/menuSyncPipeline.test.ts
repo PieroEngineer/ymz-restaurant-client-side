@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { menuApi } from '@/features/menu/api/menuApi';
-import { type CloudMenuDiffPayload } from '@/features/menu/types/sync.types';
+import { type CloudMenuDiffPayload } from '@/features/menu/types/domain.types';
 
 describe('Menu Synchronization Multi-Hop Integration Suite (LocalStack)', () => {
   

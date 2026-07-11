@@ -1,14 +1,16 @@
 import React, { useRef, useEffect } from 'react';
-import type { DishItem } from '@/features/menu/types/sync.types';
-import type { SyncStatusType } from '@/features/menu/types/syncStatus.types';
+import type { DishItem } from '@/features/menu/types/domain.types';
+import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.types';
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
+import type { EditableDishField } from '@/features/menu/types/support/selection.types';
+import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
   items: (DishItem & { orderNumber: number })[];
-  activeEditCell: { id: string; field: 'name' | 'cost' | 'prepTime' } | null;
-  setActiveEditCell: (cell: { id: string; field: 'name' | 'cost' | 'prepTime' } | null) => void;
-  onUpdateItem: (id: string, field: 'name' | 'cost' | 'prepTime', value: string) => void;
+  activeEditCell: { id: string; field: EditableDishField } | null;
+  setActiveEditCell: (cell: { id: string; field: EditableDishField } | null) => void;
+  onUpdateItem: (id: string, field: EditableDishField, value: string, fallbackValue?: number) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
   onRowClicked: (pageId: string) => void;
   // 🔌 New Sync Connection Prop Lines
@@ -36,24 +38,10 @@ export function DishChart({
       activeInputRef.current.select(); // Highlight the existing text for quick overwriting
     }
   }, [activeEditCell]);
-  
-  // 📝 Validation Guard: Restricts the Cost string value to maximum of 2 decimal places
-  const validateCostInput = (val: string): string => {
-    // Allows digits, and a optional single decimal dot followed by up to 2 decimal places max
-    const sanitized = val.replace(/[^0-9.]/g, '');
-    const split = sanitized.split('.');
-    if (split.length > 2) return `${split[0]}.${split[1]}`;
-    if (split[1] && split[1].length > 2) return `${split[0]}.${split[1].slice(0, 2)}`;
-    return sanitized;
-  };
-
-  // 📝 Validation Guard: Restricts the Prep Time to whole numbers only
-  const validatePrepTimeInput = (val: string): string => {
-    return val.replace(/[^0-9]/g, ''); // Strip out non-integers entirely
-  };
 
   // 🧮 Keyboard Navigation Engine: Handles Tab and Enter loops
-  const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: 'name' | 'cost' | 'prepTime') => {
+  const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: EditableDishField) => { /// currentId is deductible with "findIndex"
+
     const isTab = e.key === 'Tab';
     const isEnter = e.key === 'Enter';  //TODO: Enter should also jump between rows, not only within one row
 
@@ -70,8 +58,8 @@ export function DishChart({
     // 🗺️ Focus Path Checklist Matrix
     if (isTab) {
       if (currentField === 'name') {
-        setActiveEditCell({ id: currentId, field: 'cost' });
-      } else if (currentField === 'cost') {
+        setActiveEditCell({ id: currentId, field: 'priceCents' });
+      } else if (currentField === 'priceCents') {
         setActiveEditCell({ id: currentId, field: 'prepTime' });
       } else if (currentField === 'prepTime') {
         // Jump to the first column of the next row if available
@@ -86,10 +74,10 @@ export function DishChart({
     // 🚀 Enter Key Logic: Jumps strictly to incomplete text fields in this row
     if (isEnter) {
       if (currentField === 'name') {
-        if (!currentItem.cost) setActiveEditCell({ id: currentId, field: 'cost' });
+        if (!currentItem.priceCents) setActiveEditCell({ id: currentId, field: 'priceCents' });
         else if (!currentItem.prepTime) setActiveEditCell({ id: currentId, field: 'prepTime' });
         else setActiveEditCell(null);
-      } else if (currentField === 'cost') {
+      } else if (currentField === 'priceCents') {
         if (!currentItem.prepTime) setActiveEditCell({ id: currentId, field: 'prepTime' });
         else setActiveEditCell(null);
       } else if (currentField === 'prepTime') {
@@ -136,7 +124,7 @@ export function DishChart({
               <tr 
                 key={dish.id} 
                 /* 🧭 Feature: Clicking anywhere on a row takes you to its respective page */
-                onClick={() => onRowClicked(dish.pageId)}
+                onClick={() => onRowClicked(dish.parentPageId)}
                 className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-14 cursor-pointer"
               >
 
@@ -157,14 +145,12 @@ export function DishChart({
                     <input
                       ref={activeInputRef}
                       type="text"
-                      //XautoFocus
                       maxLength={90} // 📏 Guard: Max 90 characters
                       value={dish.name}
                       onChange={(e) => onUpdateItem(dish.id, 'name', e.target.value)}
                       onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'name')}
                       onBlur={() => setActiveEditCell(null)} // 🔍 Leave cell to revert to text string
                       className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-medium"
-                      //Xplaceholder="Enter dish name..."
                     />
                   ) : (
                     <span className={`block text-sm truncate max-w-55 ${!dish.name && 'text-slate-300 font-normal italic'}`}>
@@ -176,21 +162,37 @@ export function DishChart({
                 {/* 💵 ITEM COST ROW COMPONENT CELL */}
                 <td 
                   className="border-l border-brand-navy/10 px-4"
-                  onClick={() => setActiveEditCell({ id: dish.id, field: 'cost' })}
+                  onClick={() => setActiveEditCell({ id: dish.id, field: 'priceCents' })}
                 >
-                  {activeEditCell?.id === dish.id && activeEditCell?.field === 'cost' ? (
+                  {activeEditCell?.id === dish.id && activeEditCell?.field === 'priceCents' ? (
+                    // <input //X If the bellow one works, delete this
+                    //   ref={activeInputRef}
+                    //   type="text"
+                    //   value={dish.priceCents}
+                    //   onChange={(e) => onUpdateItem(dish.id, 'priceCents', validateCostInput(e.target.value))}
+                    //   onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'priceCents')}
+                    //   onBlur={() => setActiveEditCell(null)}
+                    //   className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-mono font-medium"
+                    // />
                     <input
                       ref={activeInputRef}
                       type="text"
-                      value={dish.cost}
-                      onChange={(e) => onUpdateItem(dish.id, 'cost', validateCostInput(e.target.value))}
-                      onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'cost')}
-                      onBlur={() => setActiveEditCell(null)}
+                      defaultValue={dish.priceCents}
+                      onKeyDown={(e) => {
+                        onUpdateItem(dish.id, 'priceCents', e.currentTarget.value, dish.priceCents);
+                        handleKeyDownGridTraverse(e, dish.id, 'priceCents')
+                      }}
+                      onBlur={  // Only update state when the user leaves the input
+                        (e) => {
+                          onUpdateItem(dish.id, 'priceCents', e.target.value, dish.priceCents);
+                          setActiveEditCell(null);
+                        }
+                      }
                       className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-mono font-medium"
                     />
                   ) : (
-                    <span className={`block text-sm font-mono ${!dish.cost && 'text-slate-300 font-normal italic'}`}>
-                      {dish.cost ? `$${dish.cost}` : '$0.00'}
+                    <span className={`block text-sm font-mono ${!dish.priceCents && 'text-slate-300 font-normal italic'}`}>
+                      {dish.priceCents ? `$${dish.priceCents}` : '$0.00'}
                     </span>
                   )}
                 </td>
@@ -205,7 +207,7 @@ export function DishChart({
                       ref={activeInputRef}
                       type="text"
                       value={dish.prepTime}
-                      onChange={(e) => onUpdateItem(dish.id, 'prepTime', validatePrepTimeInput(e.target.value))}
+                      onChange={(e) => onUpdateItem(dish.id, 'prepTime', ensureTimeFormat(e.target.value))}
                       onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'prepTime')}
                       onBlur={() => setActiveEditCell(null)}
                       className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-medium"

@@ -1,22 +1,5 @@
-import type { MenuPage, DishItem } from '@/features/menu/types/sync.types';
-
-export interface EmptyPageValidationResult {
-  isValid: boolean;
-  emptyPageNumbers: number[]; // e.g., [2, 5]
-}
-
-export interface DishValidationResult {
-  isValid: boolean;
-  invalidDishes: InvalidDishDetail[];
-}
-
-export interface InvalidDishDetail {
-  dishName: string;
-  pageNumber: number;
-  missingFields: string[];
-//   orderNumber: number;   TODO: find the way to add the order number too
-}
-
+import type { MenuPage, DishItem } from '@/features/menu/types/domain.types';
+import type { DishValidationResult, EmptyPageValidationResult, InvalidDishDetail } from '@/features/menu/types/support/validation.types';
 
 /**
  * 🔍 Rule 1: Scans for any menu page that has zero attached dish coordinate pins
@@ -25,7 +8,7 @@ export const validateEmptyPages = (pages: MenuPage[], dishes: DishItem[]): Empty
   const emptyPageNumbers: number[] = [];
 
   pages.forEach((page) => {
-    const hasDishes = dishes.some((dish) => dish.pageId === page.pageId);
+    const hasDishes = dishes.some((dish) => dish.parentPageId === page.pageId);
     if (!hasDishes) {
       emptyPageNumbers.push(page.pageNumber);
     }
@@ -47,15 +30,15 @@ export const validateDishFields = (pages: MenuPage[], dishes: DishItem[]): DishV
   const invalidDishes: InvalidDishDetail[] = [];
 
   dishes.forEach((dish) => {
-    const parentPage = pages.find((p) => p.pageId === dish.pageId);
+    const parentPage = pages.find((p) => p.pageId === dish.parentPageId);
     const pageNum = parentPage ? parentPage.pageNumber : 0;
 
     const missingFields: string[] = [];
     
     // Check fields using clean trim assertions
     if (!dish.name || dish.name.trim() === '') missingFields.push('Nombre');
-    if (!dish.cost || dish.cost.trim() === '' || parseFloat(dish.cost) === 0) missingFields.push('Precio');
-    if (!dish.prepTime || dish.prepTime.trim() === '' || parseInt(dish.prepTime, 10) === 0) missingFields.push('Tiempo de preparación');
+    if (!dish.priceCents || dish.priceCents.toString() === '' || dish.priceCents === 0) missingFields.push('Precio');
+    if (!dish.prepTime || dish.prepTime.toString() === '' || dish.prepTime === 0) missingFields.push('Tiempo de preparación');
 
     if (missingFields.length > 0) {
       // If ALL fields are missing, we will capture a clean label to avoid text overload

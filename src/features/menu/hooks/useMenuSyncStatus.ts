@@ -1,26 +1,20 @@
 import { useMemo } from 'react';
 
 import { checkMinimalDiff } from '@/features/menu/helpers/menuComparators';
-import type { SyncStatusType } from '@/features/menu/types/syncStatus.types';
-import type { CloudMenuGetPayload, DishItem, MenuPage } from '@/features/menu/types/sync.types';
+import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.types';
+import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.types';
 
-interface UseMenuSyncStatusParams {
-  draftPages: MenuPage[];
-  draftDishes: DishItem[];
-  dbSnapshot: CloudMenuGetPayload | undefined;
-  isLoading: boolean;
-  isError: boolean;
-  isSyncPending: boolean;
-}
+export function useMenuSyncStatus(
+  draftPages: MenuPage[],
+  draftDishes: DishItem[],
+  isSyncPending: boolean,
 
-export function useMenuSyncStatus({
-  draftPages,
-  draftDishes,
-  dbSnapshot,
-  isLoading,
-  isError,
-  isSyncPending,
-}: UseMenuSyncStatusParams): SyncStatusType {
+  dbSnapshot: Menu | undefined,
+
+  isLoading: boolean,
+  isError: boolean,
+): SyncStatusType {
+  
   return useMemo((): SyncStatusType => {
     if (isLoading || isSyncPending) return 'Loading';
     if (isError && !dbSnapshot) return 'Unsynchronized';

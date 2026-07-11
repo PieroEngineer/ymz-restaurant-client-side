@@ -1,26 +1,27 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { MenuModalMode } from '@/features/menu/components/MenuValidationModal';
 
 import { checkMinimalDiff } from '@/features/menu/helpers/menuComparators';
 import {areDishCollectionsEqual, sortDishesWithOrderNumbers} from '@/features/menu/helpers/menuDishHelpers';
-import { mapCloudPayloadToMenuState } from '@/features/menu/helpers/menuMappers';
 
-import { useMenuDatasetQuery } from '@/features/menu/hooks/useMenuDatasetQuery';
-import { useMenuSyncMutation } from '@/features/menu/hooks/useMenuSyncMutation';
+import { deprecateUseMenuDatasetQuery } from '@/features/menu/hooks/useMenuDatasetQuery';
 import { useMenuSyncStatus } from '@/features/menu/hooks/useMenuSyncStatus';
 import { useUndoableState } from '@/features/menu/hooks/useUndoableState';
 
-import type { ActiveEditCell, EditableDishField } from '@/features/menu/types/menuEditor.types';
-import type { DishItem, MenuPage } from '@/features/menu/types/sync.types';
+import type { deprecateDish, MenuPage } from '@/features/menu/types/domain.types';
 
 import {
   validateEmptyPages,
   validateDishFields,
   type InvalidDishDetail,
-} from '@/features/menu/utils/menuValidators';
+} from '@/features/menu/helpers/menuValidators';
 
-export function useMenuEditor() { // TODO: break it in different hooks
+/**
+ * @deprecated This functions was refactorized and modularized in other file. 
+ * This function only is useful to understand how it was working earlier. 
+ * Once stability is achieved, delete this function
+ */
+export function deprecatedUseMenuEditor() { // TODO: break it in different hooks
   // ===== UI State =====
   // Menu pages and navigation
   const [menuPages, setMenuPages] = useState<MenuPage[]>([]);
@@ -39,7 +40,7 @@ export function useMenuEditor() { // TODO: break it in different hooks
   const addPagesInputRef = useRef<HTMLInputElement>(null);
   const replacePageInputRef = useRef<HTMLInputElement>(null);
   // Tracks base state for drag operations to enable undo/redo
-  const dragHistoryBaseRef = useRef<DishItem[] | null>(null);
+  const dragHistoryBaseRef = useRef<deprecateDish[] | null>(null);
   // Prevents duplicate hydration from cloud data
   const hasHydratedRef = useRef(false);
 
@@ -52,10 +53,10 @@ export function useMenuEditor() { // TODO: break it in different hooks
     redo: redoDishAction,
     canUndo,
     canRedo,
-  } = useUndoableState<DishItem[]>([], { isEqual: areDishCollectionsEqual });
+  } = useUndoableState<deprecateDish[]>([], { isEqual: areDishCollectionsEqual });
 
   // ===== Data Fetching & Mutations =====
-  const { data: dbSnapshot, isLoading, isError } = useMenuDatasetQuery();
+  const { data: dbSnapshot, isLoading, isError } = deprecateUseMenuDatasetQuery();
   const syncMutation = useMenuSyncMutation();
 
   // ===== Derived State =====
@@ -157,13 +158,13 @@ export function useMenuEditor() { // TODO: break it in different hooks
   }, [handleRedoDishAction, handleUndoDishAction]);
 
   // ===== Page Navigation Handlers =====
-  const handlePageNext = useCallback(() => {
-    setActivePageIndex((prev) => (prev < menuPages.length - 1 ? prev + 1 : prev));
-  }, [menuPages.length]);
-
   const handlePagePrevious = useCallback(() => {
     setActivePageIndex((prev) => (prev > 0 ? prev - 1 : prev));
   }, []);
+  
+  const handlePageNext = useCallback(() => {
+    setActivePageIndex((prev) => (prev < menuPages.length - 1 ? prev + 1 : prev));
+  }, [menuPages.length]);
 
   // ===== File Input Handlers =====
   const handleOpenAddPages = useCallback(() => {
@@ -323,14 +324,14 @@ export function useMenuEditor() { // TODO: break it in different hooks
   const handleAddNewCoordinatePin = useCallback(
     (
       coords: Omit<
-        DishItem,
+        deprecateDish,
         'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'
       >,
     ) => {
       if (!activePageObject) return;
 
       const newId = crypto.randomUUID();
-      const newDishRecord: DishItem = {
+      const newDishRecord: deprecateDish = {
         ...coords,
         id: newId,
         pageId: activePageObject.pageId,
@@ -347,6 +348,7 @@ export function useMenuEditor() { // TODO: break it in different hooks
     [activePageObject, setDishes],
   );
 
+  
   // Remove dish by id
   const handleDeleteCoordinateRecord = useCallback(
     (id: string) => {

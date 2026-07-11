@@ -1,5 +1,5 @@
 import React, { type ChangeEvent, useRef, useState, useEffect } from 'react';
-import { type DishItem } from '@/features/menu/types/sync.types';
+import { type DishItem } from '@/features/menu/types/domain.types';
 import { TrashIcon } from "@/features/menu/components/icons/TrashIcon";
 import { PencilIcon } from "@/features/menu/components/icons/PencilIcon";
 import { PlusIcon } from "@/features/menu/components/icons/PlusIcon";
@@ -14,11 +14,11 @@ interface MenuDisplayProps {
 
   onImagesUploaded: (localFileEvent: ChangeEvent<HTMLInputElement>) => void;
 
-  onCoordinateAdded: (coord: Omit<DishItem, 'id' | 'pageId' | 'name' | 'cost' | 'prepTime' | 'createdAt' | 'imageUrl'>) => void;
+  onCoordinateAdded: (coord: {coordinateXInMenu: number, coordinateYInMenu: number}) => void;
   // 🚀 New FDD Operations Data Pipes
   onCoordinateUpdated: (id: string, xPercent: number, yPercent: number) => void;
-  onCoordinateDragStarted: (id: string) => void;
-  onCoordinateDragCommitted: () => void;
+  // onCoordinateDragStarted: (id: string) => void;
+  // onCoordinateDragCommitted: () => void;
   onCoordinateDeleted: (id: string) => void;
   
     // 🔌 Action callback to target a table row directly from a marker pin
@@ -35,8 +35,8 @@ export function MenuDisplay({
 
   onCoordinateAdded,
   onCoordinateUpdated,
-  onCoordinateDragStarted,
-  onCoordinateDragCommitted,
+  // onCoordinateDragStarted,   /// Retake it when undo & redo come back
+  // onCoordinateDragCommitted,
   onCoordinateDeleted,
 
   onTargetRowFocusRequested
@@ -123,7 +123,7 @@ export function MenuDisplay({
       onCoordinateUpdated(activeDragId, dragPosition.xPercent, dragPosition.yPercent);
     }
 
-    onCoordinateDragCommitted();
+    // onCoordinateDragCommitted();
     setDraggingPinId(null);
     draggingPinIdRef.current = null;
     dragPositionRef.current = null;
@@ -136,7 +136,7 @@ export function MenuDisplay({
 
   // Filter out pin markers belonging strictly to the menu page being viewed right now
 
-  const activePagePins = dishesWithNumbers.filter(dish => dish.pageId === currentPageId);
+  const activePagePins = dishesWithNumbers.filter(dish => dish.parentPageId === currentPageId);
 
   //TODO: Verify if it's ok that the menu recompose everytime some letter is written in the dish chart. I found it by placing a log in the possition of this comment
 
@@ -184,7 +184,7 @@ export function MenuDisplay({
                   onMouseLeave={() => setHoveredPinId(null)}
                   onMouseDown={(e) => {
                     e.stopPropagation(); // Stop click from creating a second pin on top of this one
-                    onCoordinateDragStarted(pin.id);
+                    // onCoordinateDragStarted(pin.id);
                     setDraggingPinId(pin.id);
                     draggingPinIdRef.current = pin.id;
                   }}

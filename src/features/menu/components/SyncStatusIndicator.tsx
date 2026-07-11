@@ -1,4 +1,4 @@
-import type { SyncStatusType } from '@/features/menu/types/syncStatus.types';
+import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.types';
 
 interface SyncStatusIndicatorProps {
   status: SyncStatusType;

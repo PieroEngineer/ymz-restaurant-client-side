@@ -1,6 +1,8 @@
-import type { CloudDishPayload, CloudMenuDiffPayload, CloudMenuGetPayload, DishItem, MenuPage } from "@/features/menu/types/sync.types";
+import type { CloudDishItemPayload, CloudMenuDiffPayload } from "@/features/menu/types/api.types";
+import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.types';
 
-export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[], dbSnapshot: CloudMenuGetPayload): boolean => {
+
+export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[], dbSnapshot: Menu): boolean => {
   // Build operational comparison arrays
     const isPagesChanged = localPages.length !== dbSnapshot.menuPages.length ||
       localPages.some(cp => {
@@ -13,22 +15,19 @@ export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[]
       localDishes.some(cd => {
         const snap = dbSnapshot.dishes.find(d => d.id === cd.id);
         if (!snap) return true;
-        
-        const priceCents = Math.round(parseFloat(cd.cost || '0') * 100);
-        const prepTime = parseInt(cd.prepTime || '0', 10);
 
         return snap.name !== cd.name ||
-          snap.priceCents !== priceCents ||
-          snap.prepTime !== prepTime ||
-          snap.coordinateXInMenu !== cd.coordinateXInMenu || //TODO: Verify if "1" it's a good threshold (It's better if everyone works with the same normalization "%")
+          snap.priceCents !== cd.priceCents ||
+          snap.prepTime !== cd.prepTime ||
+          snap.coordinateXInMenu !== cd.coordinateXInMenu ||
           snap.coordinateYInMenu !== cd.coordinateYInMenu ||
-          snap.menuPageId !== cd.pageId;  /// Is this line necessary? Maybe it's always false
+          snap.parentPageId !== cd.parentPageId;  /// Is this line necessary? Maybe it's always false
       });
 
       return isPagesChanged || isDishesChanged;
 }
 
-export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: DishItem[], dbSnapshot: CloudMenuGetPayload): CloudMenuDiffPayload => {
+export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: DishItem[], dbSnapshot: Menu): CloudMenuDiffPayload => {
     // 📝 Build the Delta JSON Diff Document using the new S3 links
     const diffPayload: CloudMenuDiffPayload = { menuPages: [], dishes: [] };
 
@@ -63,8 +62,6 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
         // 🍔 B. Calculate Dishes Diff
         currentDishes.forEach((cd) => {
             const original = dbSnapshot.dishes.find(d => d.id === cd.id);
-            const priceCents = Math.round(parseFloat(cd.cost || '0') * 100);
-            const prepTime = parseInt(cd.prepTime || '0', 10);
     
             if (!original) {  // For a dish totally modified
             diffPayload.dishes.push({
@@ -72,26 +69,28 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 action: 'save',
                 name: cd.name,
                 imageUrl: cd.imageUrl, 
-                priceCents,
-                prepTime,
+                priceCents: cd.priceCents,
+                prepTime: cd.prepTime,
                 isOutOfStock: true, // Preset parameter enforcement rule
-                menuPageId: cd.pageId,
+                menuPageId: cd.parentPageId,
                 coordinateXInMenu: cd.coordinateXInMenu,
                 coordinateYInMenu: cd.coordinateYInMenu,
-                description: '' // Preset parameter enforcement rule
+                description: '', // Preset parameter enforcement rule
+                createdAt: cd.createdAt /// Or Date.now()?
             });
             } else {  // For a dish partially modified
-            const updatedFields: Partial<CloudDishPayload> = {};
-            if (original.name !== cd.name) updatedFields.name = cd.name;
-            if (original.priceCents !== priceCents) updatedFields.priceCents = priceCents;
-            if (original.prepTime !== prepTime) updatedFields.prepTime = prepTime;
-            if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
-            if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;
-            if (original.menuPageId !== cd.pageId) updatedFields.menuPageId = cd.pageId;  /// Is it possible? perhaps this line is unnecessary
-    
-            if (Object.keys(updatedFields).length > 0) {
-                diffPayload.dishes.push({ id: cd.id, action: 'update', updatedFields });
-            }
+                const updatedFields: Partial<CloudDishItemPayload> = {};
+                if (original.name !== cd.name) updatedFields.name = cd.name;
+                if (original.priceCents !== cd.priceCents) updatedFields.priceCents = cd.priceCents;
+                if (original.prepTime !== cd.prepTime) updatedFields.prepTime =cd. prepTime;
+                if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
+                if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;
+                if (original.parentPageId !== cd.parentPageId) updatedFields.menuPageId = cd.parentPageId;  /// Is it possible? perhaps this line is unnecessary
+                /// Is it necessary to include  "createAt"?
+                
+                if (Object.keys(updatedFields).length > 0) {
+                    diffPayload.dishes.push({ id: cd.id, action: 'update', updatedFields });
+                }
             }
         });
     

@@ -1,7 +1,6 @@
-import { type InvalidDishDetail, formatPageNumbersList } from '@/features/menu/utils/menuValidators';
+import { type InvalidDishDetail, formatPageNumbersList } from '@/features/menu/helpers/menuValidators';
+import type { MenuModalMode } from '@/features/menu/types/support/menuEditor.types';
 
-// 🆕 Expanded modes to house the new operational confirmation situations
-export type MenuModalMode = 'EMPTY_PAGES' | 'INVALID_DISHES' | 'CONFIRM_DELETE' | 'CONFIRM_SYNC' | null;
 
 interface MenuActionModalProps {
   isOpen: boolean;
