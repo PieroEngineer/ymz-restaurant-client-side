@@ -9,7 +9,7 @@ export function useMenuSyncStatus(
   draftDishes: DishItem[],
   isSyncPending: boolean,
 
-  dbSnapshot: Menu | undefined,
+  menuSnapshot: Menu | undefined,
 
   isLoading: boolean,
   isError: boolean,
@@ -17,11 +17,11 @@ export function useMenuSyncStatus(
   
   return useMemo((): SyncStatusType => {
     if (isLoading || isSyncPending) return 'Loading';
-    if (isError && !dbSnapshot) return 'Unsynchronized';
-    if (!dbSnapshot) return 'Loading';
+    if (isError && !menuSnapshot) return 'Unsynchronized';
+    if (!menuSnapshot) return 'Loading';
 
-    return checkMinimalDiff(draftPages, draftDishes, dbSnapshot)
+    return checkMinimalDiff(draftPages, draftDishes, menuSnapshot)
       ? 'Unsynchronized'
       : 'Synchronized';
-  }, [draftPages, draftDishes, dbSnapshot, isLoading, isError, isSyncPending]);
+  }, [draftPages, draftDishes, menuSnapshot, isLoading, isError, isSyncPending]);
 }

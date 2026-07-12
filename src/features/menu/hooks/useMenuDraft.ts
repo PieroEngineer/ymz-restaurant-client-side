@@ -10,6 +10,8 @@ import { decimalToCents, ensureCostFormat } from '@/features/menu/helpers/moneyV
 
 export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
   
+  const [syncMenu, useSyncMenu] = useState<Menu>({menuPages: [], dishes: []})
+
   const [draftMenuPages, setMenuPagesDraft] = useState<MenuPage[]>([])
   const [draftDishItems, setDishItemsDraft] = useState<DishItem[]>([])
   
@@ -17,20 +19,21 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
   
   useEffect(() => { // It's expected valid use of "useCase" only because the async source run once a mount
     if (initialMenu !== undefined && !hasInitialized.current) {
+      useSyncMenu(initialMenu)
       setDishItemsDraft(initialMenu.dishes);
       setMenuPagesDraft(initialMenu.menuPages);
       hasInitialized.current = true; // ref, not state — this flag itself shouldn't trigger re-renders
     }
-  }, [initialMenu]);
+  }, [initialMenu]);  /// This useEffect does a good job while "InitialMenu" only runs once a mount
 
   const {mutate, isPending} = useMutation({
     mutationFn: async () => {
-      console.log('🔎⬆️  Trying to upload data')
+      console.log('⬆️  Trying to upload data')
       if(initialMenu ===undefined) return []
       
       const diffPayload = generateDiffPayload(draftMenuPages, draftDishItems, initialMenu);
       
-      console.log('🔎⬆️  The diff to send is\n', diffPayload)
+      console.log('⬆️  The diff to send is\n', diffPayload)
 
       let syncResponseData: Awaited<ReturnType<typeof menuApi.pushMenuDeltaChanges>> | null = null;
     
@@ -62,16 +65,16 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
 
     },
     onSuccess: (presignedUrls) => {
-        const finalSnapshotPages = injectRemoteUrlInPages(
-          draftMenuPages,
-          presignedUrls ?? [],
-        );
-
-        console.log('🔎  Page data now', draftMenuPages);
-        console.log('🔎  Dishe data now', draftDishItems);
-    
-        setMenuPagesDraft(finalSnapshotPages)
-        onResetLocalImageMap()
+      const finalSnapshotPages = injectRemoteUrlInPages(
+        draftMenuPages,
+        presignedUrls ?? [],
+      );
+      console.log('  Page data now', draftMenuPages);
+      console.log('  Dishe data now', draftDishItems);
+      
+      setMenuPagesDraft(finalSnapshotPages);
+      useSyncMenu({menuPages: finalSnapshotPages, dishes: draftDishItems});
+      onResetLocalImageMap();
     },
     onError: () =>{
       // console.error('🔴  Critical database upload synchronization failure:', err);
@@ -87,6 +90,8 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
   });
 
   return {
+    syncMenu,
+
     dishesWithOrder: useMemo( () => sortDishesWithOrderNumbers(draftDishItems, draftMenuPages), [draftDishItems, draftMenuPages]),
 
     draftMenuPages,
@@ -116,7 +121,6 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
     },
 
     onUpdateDishData: (id: string, field: EditableDishField, anyValue: string, fallbackValue = 0) => {
-      console.log('🔎  The field to save is ', field, ' has the value ', anyValue, ' whose type is ', typeof anyValue);
 
       let savedValue: string | number
       // Ensuring the field match with the type   // TODO: Find another path where the 

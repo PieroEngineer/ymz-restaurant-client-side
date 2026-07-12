@@ -3,7 +3,8 @@ import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.type
 
 
 export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[], dbSnapshot: Menu): boolean => {
-  // Build operational comparison arrays
+    
+    // Build operational comparison arrays
     const isPagesChanged = localPages.length !== dbSnapshot.menuPages.length ||
       localPages.some(cp => {
         const snap = dbSnapshot.menuPages.find(p => p.pageId === cp.pageId);
@@ -24,7 +25,7 @@ export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[]
           snap.parentPageId !== cd.parentPageId;  /// Is this line necessary? Maybe it's always false
       });
 
-      return isPagesChanged || isDishesChanged;
+    return isPagesChanged || isDishesChanged;
 }
 
 export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: DishItem[], dbSnapshot: Menu): CloudMenuDiffPayload => {

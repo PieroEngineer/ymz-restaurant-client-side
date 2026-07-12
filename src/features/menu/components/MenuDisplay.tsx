@@ -97,10 +97,10 @@ export function MenuDisplay({
     const xPercent = ((e.clientX - rect.left) / rect.width);
     const yPercent = ((e.clientY - rect.top) / rect.height);
 
-    onCoordinateAdded({ coordinateXInMenu: xPercent, coordinateYInMenu: yPercent });
+    onCoordinateAdded({ coordinateXInMenu: xPercent, coordinateYInMenu: yPercent });  /// Possible optimization (#3252)
   };
 
-  // 🪵 Gesture Dragging Engine: Updates coordinates in real-time as mouse moves across container canvas bounds
+  // 🪵 Gesture Dragging Engine: Updates coordinates as mouse moves across container canvas bounds
   const handleCanvasMouseMove = (e: React.MouseEvent) => {
     if (!draggingPinIdRef.current || !imageRef.current) return;
 
@@ -108,7 +108,7 @@ export function MenuDisplay({
     const boundedX = Math.max(0, Math.min(1, ((e.clientX - rect.left) / rect.width)));
     const boundedY = Math.max(0, Math.min(1, ((e.clientY - rect.top) / rect.height)));
 
-    scheduleDraggedPinStyleUpdate(boundedX, boundedY);
+    scheduleDraggedPinStyleUpdate(boundedX, boundedY);  /// Possible optimization (#3252): we could round decimals, many of them are not necessary
   };
 
 

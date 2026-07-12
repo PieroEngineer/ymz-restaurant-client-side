@@ -1,4 +1,3 @@
-import { Menu } from "lucide-react";
 
 export interface MenuPage {
   pageId: string;

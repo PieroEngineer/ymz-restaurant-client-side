@@ -46,9 +46,6 @@ export function MenuManagerPage() {
     // Control the current active page
     const activePage = useActivePage(menuDraft.draftMenuPages)
     
-    // console.log('🔎  Active page handler in page', activePage)
-    // console.log('🔎  Current active page in page', activePage.currentActivePage)
-    
     const localPageFile = useLocalPageFile(
         addPagesInputRef,
         replacePageInputRef,
@@ -80,7 +77,7 @@ export function MenuManagerPage() {
         menuDraft.draftDishItems,
         menuDraft.isUploading || isDownloading,
 
-        dbSnapshot,
+        menuDraft.syncMenu,
 
         isDownloading,
         isErrorInDownload,
