@@ -1,15 +1,15 @@
 import { useChannel } from 'ably/react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { TableRequestPayload } from '@/features/table-requests/types/index';
-// import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
+import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 
 export const useRestaurantLiveRequests = (restaurantId: string) => {
   const queryClient = useQueryClient();
   const queryKey = ['restaurant', restaurantId, 'active-requests'];
 
-  // const channelName = `restaurant:${MOCK_MENU_RESTAURANT_ID}:ops`;
+  const channelName = `restaurant:${MOCK_MENU_RESTAURANT_ID}:ops`;
 
-  const { channel } = useChannel((message) => {
+  const { channel } = useChannel(channelName, (message) => {
     const { name, data } = message;
     const payload = data as TableRequestPayload;
 

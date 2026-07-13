@@ -5,11 +5,7 @@ import { TableRequestCard } from '@/features/table-requests/components/TableRequ
 import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
 import { axiosClient } from '@/shared/api/axiosClient';
 
-// type RequestDashboardProps = {
-//   tableRequests: TableRequestPayload[];
-// };
-
-export function RequestDashboard(/*{tableRequests}: RequestDashboardProps*/) {
+export function RequestDashboard() {
   const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
 
   // Initial load fetches currently open requests via Axios
@@ -22,7 +18,6 @@ export function RequestDashboard(/*{tableRequests}: RequestDashboardProps*/) {
   });
 
   console.log(`Snapshot of requests:\n ${tableRequests}`)
-
 
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
   /*const { updateRequestStatus } =*/ useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID);
