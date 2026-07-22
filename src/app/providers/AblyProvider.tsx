@@ -22,12 +22,6 @@ export const createAblyClient = () => {
   key: apiKey,
   clientId: 'staff-dashboard',    /// needed later if you add presence
   
-  // key: 'completely-fake-key:for-local-testing', // For local implementation
-  // endpoint: 'localhost',
-  // port: 8080,
-  // tls: false,               // Crucial: Node ws server uses HTTP/WS, not HTTPS/WSS
-  // useBinaryProtocol: false, // Crucial: Instructs the Ably SDK to speak JSON instead of MsgPack
-  
   // autoConnect: true,
   // echoMessages: false, // High-performance option: ignores your own echo events
 });

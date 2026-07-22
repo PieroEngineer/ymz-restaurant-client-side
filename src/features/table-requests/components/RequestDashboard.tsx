@@ -1,30 +1,27 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { type TableRequestPayload } from '@/features/table-requests/types';
+import { type TableRequestPayload } from '@/features/table-requests/types/api.types';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
 import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
 import { axiosClient } from '@/shared/api/axiosClient';
+import { toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
+import type { TableRequest } from '@/features/table-requests/types/domain.types';
 
 export function RequestDashboard() {
   const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
 
   // Initial load fetches currently open requests via Axios
-  const { data: tableRequests } = useSuspenseQuery<TableRequestPayload[]>({
+  const { data: tableRequests } = useSuspenseQuery<TableRequest[]>({
     queryKey,
     queryFn: async () => {
-      const response = await axiosClient.get(`requests/${MOCK_MENU_RESTAURANT_ID}`);
-      return response.data; // Expecting TableRequestPayload[]
+      const response = await axiosClient.get<TableRequestPayload[]>(`requests/${MOCK_MENU_RESTAURANT_ID}`);
+      console.log(`🔎  Raw data :\n ${JSON.stringify(response.data)}`)
+      return response.data.map(toDomainTableRequest);
     },
   });
-
-  console.log(`Snapshot of requests:\n ${tableRequests}`)
-
+  
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
-  /*const { updateRequestStatus } =*/ useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID);
-
-  const handleAccept = (id: string) => {
-    console.log(`Accepted request: ${id}`);
-  };
+  const { updateRequestStatus } = useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID, tableRequests);
 
   const handleDecline = (id: string) => {
     console.log(`Declined request: ${id}`);
@@ -59,9 +56,9 @@ export function RequestDashboard() {
         {tableRequests.map((tableRequest) => (
           <TableRequestCard
             key={tableRequest.requestId}
-            request={tableRequest}
-            onAccept={handleAccept}
-            onDecline={handleDecline}
+            requestData={tableRequest}
+            onAcceptCardFromQueue={updateRequestStatus}
+            onDeclineRequest={handleDecline}
           />
         ))}
       </div>

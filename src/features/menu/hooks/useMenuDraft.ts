@@ -47,7 +47,7 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
     
               try {
                 await menuApi.uploadImageToS3(
-                  mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),
+                  mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),  // TODO: Remove this hardcoding
                   fileToUpload,
                 );
               } catch (s3UploadError) {

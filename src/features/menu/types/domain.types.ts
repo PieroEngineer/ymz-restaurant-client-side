@@ -5,7 +5,6 @@ export interface MenuPage {
   pageNumber: number;
 }
 
-
 export interface DishItem { // TODO: Moving to this 
   id: string;
   name: string;

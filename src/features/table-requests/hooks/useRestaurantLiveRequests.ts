@@ -1,9 +1,14 @@
 import { useChannel } from 'ably/react';
-import { useQueryClient } from '@tanstack/react-query';
-import type { TableRequestPayload } from '@/features/table-requests/types/index';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
+import type { TableRequestPayload, RequestUpdatePayload } from '@/features/table-requests/types/api.types';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
+import { toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
+import type { TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
+import type { UpdateStatusVariables } from '@/features/table-requests/types/support/cardFields.types';
+import { requestApi } from '@/features/table-requests/api/requestApi';
+import { updateTableRequestState } from '@/features/table-requests/helpers/handleuUpdate';
 
-export const useRestaurantLiveRequests = (restaurantId: string) => {
+export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequests: TableRequest[]) => {
   const queryClient = useQueryClient();
   const queryKey = ['restaurant', restaurantId, 'active-requests'];
 
@@ -11,7 +16,8 @@ export const useRestaurantLiveRequests = (restaurantId: string) => {
 
   const { channel } = useChannel(channelName, (message) => {
     const { name, data } = message;
-    const payload = data as TableRequestPayload;
+    const requestPayload = data as TableRequestPayload;
+    const request = toDomainTableRequest(requestPayload)
 
     // ✅ 2. Use a comma here instead of template literal to view the full object details
     console.log("✉️ Real-time Ably Frame arrived:", message);
@@ -22,24 +28,24 @@ export const useRestaurantLiveRequests = (restaurantId: string) => {
      * Instead of refetching the whole list via Axios, we intercept the event 
      * and surgically mutate the TanStack Query array cache in real-time.
      */
-    queryClient.setQueryData<TableRequestPayload[]>(
+    queryClient.setQueryData<TableRequest[]>(
       queryKey,
 
       (oldRequests = []) => {
         switch (name) {
           case 'table-requested':
             // Insert new request at the top of the list
-            return [payload, ...oldRequests];
+            return [request, ...oldRequests];
 
           case 'request-updated':
             // Update an existing ticket (e.g., ETA changed, or payment successful)
             return oldRequests.map((req) => 
-              req.requestId === payload.requestId ? { ...req, ...payload } : req
+              req.requestId === request.requestId ? { ...req, ...request } : req
             );
 
           case 'request-cleared':
             // Remove from view once seated
-            return oldRequests.filter((req) => req.requestId !== payload.requestId);
+            return oldRequests.filter((req) => req.requestId !== request.requestId);
 
           default:
             return oldRequests;
@@ -48,10 +54,52 @@ export const useRestaurantLiveRequests = (restaurantId: string) => {
     );
   });
 
-  // Action restaurant takes to accept/clear requests, broadcasting it back to the system
-  const updateRequestStatus = async (requestId: string, nextStatus: 'preparing' | 'arrived') => {
-    await channel.publish('restaurant-action', { requestId, nextStatus });
-  };
+  const {mutate, isPending} = useMutation({
+    mutationFn: async ({requestId, newState}: UpdateStatusVariables) => {
 
-  return { updateRequestStatus };
+      // TODO: Find get the request of the user from "currentTableRequests" and confirm if the transition if valid (e.g. Going from queued to accepted is valid)
+      const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
+
+      if (!currentRequest) {
+        throw new Error(`Request with ID ${requestId} not found in current table requests.`);
+      }
+
+      const requestUpdate: RequestUpdatePayload = { /// Consider Don't use "Payload" our the API handler. So, this line should have a local entity
+        userId: currentRequest.userId,
+        requestId: requestId,
+        newState: newState,
+      }
+
+      await requestApi.updateStatus(requestUpdate);
+    },
+
+    onMutate: async ({requestId, newState}) => {
+      await queryClient.cancelQueries({ queryKey: queryKey });
+
+      const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
+      const previousState = currentRequest?.state
+
+      queryClient.setQueryData<TableRequest[]>(queryKey, (oldRequests) =>
+        updateTableRequestState(requestId, newState, oldRequests)
+      );
+
+      return { previousState };
+    },
+
+    onError: (_err, _newRequestData, context) => {
+      console.error('🔴  Critical database upload synchronization failure:', _err);
+      if (context?.previousState) {
+        queryClient.setQueryData(queryKey, context.previousState); // rollback on failure
+        /// Consider include a invalidation of cache here
+      }  
+    },
+
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({ queryKey: queryKey }); // reconcile with server truth either way
+    // },
+  })
+
+  return { 
+    updateRequestStatus: (requestId: string, newState: TableRequestState) => mutate({requestId, newState})
+  };
 };

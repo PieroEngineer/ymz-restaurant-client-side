@@ -19,7 +19,7 @@ import { AddPageIcon } from "@/features/menu/components/icons/AddPageIcon";
 import { UpdatePageIcon } from "@/features/menu/components/icons/UpdatePageIcon";
 import { RemovePageIcon } from "@/features/menu/components/icons/RemovePageIcon";
 
-export function MenuManagerPage() {
+export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" where necessary
 
     // ===== ®️ Ref values =====
 

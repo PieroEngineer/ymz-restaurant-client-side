@@ -1,4 +1,4 @@
-import { type TableRequest } from '@/features/table-requests/types';
+import { type TableRequest } from '@/features/table-requests/types/api.types';
 
 export const MOCK_TABLE_REQUESTS: TableRequest[] = [
   {
