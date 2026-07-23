@@ -36,8 +36,8 @@ export function TableRequestCard({
     },
     READY: {
       label: 'Aceptado',
-      colorBg: 'bg-[#ff3131]',
-      relatedInfo: [...commonPrePaidInfo, {nomination: 'Estado', value: 'En Menú'}]
+      colorBg: 'bg-[#ff751f]',
+      relatedInfo: [...commonPrePaidInfo, {nomination: 'Estado', value: 'En Menú'}] //TODO: Control that "value" 
     },
     PAID: {
       label: 'Pagado',

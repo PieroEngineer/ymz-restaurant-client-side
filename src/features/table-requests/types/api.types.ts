@@ -14,6 +14,11 @@ export interface TableRequestPayload {
   // TODO: Add the parameters that I include in TablePayload
 }
 
+export interface UpdateInfoPayload{
+  requestId: string,
+  newStatus: TableRequestState
+}
+
 // ===== Output Formats =====
 export interface RequestUpdatePayload {
   userId: string,

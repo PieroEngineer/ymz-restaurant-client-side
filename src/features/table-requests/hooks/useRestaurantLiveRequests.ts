@@ -1,6 +1,6 @@
 import { useChannel } from 'ably/react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import type { TableRequestPayload, RequestUpdatePayload } from '@/features/table-requests/types/api.types';
+import type { TableRequestPayload, RequestUpdatePayload, UpdateInfoPayload } from '@/features/table-requests/types/api.types';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
 import type { TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
@@ -16,8 +16,7 @@ export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequ
 
   const { channel } = useChannel(channelName, (message) => {
     const { name, data } = message;
-    const requestPayload = data as TableRequestPayload;
-    const request = toDomainTableRequest(requestPayload)
+    
 
     // ✅ 2. Use a comma here instead of template literal to view the full object details
     console.log("✉️ Real-time Ably Frame arrived:", message);
@@ -34,18 +33,20 @@ export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequ
       (oldRequests = []) => {
         switch (name) {
           case 'table-requested':
+            const newRequestPayload = data as TableRequestPayload;
+            const request = toDomainTableRequest(newRequestPayload)
             // Insert new request at the top of the list
             return [request, ...oldRequests];
 
-          case 'request-updated':
+          case 'request-status-updated': 
             // Update an existing ticket (e.g., ETA changed, or payment successful)
-            return oldRequests.map((req) => 
-              req.requestId === request.requestId ? { ...req, ...request } : req
-            );
+            const updateInfo = data as UpdateInfoPayload;
 
-          case 'request-cleared':
-            // Remove from view once seated
-            return oldRequests.filter((req) => req.requestId !== request.requestId);
+            return updateTableRequestState(updateInfo.requestId, updateInfo.newStatus, oldRequests)
+
+          // case 'request-cleared':
+          //   // Remove from view once seated
+          //   return oldRequests.filter((req) => req.requestId !== request.requestId);
 
           default:
             return oldRequests;
