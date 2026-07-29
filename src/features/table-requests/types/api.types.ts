@@ -19,6 +19,26 @@ export interface UpdateInfoPayload{
   newStatus: TableRequestState
 }
 
+export interface OrderPreselectionPayload{
+  requestId: string,
+  userId: string,
+  userName: string,
+  // lastUpdateTimestamp: number,
+  arrivalTimeInMinutes: number,
+  groupSize: number,
+  totalCostInCents: number,
+  // currentDistanceInMeters: number,   // TODO
+  onPaidTimeStamp: number,
+  // customerArrived: Boolean,
+  orderSelections: OrderItemPayload[]
+}
+interface OrderItemPayload{
+  dishId: string
+  dishName: string,
+  quantity: number
+  historicalUnitPriceInCents: number
+}
+
 // ===== Output Formats =====
 export interface RequestUpdatePayload {
   userId: string,

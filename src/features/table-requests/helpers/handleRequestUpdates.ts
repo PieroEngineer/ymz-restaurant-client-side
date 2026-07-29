@@ -5,9 +5,14 @@ export const updateTableRequestState = (
     newState: TableRequestState,
     requests?: TableRequest[],
 ): TableRequest[] =>
-
   (requests ?? []).map((request) =>
     request.requestId === requestId
       ? { ...request, state: newState }
       : request
   );
+
+export const removeTableRequest = (
+    requestId: string,
+    requests?: TableRequest[],
+): TableRequest[] =>
+  (requests ?? []).filter((request) => request.requestId !== requestId);

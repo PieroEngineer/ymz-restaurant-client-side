@@ -1,5 +1,7 @@
 export type TableRequestState = 'QUEUED' | 'ACCEPTED' | 'READY' | 'PAID';
 
+//  export type OrderState = 'PRESELECTED' | 'PAID'; // TODO: Later, remove "PAID" from "TableRequestState" and implement "OrderState"
+
 export interface TableRequest {
   requestId: string,
   userName: string,
@@ -20,4 +22,24 @@ export interface TableRequest {
   */
 
   /// Maybe the userId should be added
+}
+
+export interface Order {
+  requestId: string,
+  userId: string,
+  userName: string,
+  // lastUpdateTimestamp: number,
+  arrivalTimeInMinutes: number,
+  groupSize: number,
+  totalCostInCents: number,
+  // currentDistanceInMeters: number,   // TODO
+  onPaidTimeStamp: number,
+  customerArrived: Boolean,
+  orderSelections: OrderItem[]
+}
+export interface OrderItem {
+  dishId: string,
+  dishName: string,
+  quantity: number,
+  historicalUnitPriceInCents: number
 }

@@ -1,12 +1,12 @@
 import { useChannel } from 'ably/react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import type { TableRequestPayload, RequestUpdatePayload, UpdateInfoPayload } from '@/features/table-requests/types/api.types';
+import type { TableRequestPayload, RequestUpdatePayload, UpdateInfoPayload, OrderPreselectionPayload } from '@/features/table-requests/types/api.types';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
 import type { TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
 import type { UpdateStatusVariables } from '@/features/table-requests/types/support/cardFields.types';
 import { requestApi } from '@/features/table-requests/api/requestApi';
-import { updateTableRequestState } from '@/features/table-requests/helpers/handleuUpdate';
+import { updateTableRequestState } from '@/features/table-requests/helpers/handleRequestUpdates';
 
 export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequests: TableRequest[]) => {
   const queryClient = useQueryClient();
@@ -16,7 +16,7 @@ export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequ
 
   const { channel } = useChannel(channelName, (message) => {
     const { name, data } = message;
-    
+
 
     // ✅ 2. Use a comma here instead of template literal to view the full object details
     console.log("✉️ Real-time Ably Frame arrived:", message);
@@ -40,13 +40,14 @@ export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequ
 
           case 'request-status-updated': 
             // Update an existing ticket (e.g., ETA changed, or payment successful)
-            const updateInfo = data as UpdateInfoPayload;
+            const updateInfoPayload = data as UpdateInfoPayload;
 
-            return updateTableRequestState(updateInfo.requestId, updateInfo.newStatus, oldRequests)
+            return updateTableRequestState(updateInfoPayload.requestId, updateInfoPayload.newStatus, oldRequests)
 
-          // case 'request-cleared':
-          //   // Remove from view once seated
-          //   return oldRequests.filter((req) => req.requestId !== request.requestId);
+          case 'order-preselected': // (AI checkpoint)
+            const preselectedOrderPayload = data as OrderPreselectionPayload;
+            //...
+            return
 
           default:
             return oldRequests;

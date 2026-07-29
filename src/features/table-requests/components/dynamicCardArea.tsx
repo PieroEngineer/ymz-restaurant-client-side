@@ -1,13 +1,18 @@
-import type { TableRequestState } from "@/features/table-requests/types/domain.types";
+import { OrderSummaryTable } from "@/features/table-requests/components/inlineTable";
+import type { OrderItem, TableRequestState } from "@/features/table-requests/types/domain.types";
 
 interface DynamicCardAreaProps{
     status: TableRequestState;
+    selectedOrder?: OrderItem[];
     onAcceptCardFromQueue?: () => void;
     onDeclineRequest?: () => void;
 }
 
-export function DynamicCardArea({status, onAcceptCardFromQueue, onDeclineRequest}: DynamicCardAreaProps) {
+export function DynamicCardArea({status, selectedOrder = [], onAcceptCardFromQueue, onDeclineRequest}: DynamicCardAreaProps) {
+  console.log(`🔎🍖  Order selections (In dynamic area):\n ${JSON.stringify(selectedOrder)}`)
+  
   switch (status) {
+    
     case 'QUEUED':
       return (
         <div className="w-full grid grid-cols-2 gap-3">
@@ -27,16 +32,20 @@ export function DynamicCardArea({status, onAcceptCardFromQueue, onDeclineRequest
             </button>
         </div>
     )
+    
     case 'ACCEPTED':
       return (
       <span className="font-sans text-xs font-semibold text-[#ff3131] animate-pulse mt-1">
         Esperando respuesta
       </span>
       )
-    case 'READY':
-      return <p></p>;
-    case 'PAID':
-      return <p></p>;
+    
+      case 'READY':
+        return <p></p>;
+    
+      case 'PAID':
+      return OrderSummaryTable({items: selectedOrder})
+
     default:
       return <p></p>;
   }

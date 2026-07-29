@@ -1,0 +1,99 @@
+import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
+import { useCallback } from 'react';
+import { toDomainOrder, toDomainTableRequest } from "@/features/table-requests/api/mappers/inboundMappers";
+import { requestApi } from "@/features/table-requests/api/requestApi";
+import { removeTableRequest, updateTableRequestState } from "@/features/table-requests/helpers/handleRequestUpdates";
+import type { OrderPreselectionPayload, RequestUpdatePayload, TableRequestPayload, UpdateInfoPayload } from "@/features/table-requests/types/api.types";
+import type { TableRequest, TableRequestState } from "@/features/table-requests/types/domain.types";
+import type { UpdateStatusVariables } from "@/features/table-requests/types/support/cardFields.types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Message } from "ably";
+
+
+
+export const useRequests = (currentTableRequests: TableRequest[]) => {
+    const queryClient = useQueryClient();
+    const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
+
+    const {mutate, isPending} = useMutation({
+    mutationFn: async ({requestId, newState}: UpdateStatusVariables) => {
+
+      // TODO: Find get the request of the user from "currentTableRequests" and confirm if the transition if valid (e.g. Going from queued to accepted is valid)
+      const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
+
+      if (!currentRequest) {
+        throw new Error(`Request with ID ${requestId} not found in current table requests.`);
+      }
+
+      const requestUpdate: RequestUpdatePayload = { /// Consider Don't use "Payload" our the API handler. So, this line should have a local entity
+        userId: currentRequest.userId,
+        requestId: requestId,
+        newState: newState,
+      }
+
+      await requestApi.updateStatus(requestUpdate);
+    },
+
+    onMutate: async ({requestId, newState}) => {
+      await queryClient.cancelQueries({ queryKey: queryKey });
+
+      const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
+      const previousState = currentRequest?.state
+
+      queryClient.setQueryData<TableRequest[]>(queryKey, (oldRequests) =>
+        updateTableRequestState(requestId, newState, oldRequests)
+      );
+
+      return { previousState };
+    },
+
+    onError: (_err, _newRequestData, context) => {
+      console.error('🔴  Critical database upload synchronization failure:', _err);
+      if (context?.previousState) {
+        queryClient.setQueryData(queryKey, context.previousState); // rollback on failure
+        /// Consider include a invalidation of cache here
+      }  
+    },
+
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({ queryKey: queryKey }); // reconcile with server truth either way
+    // },
+  })
+
+    /**
+     * High Performance Delta Updates:
+     * Instead of refetching the whole list via Axios, we intercept the event 
+     * and surgically mutate the TanStack Query array cache in real-time.
+     */
+    return {
+        onRequestUpdate: useCallback((eventName: string, data: Message /*TODO: Incorrect type*/) => {queryClient.setQueryData<TableRequest[]>(
+            queryKey,
+            (oldRequests = []) => {
+                switch (eventName) {
+                    case 'table-requested':
+                        const newRequestPayload = data as TableRequestPayload;
+                        const request = toDomainTableRequest(newRequestPayload)
+                        // Insert new request at the top of the list
+                        return [request, ...oldRequests];
+
+                    case 'request-status-updated': 
+                        // Update an existing ticket (e.g., ETA changed, or payment successful)
+                        const updateInfoPayload = data as UpdateInfoPayload;
+
+                        return updateTableRequestState(updateInfoPayload.requestId, updateInfoPayload.newStatus, oldRequests)
+
+                    case 'new-order-preselected':
+                        const preselectedOrderPayload = data as OrderPreselectionPayload;
+                        const order = toDomainOrder(preselectedOrderPayload)
+                        return removeTableRequest(order.requestId, oldRequests)
+
+                    default:
+                        return oldRequests;
+                }
+            }
+        )}, [queryClient]),
+
+        updateRequestStatus: (requestId: string, newState: TableRequestState) => mutate({requestId, newState})
+    
+    }
+}
