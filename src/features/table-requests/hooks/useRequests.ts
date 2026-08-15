@@ -6,14 +6,23 @@ import { removeTableRequest, updateTableRequestState } from "@/features/table-re
 import type { OrderPreselectionPayload, RequestUpdatePayload, TableRequestPayload, UpdateInfoPayload } from "@/features/table-requests/types/api.types";
 import type { TableRequest, TableRequestState } from "@/features/table-requests/types/domain.types";
 import type { UpdateStatusVariables } from "@/features/table-requests/types/support/cardFields.types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import type { Message } from "ably";
-
-
+import { axiosClient } from "@/shared/api/axiosClient";
 
 export const useRequests = () => {  // TODO: Some throwed errors aren't cached, cover them after tests
     const queryClient = useQueryClient();
     const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
+
+  // Initial load fetches currently open requests via Axios
+    const { data: tableRequests } = useSuspenseQuery<TableRequest[]>({  //  TODO: Move inside the hook "useRequests"
+      queryKey: queryKey,
+      queryFn: async () => {
+        const response = await axiosClient.get<TableRequestPayload[]>(`requests/${MOCK_MENU_RESTAURANT_ID}`);
+        console.log(`🔎  Raw request data :\n ${JSON.stringify(response.data)}`)
+        return response.data.map(toDomainTableRequest);
+      },
+    });
 
     const {mutate/*, isPending*/} = useMutation({
     mutationFn: async ({requestId, newState}: UpdateStatusVariables) => {
@@ -74,7 +83,8 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
      * and surgically mutate the TanStack Query array cache in real-time.
      */
     return {
-        onRequestUpdate: useCallback((eventName: string, data: Message /*TODO: Incorrect type*/) => {queryClient.setQueryData<TableRequest[]>(
+        currentState: tableRequests,
+        onRequestUpdated: useCallback((eventName: string, data: Message /*TODO: Incorrect type*/) => {queryClient.setQueryData<TableRequest[]>(
             queryKey,
             (oldRequests = []) => {
                 switch (eventName) {

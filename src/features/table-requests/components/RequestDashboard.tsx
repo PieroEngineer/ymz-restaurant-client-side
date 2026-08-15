@@ -1,10 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { type OrderPreselectionPayload, type TableRequestPayload } from '@/features/table-requests/types/api.types';
-import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
-import { axiosClient } from '@/shared/api/axiosClient';
-import { toDomainOrder, toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
-import type { Order, TableRequest } from '@/features/table-requests/types/domain.types';
 import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTimeDashboard';
@@ -12,28 +6,6 @@ import type { CardInfoItem } from '@/features/table-requests/types/support/cardF
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 export function RequestDashboard() {
-  const requestQueryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
-  const orderQueryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-orders'];
-
-  // Initial load fetches currently open requests via Axios
-  const { data: tableRequests } = useSuspenseQuery<TableRequest[]>({  //  TODO: Move inside the hook "useRequests"
-    queryKey: requestQueryKey,
-    queryFn: async () => {
-      const response = await axiosClient.get<TableRequestPayload[]>(`requests/${MOCK_MENU_RESTAURANT_ID}`);
-      console.log(`🔎  Raw request data :\n ${JSON.stringify(response.data)}`)
-      return response.data.map(toDomainTableRequest);
-    },
-  });
-
-  const { data: customerOrders } = useSuspenseQuery<Order[]>({  //  TODO: Move inside the hook "useOrders"
-    queryKey: orderQueryKey,
-    queryFn: async () => {
-      const response = await axiosClient.get<OrderPreselectionPayload[]>(`payments/${MOCK_MENU_RESTAURANT_ID}`);
-      console.log(`🔎  Raw Order data :\n ${JSON.stringify(response.data)}`)
-      return response.data.map(toDomainOrder);
-    },
-  }); 
-  
   // TODO: Analyze if the above double GET request can be unified
 
   const requests = useRequests();
@@ -41,13 +13,13 @@ export function RequestDashboard() {
   
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
   // const { updateRequestStatus } = useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID, tableRequests);
-  useRealTimeDashboard(requests.onRequestUpdate, orders.onOrderUpdate)
+  useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate)
 
   const handleDecline = (id: string) => {
     console.log(`Declined request: ${id}`);
   };
 
-  if (tableRequests.length === 0 && customerOrders.length === 0) {
+  if (requests.currentState.length === 0 && orders.currentState.length === 0) {
     return (
       <div className="text-center max-w-sm animate-fade-in">
         <div className="relative w-12 h-12 mx-auto mb-4">
@@ -87,7 +59,7 @@ export function RequestDashboard() {
           onDeclineRequest={handleDecline}
         /> */}
        
-        {tableRequests.map((tableRequest) => {
+        {requests.currentState.map((tableRequest) => {
 
           const relatedInfo: CardInfoItem[] = [
             {nomination: 'Personas', value: String(tableRequest.groupSize)},
@@ -106,7 +78,7 @@ export function RequestDashboard() {
           />  
         })}
 
-        {customerOrders.map((customerOrder) => {
+        {orders.currentState.map((customerOrder) => {
 
           console.log(`🔎📃  Customer Order :\n ${JSON.stringify(customerOrder)}`)
 
