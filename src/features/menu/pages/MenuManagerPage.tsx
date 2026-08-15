@@ -186,7 +186,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
           <div className="w-112.5 lg:w-130 flex flex-col items-stretch h-screen shrink-0">
             <div className="h-16 shrink-0 flex justify-center">
               <SupportFrame
-                // onUndo={handlers.undo}   /// Retake it when undo & redo come back
+                // onUndo={handlers.undo}   // TODO Retake it when undo & redo come back
                 // onRedo={handlers.redo}
                 // canUndo={canUndo}
                 // canRedo={canRedo}

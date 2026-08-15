@@ -34,7 +34,7 @@ export interface Order {
   totalCostInCents: number,
   // currentDistanceInMeters: number,   // TODO
   onPaidTimeStamp: number,
-  customerArrived: Boolean,
+  customerArrived: boolean,
   orderSelections: OrderItem[]
 }
 export interface OrderItem {

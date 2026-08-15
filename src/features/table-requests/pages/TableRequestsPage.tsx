@@ -7,9 +7,9 @@ import { RequestDashboard } from '@/features/table-requests/components/RequestDa
 // import { MOCK_TABLE_REQUESTS } from '@/features/table-requests/constants/mockRequests';
 
 import { ColoredExplorationIcon } from '@/features/table-requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
-import { LightExplorationIcon } from '@/features/table-requests/components/icons/LightExplorationIcon';    // toggle the color by 
+import { LightExplorationIcon } from '@/features/table-requests/components/icons/LightExplorationIcon';        // toggle the color by 
 import { ColoredMgfGlassIcon } from '@/features/table-requests/components/icons/ColoredMgfGlassIcon';     // clicking, so only 2
-import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/LightMgfGlassIcon';        // images necessary here
+import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/LightMgfGlassIcon';            // images necessary here
 import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
 import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
