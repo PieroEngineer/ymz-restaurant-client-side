@@ -73,6 +73,20 @@ export function RequestDashboard() {
         without creating giant empty spaces beneath shorter cards.
       */}
       <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 [column-fill:auto]">
+         
+        {/*X Mockup*/}
+        {/* <TableRequestCard
+          key={'123'}
+          requestId = {'123'}
+          userName = {'Mockup'}
+          state = {'PAID'}
+          checkpointTimestamp = {Date.now() + 5*60_000}
+          relatedInfo = {[{nomination: 'Pago', value: String(centsToDecimal(12345))}]}
+          selectedOrder = {[{dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 12345}]}
+          onAcceptCardFromQueue={requests.updateRequestStatus}
+          onDeclineRequest={handleDecline}
+        /> */}
+       
         {tableRequests.map((tableRequest) => {
 
           const relatedInfo: CardInfoItem[] = [
@@ -116,19 +130,6 @@ export function RequestDashboard() {
             onDeclineRequest={handleDecline}
           />  
         })}
-
-        {/*X Mockup*/}
-        <TableRequestCard
-          key={'mockup'}
-          requestId = {'mockup'}
-          userName = {'Mockup'}
-          state = {'QUEUED'}
-          checkpointTimestamp = {0}
-          relatedInfo = {[{nomination: 'Pago', value: String(centsToDecimal(12345))}]}
-          selectedOrder = {[]}
-          onAcceptCardFromQueue = {requests.updateRequestStatus}
-          onDeclineRequest = {handleDecline}
-        />
 
       </div>
     </div>
