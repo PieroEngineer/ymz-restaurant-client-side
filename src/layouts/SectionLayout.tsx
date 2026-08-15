@@ -5,6 +5,7 @@ import yummizilogo from '@/assets/images/yummizi-logo.webp'
 // import { GearIcon } from '@/shared/components/icons/GearIcon';
 import { MenuIcon } from '@/shared/components/icons/MenuIcon';
 import { HouseIcon } from '@/shared/components/icons/HouseIcon';
+import { RequestIcon } from '@/shared/components/icons/RequestIcon';
 import { ExitIcon } from '@/shared/components/icons/ExitIcon';
 
 interface SectionLayoutProps {
@@ -58,10 +59,18 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <div className="mx-4 my-2 border-t border-brand-navy/20 shrink-0" />
 
           {/* Menu Option */}
-          <button className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: '/menu' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <MenuIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Menu
+            </span>
+          </button>
+
+          {/* Dashboard Option */}
+          <button onClick = {() => navigate({ to: '/dashboard' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+            <RequestIcon className='size-10'/>
+            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+              Solicitudes
             </span>
           </button>
 

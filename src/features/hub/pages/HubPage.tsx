@@ -33,7 +33,7 @@ export function HubPage() {
           {/* Header text occupies exactly 30% of the column height */}
           <div className="h-[30%] flex items-center pb-4">
             <span className="font-sans font-bold text-brand-navy tracking-wider text-lg md:text-4xl leading-none text-shadow-yummizi">  {/*Here there will be the restaurant logo instead of the name*/}
-              Bienvenidos <br />Pollitos chiken
+              Bienvenidos <br />Pollitos chiken {/*FIXME*/}
             </span>
           </div>
           {/* Button occupies the remaining 70% of the column height */}
