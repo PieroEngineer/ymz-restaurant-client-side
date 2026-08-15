@@ -1,5 +1,4 @@
 import type { OrderItem } from '@/features/table-requests/types/domain.types';
-import React from 'react';
 
 interface OrderRowProps {
   item: OrderItem;
@@ -49,7 +48,7 @@ export function OrderSummaryTable({items}: OrderSummaryTableProps) {    // TODO:
     return (
       <div
         className={`
-          bg-white rounded-2xl border-2 border-[#ff751f] 
+          bg-white rounded-2xl border-2 border-brand-primary 
           shadow-[0_4px_16px_rgba(0,0,0,0.25)] p-5 sm:p-6 
           overflow-x-auto
         `}
