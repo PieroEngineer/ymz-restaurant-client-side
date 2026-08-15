@@ -40,7 +40,7 @@ export function TableRequestsPage() {
 
       {/* 2. TOP-RIGHT COMPACT ALTERNATING IMAGE CONTROLLER */}
       <div className="absolute top-0 right-0 mt-2 mr-4 z-20">
-        <div className="bg-white rounded-xl p-3 shadow-md flex items-center gap-4 border border-brand-navy/5">
+        <div className="relative bg-white rounded-xl p-3 shadow-md flex items-center gap-4 border border-brand-navy/5">
 
           {/* Alternating Slot 2 */}
           <button 
@@ -67,6 +67,12 @@ export function TableRequestsPage() {
                 <ColoredExplorationIcon className="size-15 text-brand-primary scale-105" />
             )}
           </button>
+
+          <div className="absolute inset-0 bg-black/60 rounded-xl backdrop-blur-[1px] flex items-center justify-center cursor-not-allowed select-none">
+              <span className="text-white text-sm font-bold tracking-wider uppercase">
+                  Próximamente
+              </span>
+          </div>
 
         </div>
       </div>
