@@ -6,7 +6,7 @@ import { injectRemoteUrlInPages } from '@/features/menu/helpers/handleRemoteUrls
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelpers';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
-import { decimalToCents, ensureCostFormat } from '@/features/menu/helpers/moneyValidators';
+import { decimalToCents, ensureCostFormat } from '@/shared/utils/moneyConversors';
 
 export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
   

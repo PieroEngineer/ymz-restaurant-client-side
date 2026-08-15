@@ -9,6 +9,7 @@ import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTimeDashboard';
 import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
+import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 export function RequestDashboard() {
   const requestQueryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
@@ -33,9 +34,9 @@ export function RequestDashboard() {
     },
   }); 
   
-  // TODO: Analyze if the above double GET request can be unified 
+  // TODO: Analyze if the above double GET request can be unified
 
-  const requests = useRequests(tableRequests);
+  const requests = useRequests();
   const orders = useOrders();
   
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
@@ -90,6 +91,7 @@ export function RequestDashboard() {
             onDeclineRequest={handleDecline}
           />  
         })}
+
         {customerOrders.map((customerOrder) => {
 
           console.log(`🔎📃  Customer Order :\n ${JSON.stringify(customerOrder)}`)
@@ -97,7 +99,7 @@ export function RequestDashboard() {
           const relatedInfo: CardInfoItem[] = [
             {nomination: 'Personas', value: String(customerOrder.groupSize)},
             {nomination: 'Llegaría en', value: String(customerOrder.arrivalTimeInMinutes)},
-            {nomination: 'Pago', value: String(customerOrder.totalCostInCents)}
+            {nomination: 'Pago', value: String(centsToDecimal(customerOrder.totalCostInCents))}
           ] ///, {nomination: 'A', value: ''};
 
           const expectedArrivalTime = (customerOrder.arrivalTimeInMinutes*60_000) + customerOrder.onPaidTimeStamp;  // TODO: FIx the minutes difference here (It's giving an exrta minute when reload the page)
@@ -114,6 +116,20 @@ export function RequestDashboard() {
             onDeclineRequest={handleDecline}
           />  
         })}
+
+        {/*X Mockup*/}
+        <TableRequestCard
+          key={'mockup'}
+          requestId = {'mockup'}
+          userName = {'Mockup'}
+          state = {'QUEUED'}
+          checkpointTimestamp = {0}
+          relatedInfo = {[{nomination: 'Pago', value: String(centsToDecimal(12345))}]}
+          selectedOrder = {[]}
+          onAcceptCardFromQueue = {requests.updateRequestStatus}
+          onDeclineRequest = {handleDecline}
+        />
+
       </div>
     </div>
   );

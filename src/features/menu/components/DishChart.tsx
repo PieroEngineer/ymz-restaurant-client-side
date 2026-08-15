@@ -4,7 +4,7 @@ import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.ty
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
 import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
-import { centsToDecimal } from '../helpers/moneyValidators';
+import { centsToDecimal } from '../../../shared/utils/moneyConversors';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items

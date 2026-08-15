@@ -11,18 +11,22 @@ import type { Message } from "ably";
 
 
 
-export const useRequests = (currentTableRequests: TableRequest[]) => {
+export const useRequests = () => {  // TODO: Some throwed errors aren't cached, cover them after tests
     const queryClient = useQueryClient();
     const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
 
-    const {mutate, isPending} = useMutation({
+    const {mutate/*, isPending*/} = useMutation({
     mutationFn: async ({requestId, newState}: UpdateStatusVariables) => {
 
       // TODO: Find get the request of the user from "currentTableRequests" and confirm if the transition if valid (e.g. Going from queued to accepted is valid)
+      const currentTableRequests = queryClient.getQueryData<TableRequest[]>(['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests']) 
+      if(currentTableRequests === undefined){
+        throw new Error("🔴Current table requests are undefined. Cannot update request status.");
+      }
       const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
 
       if (!currentRequest) {
-        throw new Error(`Request with ID ${requestId} not found in current table requests.`);
+        throw new Error(`🔴Request with ID ${requestId} not found in current table requests.`);
       }
 
       const requestUpdate: RequestUpdatePayload = { /// Consider Don't use "Payload" our the API handler. So, this line should have a local entity
@@ -37,6 +41,10 @@ export const useRequests = (currentTableRequests: TableRequest[]) => {
     onMutate: async ({requestId, newState}) => {
       await queryClient.cancelQueries({ queryKey: queryKey });
 
+      const currentTableRequests = queryClient.getQueryData<TableRequest[]>(queryKey);
+      if (currentTableRequests === undefined) {
+        throw new Error("🔴Current table requests are undefined. Cannot update request status.");
+      }
       const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);
       const previousState = currentRequest?.state
 
@@ -51,7 +59,7 @@ export const useRequests = (currentTableRequests: TableRequest[]) => {
       console.error('🔴  Critical database upload synchronization failure:', _err);
       if (context?.previousState) {
         queryClient.setQueryData(queryKey, context.previousState); // rollback on failure
-        /// Consider include a invalidation of cache here
+        /// Consider include a invalidation of cache here // If we invalidate cache here, will it generate a loop of reattemps?
       }  
     },
 

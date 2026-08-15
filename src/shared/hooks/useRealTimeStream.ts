@@ -7,7 +7,7 @@ interface StreamConfig {
   queryKey: unknown[];
 }
 
-export function useRealTimeStream({ channel, eventKey, queryKey }: StreamConfig) {
+export function useRealTimeStream({ channel, eventKey, queryKey }: StreamConfig) {  // TODO: Unnused?
   const queryClient = useQueryClient();
 
   useEffect(() => {
