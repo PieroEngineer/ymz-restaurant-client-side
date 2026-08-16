@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react';
+
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
 import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
@@ -5,8 +7,24 @@ import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTim
 import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
-export function RequestDashboard() {
+type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
+
+type RequestDashboardScrollTarget = {
+  section: RequestDashboardScrollSection;
+  triggerKey: number;
+};
+
+type RequestDashboardProps = {
+  scrollTarget?: RequestDashboardScrollTarget | null;
+};
+
+export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps) {
   // TODO: Analyze if the above double GET request can be unified
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const queuedRequestsRef = useRef<HTMLDivElement>(null);
+  const readyRequestsRef = useRef<HTMLDivElement>(null);
+  const paidRequestsRef = useRef<HTMLDivElement>(null);
 
   const requests = useRequests();
   const orders = useOrders();
@@ -18,6 +36,29 @@ export function RequestDashboard() {
   const handleDecline = (id: string) => {
     console.log(`Declined request: ${id}`);
   };
+
+  useEffect(() => {
+    if (!scrollTarget) return;
+
+    const sectionRefs = {
+      queued: queuedRequestsRef,
+      ready: readyRequestsRef,
+      paid: paidRequestsRef,
+    };
+
+    const scrollContainer = scrollContainerRef.current;
+    const targetBlock = sectionRefs[scrollTarget.section].current;
+
+    if (!scrollContainer || !targetBlock) return;
+
+    const scrollContainerBox = scrollContainer.getBoundingClientRect();
+    const targetBlockBox = targetBlock.getBoundingClientRect();
+
+    scrollContainer.scrollTo({
+      top: targetBlockBox.top - scrollContainerBox.top + scrollContainer.scrollTop,
+      behavior: 'smooth',
+    });
+  }, [scrollTarget]);
 
   if (requests.currentState.length === 0 && orders.currentState.length === 0) {
     return (
@@ -39,9 +80,10 @@ export function RequestDashboard() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+    <div ref={scrollContainerRef} className="w-full h-full flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
 
-      <div className="flex flex-wrap items-start gap-4">
+      {/* QUEUED REQUESTS BLOCK*/}
+      <div ref={queuedRequestsRef} className="flex flex-wrap items-start gap-4 scroll-mt-2">
         {requests.currentState.map((tableRequest) => {
 
           if(tableRequest.state === 'QUEUED' || tableRequest.state === 'ACCEPTED') {
@@ -67,7 +109,8 @@ export function RequestDashboard() {
         })}
       </div>
 
-      <div className="flex flex-wrap items-start gap-4">
+      {/* READY REQUESTS BLOCK*/}
+      <div ref={readyRequestsRef} className="flex flex-wrap items-start gap-4 scroll-mt-2">
         {requests.currentState.map((tableRequest) => {
 
           if(tableRequest.state === 'READY' || tableRequest.state === 'PAY_TRIED') {
@@ -94,7 +137,8 @@ export function RequestDashboard() {
         })}
       </div>
 
-      <div className="flex flex-wrap items-start gap-4">
+      {/* PAID REQUESTS BLOCK*/}
+      <div ref={paidRequestsRef} className="flex flex-wrap items-start gap-4 scroll-mt-2">
         {orders.currentState.map((customerOrder) => {
 
           console.log(`🔎📃  Customer Order :\n ${JSON.stringify(customerOrder)}`)
