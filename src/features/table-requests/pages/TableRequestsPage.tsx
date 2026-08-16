@@ -34,7 +34,7 @@ export function TableRequestsPage() {
       {/* 1. TOP-CENTER TITLE BANNER RECTANGLE */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-brand-navy px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue">
         <h1 className="font-heading mx-30 my-5 font-bold text-white text-2xl lg:text-5xl tracking-wide whitespace-nowrap">
-          Solicitudes en cola
+          Solicitudes para mesa
         </h1>
       </div>
 
