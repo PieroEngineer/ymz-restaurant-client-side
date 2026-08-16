@@ -1,4 +1,4 @@
-export type TableRequestState = 'QUEUED' | 'ACCEPTED' | 'READY' | 'PAID';
+export type TableRequestState = 'QUEUED' | 'ACCEPTED' | 'PAY_TRIED' |  'READY' | 'PAID';
 
 //  export type OrderState = 'PRESELECTED' | 'PAID'; // TODO: Later, remove "PAID" from "TableRequestState" and implement "OrderState"
 

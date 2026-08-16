@@ -42,6 +42,10 @@ export function TableRequestCard({
       label: 'Aceptado',
       colorBg: 'bg-[#ff751f]',
     },
+    PAY_TRIED: {
+      label: 'Pagando',
+      colorBg: 'bg-[#ff751f]',
+    },
     PAID: {
       label: 'Pagado',
       colorBg: 'bg-[#00bf63]',

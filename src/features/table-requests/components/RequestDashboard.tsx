@@ -70,10 +70,11 @@ export function RequestDashboard() {
       <div className="flex flex-wrap items-start gap-4">
         {requests.currentState.map((tableRequest) => {
 
-          if(tableRequest.state === 'READY') {
+          if(tableRequest.state === 'READY' || tableRequest.state === 'PAY_TRIED') {
             const relatedInfo: CardInfoItem[] = [
               {nomination: 'Personas', value: String(tableRequest.groupSize)},
-              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
+              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)},
+              {nomination: 'Estado', value: tableRequest.state === 'READY' ? 'Seleccionando' : 'En pago'}
             ] ///, {nomination: 'A', value: ''};
             
             return (
