@@ -47,7 +47,7 @@ export function RequestDashboard() {
           if(tableRequest.state === 'QUEUED' || tableRequest.state === 'ACCEPTED') {
             const relatedInfo: CardInfoItem[] = [
               {nomination: 'Personas', value: String(tableRequest.groupSize)},
-              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
+              {nomination: 'Tiempo plan.', value: String(tableRequest.arrivlaTime)}
             ] ///, {nomination: 'A', value: ''};
             
             return (
@@ -73,7 +73,7 @@ export function RequestDashboard() {
           if(tableRequest.state === 'READY' || tableRequest.state === 'PAY_TRIED') {
             const relatedInfo: CardInfoItem[] = [
               {nomination: 'Personas', value: String(tableRequest.groupSize)},
-              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)},
+              {nomination: 'Tiempo plan.', value: String(tableRequest.arrivlaTime)},
               {nomination: 'Estado', value: tableRequest.state === 'READY' ? 'Seleccionando' : 'En pago'}
             ] ///, {nomination: 'A', value: ''};
             
@@ -101,7 +101,7 @@ export function RequestDashboard() {
 
           const relatedInfo: CardInfoItem[] = [
             {nomination: 'Personas', value: String(customerOrder.groupSize)},
-            {nomination: 'Llegaría en', value: String(customerOrder.arrivalTimeInMinutes)},
+            {nomination: 'Tiempo plan.', value: String(customerOrder.arrivalTimeInMinutes)},
             {nomination: 'Pago', value: String(centsToDecimal(customerOrder.totalCostInCents))}
           ] ///, {nomination: 'A', value: ''};
 

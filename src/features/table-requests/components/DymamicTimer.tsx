@@ -36,5 +36,5 @@ export function DymamicTimer({ checkpointTimestamp }: { checkpointTimestamp: num
     ? Math.max(0, Math.ceil((checkpointTimestamp - Date.now()) / 60000))
     : Math.floor((Date.now() - checkpointTimestamp) / 60000);
 
-  return <span>{countdownMode ? `${minutes} min left` : `${minutes} min ago`}</span>;
+  return <span>{countdownMode ? `Llega en ${minutes}` : `Hace ${minutes}`}</span>;
 }
