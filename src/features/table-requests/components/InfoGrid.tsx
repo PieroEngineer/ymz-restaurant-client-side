@@ -21,8 +21,8 @@ export const InfoGrid = ({ items }: InfoGridProps) => {
     <ul 
       className={`
         grid grid-cols-1 sm:grid-cols-2 
-        gap-x-8 gap-y-6 
-        w-full max-w-4xl mx-auto p-6
+        gap-x-8 gap-y-4 
+        w-full max-w-4xl mx-auto p-2
       `}
     >
       {items.map((item, index) => {
@@ -32,7 +32,7 @@ export const InfoGrid = ({ items }: InfoGridProps) => {
         return (
             <li
                 className={`
-                    flex flex-col items-center text-center p-4 transition-all duration-200
+                    flex flex-col items-center text-center transition-all duration-200
                     ${isCentredRow ? 'sm:col-span-2 justify-self-center w-full max-w-md' : ''}
                 `}
                 >
@@ -48,7 +48,7 @@ export const InfoGrid = ({ items }: InfoGridProps) => {
 
                 {/* Short, thin, and gray horizontal decorative line */}
                 <div 
-                    className="w-12 h-px bg-gray-200 mt-4 transition-colors hover:bg-gray-300" 
+                    className="w-12 h-px bg-gray-200 mt-1 transition-colors hover:bg-gray-300" 
                     aria-hidden="true" 
                 />
             </li>

@@ -15,7 +15,7 @@ export function DynamicCardArea({status, selectedOrder = [], onAcceptCardFromQue
     
     case 'QUEUED':
       return (
-        <div className="w-full grid grid-cols-2 gap-3">
+        <div className="w-full grid grid-cols-2">
             <button
             type="button"
             onClick={() => onDeclineRequest?.()}

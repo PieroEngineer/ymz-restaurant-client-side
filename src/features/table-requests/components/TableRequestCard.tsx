@@ -56,7 +56,7 @@ export function TableRequestCard({
     <article className="w-full bg-white rounded-2xl shadow-yummizi border border-slate-100 flex flex-col overflow-hidden break-inside-avoid transition-all duration-200 hover:-translate-y-0.5">
       
       {/* SECTION 1: Main Text */}
-      <header className="py-4 text-center">
+      <header className="py-2 text-center">
         <h2 className="font-heading font-bold text-brand-navy text-xl lg:text-2xl tracking-wide">
           {userName}
         </h2>
@@ -80,7 +80,7 @@ export function TableRequestCard({
       </div>
 
       {/* SECTION 4: Dynamic Space */}
-      <footer className="p-4 flex flex-col items-center gap-3">
+      <footer className="p-2 flex flex-col items-center gap-3">
         <DynamicCardArea
           status = { state }
           selectedOrder =  { selectedOrder }

@@ -19,24 +19,24 @@ export function RequestDashboard() {
     console.log(`Declined request: ${id}`);
   };
 
-  if (requests.currentState.length === 0 && orders.currentState.length === 0) {
-    return (
-      <div className="text-center max-w-sm animate-fade-in">
-        <div className="relative w-12 h-12 mx-auto mb-4">
-          <span className="absolute inset-0 rounded-full bg-brand-primary/20 animate-ping" />
-          <span className="relative w-12 h-12 rounded-full bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center">
-            <span className="w-3 h-3 rounded-full bg-brand-primary" />
-          </span>
-        </div>
-        <h3 className="font-heading font-bold text-brand-navy text-lg mb-1">
-          Live Stream Workspace Active
-        </h3>
-        <p className="text-brand-navy/50 font-sans text-xs leading-relaxed">
-          Waiting for incoming live table requests from clients...
-        </p>
-      </div>
-    );
-  }
+  // if (requests.currentState.length === 0 && orders.currentState.length === 0) {
+  //   return (
+  //     <div className="text-center max-w-sm animate-fade-in">
+  //       <div className="relative w-12 h-12 mx-auto mb-4">
+  //         <span className="absolute inset-0 rounded-full bg-brand-primary/20 animate-ping" />
+  //         <span className="relative w-12 h-12 rounded-full bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center">
+  //           <span className="w-3 h-3 rounded-full bg-brand-primary" />
+  //         </span>
+  //       </div>
+  //       <h3 className="font-heading font-bold text-brand-navy text-lg mb-1">
+  //         Live Stream Workspace Active
+  //       </h3>
+  //       <p className="text-brand-navy/50 font-sans text-xs leading-relaxed">
+  //         Waiting for incoming live table requests from clients...
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-full h-full overflow-y-auto pr-2 custom-scrollbar">
@@ -47,17 +47,25 @@ export function RequestDashboard() {
       <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 [column-fill:auto]">
          
         {/*X Mockup*/}
-        {/* <TableRequestCard
+        <TableRequestCard
           key={'123'}
           requestId = {'123'}
           userName = {'Mockup'}
           state = {'PAID'}
           checkpointTimestamp = {Date.now() + 5*60_000}
-          relatedInfo = {[{nomination: 'Pago', value: String(centsToDecimal(12345))}]}
-          selectedOrder = {[{dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 12345}]}
+          relatedInfo = {[
+            {nomination: 'ABC', value: "ABCDE"},
+            {nomination: 'EFG', value: "HIGJK"},
+            {nomination: 'Pago', value: String(centsToDecimal(12345))},
+          ]}
+          selectedOrder = {[
+            {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+            {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+            {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+          ]}
           onAcceptCardFromQueue={requests.updateRequestStatus}
           onDeclineRequest={handleDecline}
-        /> */}
+        />
        
         {requests.currentState.map((tableRequest) => {
 
