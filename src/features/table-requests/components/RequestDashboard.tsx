@@ -39,32 +39,61 @@ export function RequestDashboard() {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto pr-2 custom-scrollbar">
+    <div className="w-full h-full flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
 
       <div className="flex flex-wrap items-start gap-4">
-       
         {requests.currentState.map((tableRequest) => {
 
-          const relatedInfo: CardInfoItem[] = [
-            {nomination: 'Personas', value: String(tableRequest.groupSize)},
-            {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
-          ] ///, {nomination: 'A', value: ''};
-          
-          return (
-            <div key={tableRequest.requestId} className="w-72 shrink-0">
-              <TableRequestCard
-                requestId = {tableRequest.requestId}
-                userName = {tableRequest.userName}
-                state = {tableRequest.state}
-                checkpointTimestamp = {tableRequest.onQueuedTimestamp}
-                relatedInfo = {relatedInfo}
-                onAcceptCardFromQueue={requests.updateRequestStatus}
-                onDeclineRequest={handleDecline}
-              />
-            </div>
-          );
+          if(tableRequest.state === 'QUEUED' || tableRequest.state === 'ACCEPTED') {
+            const relatedInfo: CardInfoItem[] = [
+              {nomination: 'Personas', value: String(tableRequest.groupSize)},
+              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
+            ] ///, {nomination: 'A', value: ''};
+            
+            return (
+              <div key={tableRequest.requestId} className="w-72 shrink-0">
+                <TableRequestCard
+                  requestId = {tableRequest.requestId}
+                  userName = {tableRequest.userName}
+                  state = {tableRequest.state}
+                  checkpointTimestamp = {tableRequest.onQueuedTimestamp}
+                  relatedInfo = {relatedInfo}
+                  onAcceptCardFromQueue={requests.updateRequestStatus}
+                  onDeclineRequest={handleDecline}
+                />
+              </div>
+            );
+          }
         })}
+      </div>
 
+      <div className="flex flex-wrap items-start gap-4">
+        {requests.currentState.map((tableRequest) => {
+
+          if(tableRequest.state === 'READY') {
+            const relatedInfo: CardInfoItem[] = [
+              {nomination: 'Personas', value: String(tableRequest.groupSize)},
+              {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
+            ] ///, {nomination: 'A', value: ''};
+            
+            return (
+              <div key={tableRequest.requestId} className="w-72 shrink-0">
+                <TableRequestCard
+                  requestId = {tableRequest.requestId}
+                  userName = {tableRequest.userName}
+                  state = {tableRequest.state}
+                  checkpointTimestamp = {tableRequest.onQueuedTimestamp}
+                  relatedInfo = {relatedInfo}
+                  onAcceptCardFromQueue={requests.updateRequestStatus}
+                  onDeclineRequest={handleDecline}
+                />
+              </div>
+            );
+          }
+        })}
+      </div>
+
+      <div className="flex flex-wrap items-start gap-4">
         {orders.currentState.map((customerOrder) => {
 
           console.log(`🔎📃  Customer Order :\n ${JSON.stringify(customerOrder)}`)
@@ -92,7 +121,6 @@ export function RequestDashboard() {
             </div>
           );
         })}
-
       </div>
     </div>
   );

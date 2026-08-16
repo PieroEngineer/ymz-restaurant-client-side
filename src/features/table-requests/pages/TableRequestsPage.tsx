@@ -102,8 +102,8 @@ export function TableRequestsPage() {
 
       {/* 4. WORKSPACE GRID FRAME: RESERVED FOR INCOMING LIVE TABLE REQUESTS */}
       {/* Positioned cleanly below the header banners (pt-24) and to the right of the status rail (pl-24) */}
-      <main className="w-full h-full pt-28 pl-24 pr-4 pb-4 overflow-hidden">
-        <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-8 transition-colors duration-300">
+      <main className="w-full h-full pt-28 pl-24 pr-4 pb-2 overflow-hidden">
+        <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-2 transition-colors duration-300">
           
           {/* Scalable Container Delivery */}
 
