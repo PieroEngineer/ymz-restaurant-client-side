@@ -40,32 +40,146 @@ export function RequestDashboard() {
 
   return (
     <div className="w-full h-full overflow-y-auto pr-2 custom-scrollbar">
-      {/* Masonry Grid Optimization: 
-        Using columns properties allows dynamic item heights to fit together neatly vertically 
-        without creating giant empty spaces beneath shorter cards.
-      */}
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4 [column-fill:auto]">
-         
+
+      {/* Order block */}
+      <div className="flex flex-wrap items-start gap-4">
         {/*X Mockup*/}
-        <TableRequestCard
-          key={'123'}
-          requestId = {'123'}
-          userName = {'Mockup'}
-          state = {'PAID'}
-          checkpointTimestamp = {Date.now() + 5*60_000}
-          relatedInfo = {[
-            {nomination: 'ABC', value: "ABCDE"},
-            {nomination: 'EFG', value: "HIGJK"},
-            {nomination: 'Pago', value: String(centsToDecimal(12345))},
-          ]}
-          selectedOrder = {[
-            {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
-            {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
-            {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
-          ]}
-          onAcceptCardFromQueue={requests.updateRequestStatus}
-          onDeclineRequest={handleDecline}
-        />
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
+
+        {/*X Mockup*/}
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
+
+        {/*X Mockup*/}
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
+
+        {/*X Mockup*/}
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
+
+        {/*X Mockup*/}
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
+
+        {/*X Mockup*/}
+        <div className="min-w-70 basis-70 flex-1 max-w-full">
+          <TableRequestCard
+            key={'123'}
+            requestId = {'123'}
+            userName = {'Mockup'}
+            state = {'PAID'}
+            checkpointTimestamp = {Date.now() + 5*60_000}
+            relatedInfo = {[
+              {nomination: 'ABC', value: "ABCDE"},
+              {nomination: 'EFG', value: "HIGJK"},
+              {nomination: 'Pago', value: String(centsToDecimal(12345))},
+            ]}
+            selectedOrder = {[
+              {dishId: 'mockup-dish', quantity: 2, dishName: "Visteck a lo pobre con moyabamba", historicalUnitPriceInCents: 125},
+              {dishId: 'mockup-dish', quantity: 5, dishName: "mockup", historicalUnitPriceInCents: 12},
+              {dishId: 'mockup-dish', quantity: 2, dishName: "mockup", historicalUnitPriceInCents: 1},
+            ]}
+            onAcceptCardFromQueue={requests.updateRequestStatus}
+            onDeclineRequest={handleDecline}
+          />
+        </div>
        
         {requests.currentState.map((tableRequest) => {
 
@@ -74,16 +188,19 @@ export function RequestDashboard() {
             {nomination: 'Llegaría en', value: String(tableRequest.arrivlaTime)}
           ] ///, {nomination: 'A', value: ''};
           
-          return <TableRequestCard
-            key={tableRequest.requestId}
-            requestId = {tableRequest.requestId}
-            userName = {tableRequest.userName}
-            state = {tableRequest.state}
-            checkpointTimestamp = {tableRequest.onQueuedTimestamp}
-            relatedInfo = {relatedInfo}
-            onAcceptCardFromQueue={requests.updateRequestStatus}
-            onDeclineRequest={handleDecline}
-          />  
+          return (
+            <div key={tableRequest.requestId} className="min-w-70 basis-70 flex-1 max-w-full">
+              <TableRequestCard
+                requestId = {tableRequest.requestId}
+                userName = {tableRequest.userName}
+                state = {tableRequest.state}
+                checkpointTimestamp = {tableRequest.onQueuedTimestamp}
+                relatedInfo = {relatedInfo}
+                onAcceptCardFromQueue={requests.updateRequestStatus}
+                onDeclineRequest={handleDecline}
+              />
+            </div>
+          );
         })}
 
         {orders.currentState.map((customerOrder) => {
@@ -98,17 +215,20 @@ export function RequestDashboard() {
 
           const expectedArrivalTime = (customerOrder.arrivalTimeInMinutes*60_000) + customerOrder.onPaidTimeStamp;  // TODO: FIx the minutes difference here (It's giving an exrta minute when reload the page)
           
-          return <TableRequestCard
-            key={customerOrder.requestId}                 // TODO: Analize if it's ok if it works with request ID or I should create an order ID (Mayber just change the name in backend)  
-            requestId = {customerOrder.requestId}  //
-            userName = {customerOrder.userName}
-            state = {'PAID'}
-            checkpointTimestamp = {expectedArrivalTime}
-            relatedInfo = {relatedInfo}
-            selectedOrder = {customerOrder.orderSelections}
-            onAcceptCardFromQueue={requests.updateRequestStatus}
-            onDeclineRequest={handleDecline}
-          />  
+          return (
+            <div key={customerOrder.requestId} className="min-w-70 basis-70 flex-1 max-w-full">
+              <TableRequestCard
+                requestId = {customerOrder.requestId}  //
+                userName = {customerOrder.userName}
+                state = {'PAID'}
+                checkpointTimestamp = {expectedArrivalTime}
+                relatedInfo = {relatedInfo}
+                selectedOrder = {customerOrder.orderSelections}
+                onAcceptCardFromQueue={requests.updateRequestStatus}
+                onDeclineRequest={handleDecline}
+              />
+            </div>
+          );
         })}
 
       </div>
