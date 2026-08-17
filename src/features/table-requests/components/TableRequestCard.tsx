@@ -89,7 +89,7 @@ export function TableRequestCard({
           status = { state }
           selectedOrder =  { selectedOrder }
           onAcceptCardFromQueue = { () => onAcceptCardFromQueue?.(requestId, 'ACCEPTED') }
-          onDeclineRequest = { () => onDeclineRequest?.(requestId) }
+          onDeclineRequest = { () => onDeclineRequest?.(requestId) }  // TODO: It will be used once the websockets of the customer's client-side is in different screens
         />
       </footer>
     </article>

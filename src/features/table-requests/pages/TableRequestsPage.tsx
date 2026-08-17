@@ -15,7 +15,7 @@ import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon'
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 
-
+//X
 // import { useSuspenseQuery } from '@tanstack/react-query';
 // import { type TableRequestPayload } from '@/features/table-requests/types';
 // import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
@@ -35,7 +35,7 @@ export function TableRequestsPage() {
 
   const channelName = `restaurant:${MOCK_MENU_RESTAURANT_ID}:ops`;
 
-  const scrollDashboardTo = (section: RequestDashboardScrollSection) => {
+  const scrollDashboardTo = (section: RequestDashboardScrollSection) => { // TODO: Move it to a hook
     setDashboardScrollTarget({
       section,
       triggerKey: Date.now(),

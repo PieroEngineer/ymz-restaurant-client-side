@@ -6,8 +6,7 @@ import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTimeDashboard';
 import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
-
-type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
+import type { RequestDashboardScrollSection } from '@/features/table-requests/types/support/requestDashboard.types';
 
 type RequestDashboardScrollTarget = {
   section: RequestDashboardScrollSection;
@@ -30,11 +29,10 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
   const orders = useOrders();
   
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
-  // const { updateRequestStatus } = useRestaurantLiveRequests(MOCK_MENU_RESTAURANT_ID, tableRequests);
   useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate)
 
   const handleDecline = (id: string) => {
-    console.log(`Declined request: ${id}`);
+    console.log(`Declined request: ${id}`); // TODO
   };
 
   useEffect(() => {

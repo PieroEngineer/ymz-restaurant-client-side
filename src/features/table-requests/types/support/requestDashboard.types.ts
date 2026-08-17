@@ -1,0 +1,1 @@
+export type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';

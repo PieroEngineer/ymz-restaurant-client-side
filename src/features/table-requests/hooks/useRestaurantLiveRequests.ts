@@ -4,10 +4,13 @@ import type { TableRequestPayload, RequestUpdatePayload, UpdateInfoPayload, Orde
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { toDomainTableRequest } from '@/features/table-requests/api/mappers/inboundMappers';
 import type { TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
-import type { UpdateStatusVariables } from '@/features/table-requests/types/support/cardFields.types';
+import type { UpdateStatusAttributes } from '@/features/table-requests/types/support/cardFields.types';
 import { requestApi } from '@/features/table-requests/api/requestApi';
 import { updateTableRequestState } from '@/features/table-requests/helpers/handleRequestUpdates';
 
+/**
+ * @deprecated 
+ */
 export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequests: TableRequest[]) => {
   const queryClient = useQueryClient();
   const queryKey = ['restaurant', restaurantId, 'active-requests'];
@@ -57,7 +60,7 @@ export const useRestaurantLiveRequests = (restaurantId: string, currentTableRequ
   });
 
   const {mutate, isPending} = useMutation({
-    mutationFn: async ({requestId, newState}: UpdateStatusVariables) => {
+    mutationFn: async ({requestId, newState}: UpdateStatusAttributes) => {
 
       // TODO: Find get the request of the user from "currentTableRequests" and confirm if the transition if valid (e.g. Going from queued to accepted is valid)
       const currentRequest = currentTableRequests.find((request) => request.requestId === requestId);

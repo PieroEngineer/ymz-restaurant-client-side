@@ -5,7 +5,11 @@ export interface CardInfoItem {
     value: string;
 }
 
-export type UpdateStatusVariables = {
+export interface UpdateStatusAttributes {
   requestId: string;
   newState: TableRequestState;
 };
+
+export interface CancelRequestAttributes { 
+  requestId: string;
+}

@@ -39,11 +39,21 @@ interface OrderItemPayload{
   historicalUnitPriceInCents: number
 }
 
+export interface CancelRequestPayload {
+  requestId: string
+}
+
 // ===== Output Formats =====
 export interface RequestUpdatePayload {
   userId: string,
   requestId: string,
   newState: TableRequestState
+}
+
+export interface DenyRequestPayload {
+  userId: string,
+  restaurantId: string,  // TODO: The restaurant ID should be passed later for all the requests because the backend can identify who is doing the request and associate it with the cognito key
+  actor: String
 }
 
 // ===== Response formats =====
