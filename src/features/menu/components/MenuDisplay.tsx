@@ -230,10 +230,10 @@ export function MenuDisplay({
                         onCoordinateDeleted(pin.id);
                         setHoveredPinId(null);
                       }}
-                      className="hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition-transform cursor-pointer"
                       title="Borrar pin"
                     >
-                      <TrashIcon className='size-6'/>
+                      <TrashIcon className='size-5'/>
                     </button>
 
                     {/* ▫️ Vertical partition separation wireframe rule line */}
@@ -247,10 +247,10 @@ export function MenuDisplay({
                         onTargetRowFocusRequested(pin.id);
                         setHoveredPinId(null); // Collapse frame after jumping
                       }}
-                      className="hover:scale-120 active:scale-90 transition-transform cursor-pointer"
+                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                       title="Editar pin"
                     >
-                      <PencilIcon className='size-6'/>
+                      <PencilIcon className='size-5'/>
                     </button>
                   </div>
                 </div>

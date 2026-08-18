@@ -4,14 +4,14 @@ import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.ty
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 import type { EditableDishField } from '@/features/menu/types/support/selection.types';
 import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
-import { centsToDecimal } from '../../../shared/utils/moneyConversors';
+import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
   items: (DishItem & { orderNumber: number })[];
   activeEditCell: { id: string; field: EditableDishField } | null;
   setActiveEditCell: (cell: { id: string; field: EditableDishField } | null) => void;
-  onUpdateItem: (id: string, field: EditableDishField, value: string, fallbackValue?: number) => void;
+  onUpdateItem: (id: string, field: EditableDishField, value: string | boolean, fallbackValue?: number) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
   onRowClicked: (pageId: string) => void;
   // 🔌 New Sync Connection Prop Lines
@@ -33,14 +33,14 @@ export function DishChart({
   const activeInputRef = useRef<HTMLInputElement>(null);
 
   // ⚡ Auto-focus hook: Whenever the active edit cell changes, ensure the input field is focused
-  useEffect(() => {
+  useEffect(() => { // TODO: Remove the 
     if (activeEditCell && activeInputRef.current) {
       activeInputRef.current.focus();
       activeInputRef.current.select(); // Highlight the existing text for quick overwriting
     }
   }, [activeEditCell]);
 
-  // 🧮 Keyboard Navigation Engine: Handles Tab and Enter loops
+  // 🧮 Keyboard Navigation Engine: Handles Tab and Enter loops // TODO: Move to a hook
   const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: EditableDishField) => { /// currentId is deductible with "findIndex"
 
     const isTab = e.key === 'Tab';
@@ -117,6 +117,7 @@ export function DishChart({
               <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Nombre</th>
               <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Costo</th>
               <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Tiempo de prep.</th>
+              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Dispon.</th>
             </tr>
           </thead>
           
@@ -166,15 +167,6 @@ export function DishChart({
                   onClick={() => setActiveEditCell({ id: dish.id, field: 'priceCents' })}
                 >
                   {activeEditCell?.id === dish.id && activeEditCell?.field === 'priceCents' ? (
-                    // <input //X If the bellow one works, delete this
-                    //   ref={activeInputRef}
-                    //   type="text"
-                    //   value={dish.priceCents}
-                    //   onChange={(e) => onUpdateItem(dish.id, 'priceCents', validateCostInput(e.target.value))}
-                    //   onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'priceCents')}
-                    //   onBlur={() => setActiveEditCell(null)}
-                    //   className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-mono font-medium"
-                    // />
                     <input
                       ref={activeInputRef}
                       type="text"
@@ -198,6 +190,8 @@ export function DishChart({
                   )}
                 </td>
 
+                
+
                 {/* ⏱️ ITEM PREPARATION TIME COMPONENT CELL */}
                 <td 
                   className="border-l border-brand-navy/10 px-4"
@@ -219,6 +213,26 @@ export function DishChart({
                     </span>
                   )}
                 </td>
+
+                {/* ✅ ITEM AVAILABILITY COMPONENT CELL */}
+                <td className="border-l border-brand-navy/10 px-4">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUpdateItem(dish.id, 'isOutOfStock', !dish.isOutOfStock);
+                    }}
+                    aria-label={dish.isOutOfStock ? 'Marcar como disponible' : 'Marcar como no disponible'}
+                    className={`min-w-16 rounded-full px-3 py-1 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+                      dish.isOutOfStock
+                        ? 'bg-red-500 hover:bg-red-600'
+                        : 'bg-green-500 hover:bg-green-600'
+                    }`}
+                  >
+                    {dish.isOutOfStock ? 'No' : 'Sí'}
+                  </button>
+                </td>
+
               </tr>
             ))}
           </tbody>

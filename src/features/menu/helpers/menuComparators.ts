@@ -22,7 +22,8 @@ export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[]
           snap.prepTime !== cd.prepTime ||
           snap.coordinateXInMenu !== cd.coordinateXInMenu ||
           snap.coordinateYInMenu !== cd.coordinateYInMenu ||
-          snap.parentPageId !== cd.parentPageId;  /// Is this line necessary? Maybe it's always false
+          snap.parentPageId !== cd.parentPageId ||
+          snap.isOutOfStock !== cd.isOutOfStock;  /// Is this line necessary? Maybe it's always false
       });
 
     return isPagesChanged || isDishesChanged;
@@ -72,7 +73,7 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 imageUrl: cd.imageUrl, 
                 priceCents: cd.priceCents,
                 prepTime: cd.prepTime,
-                isOutOfStock: true, // Preset parameter enforcement rule
+                isOutOfStock: cd.isOutOfStock,
                 menuPageId: cd.parentPageId,
                 coordinateXInMenu: cd.coordinateXInMenu,
                 coordinateYInMenu: cd.coordinateYInMenu,
@@ -86,6 +87,7 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 if (original.prepTime !== cd.prepTime) updatedFields.prepTime =cd. prepTime;
                 if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
                 if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;
+                if (original.isOutOfStock !== cd.isOutOfStock) updatedFields.isOutOfStock = cd.isOutOfStock;
                 if (original.parentPageId !== cd.parentPageId) updatedFields.menuPageId = cd.parentPageId;  /// Is it possible? perhaps this line is unnecessary
                 /// Is it necessary to include  "createAt"?
                 

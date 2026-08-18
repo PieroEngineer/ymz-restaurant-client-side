@@ -120,17 +120,20 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
       });
     },
 
-    onUpdateDishData: (id: string, field: EditableDishField, anyValue: string, fallbackValue = 0) => {
+    onUpdateDishData: (id: string, field: EditableDishField, anyValue: string | boolean, fallbackValue = 0) => {
 
-      let savedValue: string | number
+      let savedValue: string | number | boolean;
       // Ensuring the field match with the type   // TODO: Find another path where the 
       switch(field){
         case "name":
         case "prepTime":
-          savedValue = anyValue;
+          savedValue = String(anyValue);
           break;
         case "priceCents":
-          savedValue = decimalToCents(parseFloat(ensureCostFormat(anyValue)) || fallbackValue);
+          savedValue = decimalToCents(parseFloat(ensureCostFormat(String(anyValue))) || fallbackValue);
+          break;
+        case "isOutOfStock":
+          savedValue = Boolean(anyValue);
           break;
       }
 
