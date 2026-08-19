@@ -7,21 +7,22 @@ import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.type
 export function useMenuSyncStatus(
   draftPages: MenuPage[],
   draftDishes: DishItem[],
-  isSyncPending: boolean,
+  isUploading: boolean,
 
-  menuSnapshot: Menu | undefined,
+  menuSnapshot: Menu,
 
-  isLoading: boolean,
-  isError: boolean,
+  isErrorInUpload: boolean,
+  isDownloading: boolean,
+  isErrorInDownload: boolean,
 ): SyncStatusType {
   
   return useMemo((): SyncStatusType => {
-    if (isLoading || isSyncPending) return 'Loading';
-    if (isError && !menuSnapshot) return 'Unsynchronized';
-    if (!menuSnapshot) return 'Loading';
+    if (isDownloading) return 'Downloading';
+    if (isUploading) return 'Uploading';
+    if (isErrorInUpload || isErrorInDownload) return 'Error';
 
     return checkMinimalDiff(draftPages, draftDishes, menuSnapshot)
       ? 'Unsynchronized'
       : 'Synchronized';
-  }, [draftPages, draftDishes, menuSnapshot, isLoading, isError, isSyncPending]);
+  }, [draftPages, draftDishes, menuSnapshot, isDownloading, isErrorInDownload, isUploading]);
 }

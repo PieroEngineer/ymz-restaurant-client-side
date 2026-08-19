@@ -75,10 +75,11 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     const syncStatus = useMenuSyncStatus(
         menuDraft.draftMenuPages,
         menuDraft.draftDishItems,
-        menuDraft.isUploading || isDownloading,
+        menuDraft.isUploading,
 
         menuDraft.syncMenu,
 
+        menuDraft.isErrorInUpload,
         isDownloading,
         isErrorInDownload,
     );

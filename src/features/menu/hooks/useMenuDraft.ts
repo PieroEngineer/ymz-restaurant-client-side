@@ -26,7 +26,7 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
     }
   }, [initialMenu]);  /// This useEffect does a good job while "InitialMenu" only runs once a mount
 
-  const {mutate, isPending} = useMutation({
+  const {mutate, isPending, isError} = useMutation({
     mutationFn: async () => {
       console.log('⬆️  Trying to upload data')
       if(initialMenu ===undefined) return []
@@ -99,6 +99,8 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
     draftDishItems,
 
     isUploading: isPending,
+
+    isErrorInUpload: isError,
 
     onUploadMenu: () => mutate(),
 

@@ -11,15 +11,25 @@ export function SyncStatusIndicator({ status }: SyncStatusIndicatorProps) {
       icon: '🟢',
       label: 'Menú sincronizado'
     },
-    Loading: {
+    Downloading: {
       bg: 'bg-blue-50 border-blue-200 text-blue-700 animate-pulse',
       icon: '⏳',
-      label: 'Guardando cambios...'
+      label: 'Obteniendo menu...'
+    },
+    Uploading: {
+      bg: 'bg-blue-50 border-blue-200 text-blue-700 animate-pulse',
+      icon: '⏳',
+      label: 'Sincronizando cambios...'
     },
     Unsynchronized: {
       bg: 'bg-amber-50 border-amber-200 text-amber-700',
       icon: '🟠',
-      label: 'Cambios sin sincronizar'
+      label: 'Cambios pendientes a sincronizar'
+    },
+    Error: {
+      bg: 'bg-red-50 border-red-200 text-red-700',
+      icon: '🔴',
+      label: 'Error al conectar con la nube'
     }
   };
 

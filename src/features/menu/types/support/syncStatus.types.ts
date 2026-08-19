@@ -1,1 +1,1 @@
-export type SyncStatusType = 'Synchronized' | 'Loading' | 'Unsynchronized';
+export type SyncStatusType = 'Synchronized' | 'Downloading' | 'Uploading' | 'Unsynchronized' | 'Error';
