@@ -3,6 +3,7 @@ import { HubPage } from '@/features/hub/pages/HubPage';
 import { TableRequestsPage } from '@/features/table-requests/pages/TableRequestsPage';
 import { SectionLayout } from '@/layouts/SectionLayout';
 import { MenuManagerPage } from '@/features/menu/pages/MenuManagerPage';
+import RestaurantConfigPage from '@/features/profile/pages/RestaurantProfileConfigPage';
 
 // Root Route: Acts as the absolute base container wrapper
 const rootRoute = createRootRoute();
@@ -10,7 +11,8 @@ const rootRoute = createRootRoute();
 // Index Route: Maps the root URL ("/") directly to your fullscreen HubPage
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  // path: '/',
+  path: '/hub',
   component: HubPage,
 });
 
@@ -26,6 +28,18 @@ const dashboardRoute = createRoute({
   ),
 });
 
+const restaurantProfileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  // path: '/restaurantProfile',
+  path: '/',
+  component: () => (
+    /* Configured layout context rule: hiding top-right logo parameter */
+    <SectionLayout showLogo={false}> 
+      <RestaurantConfigPage/>
+    </SectionLayout>
+  ),
+});
+
 const menuRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/menu',
@@ -37,7 +51,7 @@ const menuRoute = createRoute({
 });
 
 // Create the unified router instance passing our route definitions
-const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute, menuRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, dashboardRoute, menuRoute, restaurantProfileRoute]);
 
 export const router = createRouter({ routeTree });
 
