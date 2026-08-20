@@ -87,7 +87,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <div className="mt-auto pt-4 flex flex-col gap-2">
             <div className="mx-4 mb-2 border-t border-brand-navy/20 shrink-0" />
             
-            <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
+            <button onClick={() => navigate({ to: '/auth' })} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
               <ExitIcon className='size-7' />
               <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
                 Salir

@@ -1,38 +1,51 @@
+import { useRef } from "react";
 
-export function AuthForm(){
+interface AuthFormProps {
+    email: string;
+    onEmailChanged: (newEmail: string) => void;
+    password: string;
+    onPasswordChanged: (newPassword: string) => void;
+}
 
-  return(
-    <div className="flex flex-col gap-3 self-start" >
+export function AuthForm({ email, onEmailChanged, password, onPasswordChanged }: AuthFormProps) {
 
-        <span className="font-heading text-2xl text-brand-navy">
-            {"Correo:"}
-        </span>
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
-        <input
-            readOnly
-            // value={value}
-            value={"mockmail@gmail.com"}
-            className={
-                "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
-                "outline-none w-full "
-            }
-        />
+    return(
+        <div className="flex flex-col gap-3 self-start" >
 
-        <span className="font-heading text-2xl text-brand-navy">
-            {"Correo:"}
-        </span>
+            <span className="font-heading text-2xl text-brand-navy">
+                {"Correo:"}
+            </span>
 
-        <input
-            readOnly
-            // value={value}
-            value={"mock password"}
-            className={
-                "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
-                "outline-none w-full "
-            }
-        />
-        
-    </div>
+            <input
+                type = "email"
+                ref = {emailInputRef}
+                defaultValue={email}
+                className={
+                    "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
+                    "outline-none w-full "
+                }
+                onBlur={() => {onEmailChanged(emailInputRef.current?.value ?? "")}}
+            />
+
+            <span className="font-heading text-2xl text-brand-navy">
+                {"Contraseña:"}
+            </span>
+
+            <input
+                type = "password"
+                ref = {passwordInputRef}
+                defaultValue={password}
+                className={
+                    "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
+                    "outline-none w-full "
+                }
+                onBlur = {() => {onPasswordChanged(passwordInputRef.current?.value ?? "")}}
+            />
+            
+        </div>
   )
 
 }

@@ -11,15 +11,14 @@ const rootRoute = createRootRoute();
 
 const AuthRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: '/auth',
   component: AuthScreen,
 });
 
 // Index Route: Maps the root URL ("/") directly to your fullscreen HubPage
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/',
-  path: '/hub',
+  path: '/',
   component: HubPage,
 });
 

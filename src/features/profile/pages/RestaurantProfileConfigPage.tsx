@@ -2,6 +2,8 @@ import { ConfigurationArea } from "@/features/profile/components/ConfigurationAr
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
 
 export default function RestaurantConfigPage() {
+
+
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
       <header

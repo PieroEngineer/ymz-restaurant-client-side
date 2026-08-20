@@ -5,7 +5,7 @@ import { generateDiffPayload } from '@/features/menu/helpers/menuComparators';
 import { injectRemoteUrlInPages } from '@/features/menu/helpers/handleRemoteUrls';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelpers';
-import type { EditableDishField } from '@/features/menu/types/support/selection.types';
+import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
 import { decimalToCents, ensureCostFormat } from '@/shared/utils/moneyConversors';
 
 export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
@@ -122,7 +122,7 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
       });
     },
 
-    onUpdateDishData: (id: string, field: EditableDishField, anyValue: string | boolean, fallbackValue = 0) => {
+    onUpdateDishData: (id: string, field: EditableDishFieldType, anyValue: string | boolean, fallbackValue = 0) => {
 
       let savedValue: string | number | boolean;
       // Ensuring the field match with the type   // TODO: Find another path where the 

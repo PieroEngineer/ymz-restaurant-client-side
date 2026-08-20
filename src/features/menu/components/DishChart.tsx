@@ -2,16 +2,16 @@ import React, { useRef, useEffect } from 'react';
 import type { DishItem } from '@/features/menu/types/domain.types';
 import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.types';
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
-import type { EditableDishField } from '@/features/menu/types/support/selection.types';
+import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
 import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
   items: (DishItem & { orderNumber: number })[];
-  activeEditCell: { id: string; field: EditableDishField } | null;
-  setActiveEditCell: (cell: { id: string; field: EditableDishField } | null) => void;
-  onUpdateItem: (id: string, field: EditableDishField, value: string | boolean, fallbackValue?: number) => void;
+  activeEditCell: { id: string; field: EditableDishFieldType } | null;
+  setActiveEditCell: (cell: { id: string; field: EditableDishFieldType } | null) => void;
+  onUpdateItem: (id: string, field: EditableDishFieldType, value: string | boolean, fallbackValue?: number) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
   onRowClicked: (pageId: string) => void;
   // 🔌 New Sync Connection Prop Lines
@@ -41,7 +41,7 @@ export function DishChart({
   }, [activeEditCell]);
 
   // 🧮 Keyboard Navigation Engine: Handles Tab and Enter loops // TODO: Move to a hook
-  const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: EditableDishField) => { /// currentId is deductible with "findIndex"
+  const handleKeyDownGridTraverse = (e: React.KeyboardEvent<HTMLInputElement>, currentId: string, currentField: EditableDishFieldType) => { /// currentId is deductible with "findIndex"
 
     const isTab = e.key === 'Tab';
     const isEnter = e.key === 'Enter';  //TODO: Enter should also jump between rows, not only within one row
