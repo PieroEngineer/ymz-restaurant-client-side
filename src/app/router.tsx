@@ -11,8 +11,7 @@ const rootRoute = createRootRoute();
 // Index Route: Maps the root URL ("/") directly to your fullscreen HubPage
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/',
-  path: '/hub',
+  path: '/',
   component: HubPage,
 });
 
@@ -30,8 +29,7 @@ const dashboardRoute = createRoute({
 
 const restaurantProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/restaurantProfile',
-  path: '/',
+    path: '/restaurantProfile',
   component: () => (
     /* Configured layout context rule: hiding top-right logo parameter */
     <SectionLayout showLogo={false}> 

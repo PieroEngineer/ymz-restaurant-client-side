@@ -49,7 +49,7 @@ export function HubPage() {
 
         {/* COLUMN 2: Stacked Buttons Container */}
         <div className="grid grid-rows-2 gap-8 h-3/4">
-          <HubButton label="Mi Restaurante" imageSrc={restaurant} />
+          <HubButton label="Mi Restaurante" imageSrc={restaurant} onClick={() => navigate({ to: '/restaurantProfile' })}/>
           <HubButton label="Mi Menú" imageSrc={menu} onClick={() => navigate({ to: '/menu' })}/>
         </div>
 

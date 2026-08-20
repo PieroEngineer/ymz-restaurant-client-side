@@ -4,7 +4,6 @@ import PinIcon from "@/features/profile/components/icon/PinIcon";
 
 
 export function ConfigurationArea(
-
 ) {
     return (
     <div className="flex flex-row items-stretch">

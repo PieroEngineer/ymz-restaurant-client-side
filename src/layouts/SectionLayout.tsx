@@ -7,6 +7,7 @@ import { MenuIcon } from '@/shared/components/icons/MenuIcon';
 import { HouseIcon } from '@/shared/components/icons/HouseIcon';
 import { RequestIcon } from '@/shared/components/icons/RequestIcon';
 import { ExitIcon } from '@/shared/components/icons/ExitIcon';
+import { StoreIcon } from '@/shared/components/icons/StoreIcon';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
@@ -71,6 +72,14 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
             <RequestIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Solicitudes
+            </span>
+          </button>
+
+          {/* Profile Option */}
+          <button onClick = {() => navigate({ to: '/restaurantProfile' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+            <StoreIcon className='size-10'/>
+            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+              Mi restaurante
             </span>
           </button>
 
