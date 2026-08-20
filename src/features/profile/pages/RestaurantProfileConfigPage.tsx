@@ -12,7 +12,7 @@ export default function RestaurantConfigPage() {
         </h1>
       </header>
 
-      <main className="flex-1 w-full flex flex-col items-center justify-center gap-3 px-6 pb-1">
+      <main className="flex-1 w-full flex items-center justify-center gap-10 px-6 pb-1">
         <ConfigurationArea />
         <ConfirmationArea />
       </main>

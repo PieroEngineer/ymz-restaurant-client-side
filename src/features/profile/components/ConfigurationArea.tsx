@@ -1,3 +1,6 @@
+import Orangepencilicon from "@/features/profile/components/icon/Orangepencilicon";
+import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
+import PinIcon from "@/features/profile/components/icon/PinIcon";
 
 
 export function ConfigurationArea(
@@ -10,13 +13,13 @@ export function ConfigurationArea(
         <section
             className="bg-[#ff6105] text-white rounded-2xl shadow-lg
                         flex flex-col items-center
-                        gap-2.5 p-4 w-72"
+                        gap-2.5 p-4 "
             >
             {/* text next to icon */}
-            <div className="flex items-center gap-2 self-start">
+            <div className="flex justify-center items-center gap-2 font-accent">
                 {/* <span className="text-sm font-medium">{MOCK.scheduleLabel}</span> */}
-                <span className="text-sm font-medium">{"Pollitos chicken"}</span>
-                {/* icon-placeholder: schedule/clock icon */}
+                <span className="text-4xl font-bold text-center">{"Pollitos chicken"}</span>
+                <Pencilicon2 className='size-8'/>
             </div>
 
             <hr
@@ -25,8 +28,7 @@ export function ConfigurationArea(
             />
 
             {/* bold text */}
-            {/* <span className="text-sm font-bold self-start">{MOCK.addressLabel}</span> */}
-            <span className="text-sm font-bold self-start">{"Horario activo*"}</span>
+            <span className="text-xl font-bold self-start">{"Horario activo*"}</span>
 
             {/* textfield + "a" + textfield */}
             <div className="flex items-center gap-2 w-full">
@@ -40,14 +42,14 @@ export function ConfigurationArea(
                     }
                 />
 
-                <span className="text-xs font-medium">a</span>
+                <span className="text-xl font-medium">a</span>
 
                 <input
                     readOnly
                     // value={value}
                     value={"18:00\nPM"}
                     className={
-                        "bg-white text-blue-700 text-sm rounded-md px-2 py-1 shadow-sm " +
+                        "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
                         "outline-none w-full "
                     }
                 />
@@ -59,39 +61,38 @@ export function ConfigurationArea(
             />
 
             {/* bold text */}
-            <span className="text-sm font-bold self-start">Datos del local</span>
+            <span className="text-xl font-bold self-start">Datos del local</span>
 
             {/* form: question label to the left of its input */}
             <div className="flex flex-col gap-2 w-full">
                 <div className="flex items-center justify-between gap-2">
-                    <label className="text-xs shrink-0">{"Ubicación*:"}</label>
+                    <label className="text-md shrink-0">{"Ubicación*:"}</label>
 
                     <button
                         type="button"
-                        className="bg-white rounded-md p-1.5 shadow-sm
+                        className="bg-transparent rounded-md p-1.5 shadow-sm
                                 flex items-center justify-center shrink-0"
                         aria-label={"Edición de ubicación"}
                     >
-                        {/* icon-placeholder: clickable upload/logo icon */}
+                        <PinIcon className='size-8'/>
                     </button>
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                    <label className="text-xs shrink-0">{"Núm. de contacto*:"}</label>
+                    <label className="text-md shrink-0">{"Núm. de contacto*:"}</label>
 
                     <input
                         readOnly
                         // value={value}
                         value={"+51 950214782"}
                         className={
-                            "bg-white text-blue-700 text-sm rounded-md px-2 py-1 shadow-sm " +
-                            "outline-none w-full max-w-38"
+                            "bg-white text-blue-700 text-sm rounded-md px-2 py-1 shadow-sm outline-none w-full max-w-38"
                         }
                     />
                 </div>
 
                 <div className="flex items-center justify-between gap-2">
-                    <label className="text-xs shrink-0">{"Núm. de pago*:"}</label>
+                    <label className="text-md shrink-0">{"Núm. de pago*:"}</label>
 
                     <input
                         readOnly
@@ -110,21 +111,20 @@ export function ConfigurationArea(
         <section
             className="bg-white rounded-2xl shadow-lg border border-orange-100
                         flex flex-col items-center
-                        gap-2.5 p-4 w-72"
+                        gap-2.5 p-4"
             style={{ color: "#ff751f" }}
         >
             <div className="flex items-center gap-2 self-start">
-                <span className="text-sm font-medium" style={{ color: "#ff751f" }}>
-                    {/* {text} */}
+                <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
                     {"QR de pago*:"}
                 </span>
                 <img
                     // src={imageUrl}
                     src={"https://placehold.co/48x48/ff751f/ffffff?text=1"}
                     alt=""
-                    className="w-8 h-8 rounded-md object-cover shrink-0"
+                    className="size-20 rounded-md object-cover shrink-0"
                 />
-                {/* icon-placeholder: edit/upload icon */}
+                    <Orangepencilicon className='size-8  fill-brand-primary'/>
             </div>
 
             <hr
@@ -133,17 +133,16 @@ export function ConfigurationArea(
             />
 
             <div className="flex items-center gap-2 self-start">
-                <span className="text-sm font-medium" style={{ color: "#ff751f" }}>
-                    {/* {text} */}
-                    {"QR de pago*:"}
+                <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
+                    {"Logo*:"}
                 </span>
                 <img
                     // src={imageUrl}
-                    src={"https://placehold.co/48x48/ff751f/ffffff?text=1"}
+                    src={"https://placehold.co/48x48/ff751f/ffffff?text=2"}
                     alt=""
-                    className="w-8 h-8 rounded-md object-cover shrink-0"
+                    className="size-20 rounded-md object-cover shrink-0"
                 />
-                {/* icon-placeholder: edit/upload icon */}
+                    <Orangepencilicon className='size-8  fill-brand-primary'/>
             </div>
 
             <hr
@@ -151,7 +150,7 @@ export function ConfigurationArea(
                 style={{ borderColor: '#ff751f', opacity: 0.6 }}
             />
 
-            <span className="text-sm font-medium self-start">
+            <span className="text-xl font-medium self-start">
                 {"Platos principales (Al menos 1*)"}
             </span>
 
