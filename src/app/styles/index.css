@@ -4,7 +4,9 @@
   /* Brand Colors */
   --color-brand-primary: #ff751f;      /* Main Orange */
   --color-brand-secondary: #d94500;    /* Complementary Darker Orange */
+  --color-brand-tertiary: #ff6105;
   --color-brand-navy: #001560;         /* App Deep Navy Text/Accents */
+  --color-brand-blue: #004aad;
   --color-brand-background: #ffffff;   /* Clean White Base */
 
   /* Custom Fonts */

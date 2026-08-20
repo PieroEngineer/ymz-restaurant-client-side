@@ -10,9 +10,7 @@ export function ConfigurationArea(
 
         {/* Restaurant info card */}
         <section
-            className="bg-[#ff6105] text-white rounded-2xl shadow-lg
-                        flex flex-col items-center
-                        gap-2.5 p-4 "
+            className="bg-brand-tertiary text-white rounded-2xl shadow-lg flex flex-col items-center gap-2.5 p-4 "
             >
             {/* text next to icon */}
             <div className="flex justify-center items-center gap-2 font-accent">

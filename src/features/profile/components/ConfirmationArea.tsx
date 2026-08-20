@@ -33,7 +33,7 @@ export function ConfirmationArea() {
                 <span className="text-white text-xl font-medium">
                 {"Guardar"}
                 </span>
-                {/* icon-placeholder: save/check icon */}
+                {/* icon-placeholder: save/check icon // With a Div, no inside the button*/}  
             </button>
 
             <CloudloadingIcon className='size-8'/>
@@ -54,7 +54,7 @@ export function ConfirmationArea() {
                         flex items-center gap-2"
             >
                 <span className="font-medium" style={{ color: "#ff751f" }}>
-                {"Cerrado"}
+                    {"Cerrado"}
                 </span>
                 <Closeddooricon className = 'size-8'/>
             </button>
