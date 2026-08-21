@@ -11,9 +11,10 @@ interface InputCardProps{
     onTermsAcceptanceToggled: () => void,
 
     onTryToSignIn: () => void,
-    onTryToSignUp: () => void
+    onTryToSignUp: () => void,
 
-    issueMessage: string
+    issueMessage: string,
+    cleanIssueMessage: () => void
 }
 
 export function InputCard({ 
@@ -25,7 +26,8 @@ export function InputCard({
     onTermsAcceptanceToggled,
     onTryToSignIn,
     onTryToSignUp,
-    issueMessage
+    issueMessage,
+    cleanIssueMessage
 }: InputCardProps) {
 
     const authMode = useAuthMode()
@@ -41,6 +43,7 @@ export function InputCard({
                     onEmailChanged={onEmailChanged}
                     password={password}
                     onPasswordChanged={onPasswordChanged}
+                    cleanIssueMessage = {cleanIssueMessage}
                 />
                 
                 {/* Terms and condition*/}
@@ -71,6 +74,7 @@ export function InputCard({
                         onClick={()=>{
                             if(authMode.mode == "signingIn") {
                                 authMode.setSignUpMode()
+                                cleanIssueMessage()
                             }
                             else{
                                 onTryToSignUp()
@@ -90,6 +94,7 @@ export function InputCard({
                         onClick={() => {
                             if(authMode.mode == "signingUp") {
                                 authMode.setSignInMode()
+                                cleanIssueMessage()
                             }
                             else{
                                 onTryToSignIn()

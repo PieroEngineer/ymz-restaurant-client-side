@@ -27,6 +27,7 @@ export function AuthScreen(){
                     onTryToSignIn={auth.trySignIn}
                     onTryToSignUp={auth.trySignUp}
                     issueMessage={auth.issueMessage}
+                    cleanIssueMessage = {auth.cleanIssueMessage}
                 />
             </div>
 
