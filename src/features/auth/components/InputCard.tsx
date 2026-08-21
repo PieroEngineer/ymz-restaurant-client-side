@@ -74,7 +74,6 @@ export function InputCard({
                         onClick={()=>{
                             if(authMode.mode == "signingIn") {
                                 authMode.setSignUpMode()
-                                cleanIssueMessage()
                             }
                             else{
                                 onTryToSignUp()
@@ -94,7 +93,6 @@ export function InputCard({
                         onClick={() => {
                             if(authMode.mode == "signingUp") {
                                 authMode.setSignInMode()
-                                cleanIssueMessage()
                             }
                             else{
                                 onTryToSignIn()
