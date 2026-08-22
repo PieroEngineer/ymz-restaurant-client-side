@@ -16,7 +16,7 @@ export default function RestaurantConfigPage() {
       </header>
 
       <main className="flex-1 w-full flex items-center justify-center gap-10 px-6 pb-1">
-        {restaurantInfo.isDownloading || !restaurantInfo.draft.restaurantId ? (
+        {restaurantInfo.isDownloading || restaurantInfo.draft == null ? (
           <section
             className="bg-brand-navy text-white rounded-2xl shadow-lg flex flex-col items-center gap-4 px-10 py-8"
             role="status"
@@ -36,12 +36,14 @@ export default function RestaurantConfigPage() {
               phoneNumberToContact = {restaurantInfo.draft.peruvianContactNumber}
               qrUrl = {restaurantInfo.draft.qrUrl}
               logoUrl = {restaurantInfo.draft.logoUrl}
-              dishesToShow = {restaurantInfo.draft.dishesToShow}
+              dishesToShow = {restaurantInfo.draft.dishesToShowUrls}
               coordinates = {restaurantInfo.draft.coordinates}
               onUpdateStringField = {restaurantInfo.onUpdateTextField}
-              onUpdateDemostrationImageUrl = {restaurantInfo.onUpdateDemostrationImageUrl}
+              onLocalImageImported = {restaurantInfo.onLocalImageImported}
             />
-            <ConfirmationArea />
+            <ConfirmationArea 
+              confirmSaving = {restaurantInfo.upload}
+            />
           </>
         )}
       </main>

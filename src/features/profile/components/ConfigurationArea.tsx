@@ -3,20 +3,20 @@ import Orangepencilicon from "@/features/profile/components/icon/Orangepencilico
 import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
 import PinIcon from "@/features/profile/components/icon/PinIcon";
 import { useInteraction } from "@/features/profile/hooks/useInteraction";
-import { useLocalImage } from "@/features/profile/hooks/useLocalImage";
-import type { Restaurant } from "@/features/profile/types/domain.types";
+import type { RestaurantResourceTypes } from "@/features/profile/types/support/imageManage.types";
+import type { RestaurantStringRegularFields } from "@/features/profile/types/support/restaurantReduced.types";
 import { useRef } from "react";
 
 interface ConfigurationAreaProps {
     restaurantName: string;
-    onUpdateStringField: (fieldName: keyof Omit<Restaurant, "dishesToShow" | "coordinates">, newValue: string) => void;
+    onUpdateStringField: (fieldName: keyof RestaurantStringRegularFields, newValue: string) => void;
     phoneNumberToPay: string;
     phoneNumberToContact: string;
     qrUrl: string;
     logoUrl: string;
     dishesToShow: [string, string, string];
     coordinates: [number, number];
-    onUpdateDemostrationImageUrl: (position: 0 | 1 | 2, newImageUrl: string) => void
+    onLocalImageImported: (event: React.ChangeEvent<HTMLInputElement>, selectedImage: RestaurantResourceTypes | null) => void;
 }
 
 export function ConfigurationArea({
@@ -28,25 +28,12 @@ export function ConfigurationArea({
     logoUrl,
     dishesToShow,
     coordinates,
-    onUpdateDemostrationImageUrl
+    onLocalImageImported
 }: ConfigurationAreaProps) {
 
     const updateImageInputRef = useRef<HTMLInputElement>(null);
-    //X const updateLogoInputRef = useRef<HTMLInputElement>(null);
-    //X const updateDishesToShowInputRef = useRef<HTMLInputElement>(null);
 
     const interaction = useInteraction(updateImageInputRef)
-
-    const localImage = useLocalImage(
-        qrUrl, 
-        logoUrl, 
-        dishesToShow,
-        onUpdateStringField,
-        onUpdateDemostrationImageUrl
-    )
-
-    console.log(`🔎  Draft logoUrl ${logoUrl}`)
-    console.log(`🔎  Local logoUrl ${localImage.logoImageUrl}`)
 
     const updateNameInputRef = useRef<HTMLInputElement>(null);
     const updatePhoneNumberToPayInputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +46,7 @@ export function ConfigurationArea({
             ref={updateImageInputRef}
             type="file"
             accept="image/*"
-            onChange={ (event) => localImage.onLocalImageImported(event, interaction.imageToEdit) }
+            onChange={ (event) => onLocalImageImported(event, interaction.imageToEdit) }
             className="hidden"
         />
         
@@ -104,7 +91,7 @@ export function ConfigurationArea({
             <span className="text-xl font-bold self-start">{"Horario activo*"}</span>
 
             {/* textfield + "a" + textfield */}
-            <div className="flex items-center gap-2 w-full">
+            <div className="relative flex items-center gap-2 w-full">
                 <input
                     readOnly
                     // value={value}
@@ -126,6 +113,11 @@ export function ConfigurationArea({
                         "outline-none w-full "
                     }
                 />
+                <div className="absolute inset-0 bg-black/60 rounded-xl backdrop-blur-[1px] flex items-center justify-center cursor-not-allowed select-none">
+                    <span className="text-white text-sm font-bold tracking-wider uppercase">
+                        Próximamente
+                    </span>
+                </div>
             </div>
 
             <hr
@@ -198,9 +190,9 @@ export function ConfigurationArea({
                 <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
                     {"QR de pago*:"}
                 </span>
-                {localImage.qrImageUrl && (
+                {qrUrl && (
                     <img
-                        src={localImage.qrImageUrl}
+                        src={qrUrl}
                         alt=""
                         className="size-20 rounded-md object-cover shrink-0"
                     />
@@ -220,9 +212,9 @@ export function ConfigurationArea({
                 <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
                     {"Logo*:"}
                 </span>
-                {localImage.logoImageUrl && (
+                {logoUrl && (
                     <img
-                        src={localImage.logoImageUrl}
+                        src={logoUrl}
                         alt=""
                         className="size-20 rounded-md object-cover shrink-0"
                     />
@@ -244,35 +236,58 @@ export function ConfigurationArea({
 
             {/* 3 icons horizontally ordered */}
             <div className="flex items-center gap-4 pt-1">
-                { localImage.frontImagesUrls[0] &&
-                    <div className="group relative inline-block h-50 w-75 overflow-hidden rounded-lg">  {/**✏️Add the clickables */}
-                   
-                    <img
-                        src={localImage.frontImagesUrls[0]}
-                        alt=""
-                        className="size-16 rounded-md object-cover shrink-0"
-                    />
-                    
-                    <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <Editpicicon className="size-8"/>
+                { dishesToShow[0] &&
+                    <div 
+                        className="group relative inline-block overflow-hidden rounded-md"
+                        onClick={() => { interaction.importNewLocalImage('FRONT1') }}
+                    >  {/**✏️Add the clickables */}
+                        <img
+                            src={dishesToShow[0]}
+                            alt=""
+                            className="size-16 rounded-md object-cover shrink-0"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <Editpicicon className="size-10"/>
+                        </div>
                     </div>
-                </div>
                 }
                 
-                { localImage.frontImagesUrls[1] &&
-                    <img
-                        src={localImage.frontImagesUrls[1]}
-                        alt=""
-                        className="size-16 rounded-md object-cover shrink-0"
-                    />
+                { dishesToShow[1] &&
+                    <div 
+                        className="group relative inline-block overflow-hidden rounded-md"
+                        onClick={() => { interaction.importNewLocalImage('FRONT2') }}
+                    >  {/**✏️Add the clickables */}
+                        <img
+                            src={dishesToShow[1]}
+                            alt=""
+                            className="size-16 rounded-md object-cover shrink-0"
+                        />
+                        
+                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <Editpicicon className="size-10"/>
+                        </div>
+                    </div>
+
+                    
                 }
 
-                { localImage.frontImagesUrls[2] &&
-                    <img
-                        src={localImage.frontImagesUrls[2]}
-                        alt=""
-                        className="size-16 rounded-md object-cover shrink-0"
-                    />
+                { dishesToShow[2] &&
+                    <div 
+                        className="group relative inline-block overflow-hidden rounded-md"
+                        onClick={() => { interaction.importNewLocalImage('FRONT3') }}
+                    >  {/**✏️Add the clickables */}
+                        <img
+                            src={dishesToShow[2]}
+                            alt=""
+                            className="size-16 rounded-md object-cover shrink-0"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <Editpicicon className="size-10"/>
+                        </div>
+                    </div>
+
+
+                    
                 }
             </div>
         </section>

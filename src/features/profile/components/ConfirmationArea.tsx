@@ -1,7 +1,13 @@
 import Closeddooricon from "@/features/profile/components/icon/Closeddooricon";
 import CloudloadingIcon from "@/features/profile/components/icon/Cloudloadingicon";
 
-export function ConfirmationArea() {
+interface ConfirmationAreaProps {
+    confirmSaving: () => void
+}
+
+export function ConfirmationArea({
+    confirmSaving
+}: ConfirmationAreaProps) {
   return (
     <div className="flex flex-col items-center gap-6">
         
@@ -29,6 +35,7 @@ export function ConfirmationArea() {
                 type="button"
                 className="flex items-center gap-2 rounded-md px-4 py-1.5 shadow-sm"
                 style={{ backgroundColor: "#ff751f" }}
+                onClick={confirmSaving}
             >
                 <span className="text-white text-xl font-medium">
                 {"Guardar"}

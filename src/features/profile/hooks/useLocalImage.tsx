@@ -1,5 +1,5 @@
-import type { Restaurant } from "@/features/profile/types/domain.types";
-import type { ImageSource, RestaurantImages } from "@/features/profile/types/support/imageManage.types";
+import type { ImageSource, RestaurantResourceTypes } from "@/features/profile/types/support/imageManage.types";
+import type { RestaurantStringRegularFields } from "@/features/profile/types/support/restaurantReduced.types";
 import { convertToWebP } from "@/shared/utils/imageConversors";
 import { useState } from "react";
 
@@ -8,7 +8,7 @@ export function useLocalImage(
     qrUrl: string,
     logoUrl: string,
     dishesToShow: [string, string, string],
-    onUpdateIndividualImageUrl: (fieldName: keyof Omit<Restaurant, "dishesToShow" | "coordinates">, newValue: string) => void,
+    onUpdateIndividualImageUrl: (fieldName: keyof RestaurantStringRegularFields, newValue: string) => void,
     onUpdateCollectionImageUrl: (position: 0 | 1 | 2, newImageUrl: string) => void
 ){
 
@@ -20,7 +20,7 @@ export function useLocalImage(
         { url: dishesToShow[2], file: null }
     ]);
 
-    const onLocalImageImported = async (event: React.ChangeEvent<HTMLInputElement>, selectedImage: RestaurantImages | null) => {
+    const onLocalImageImported = async (event: React.ChangeEvent<HTMLInputElement>, selectedImage: RestaurantResourceTypes | null) => {
         if (!selectedImage) return;
         
         const { files } = event.target;

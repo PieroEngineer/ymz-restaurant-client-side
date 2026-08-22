@@ -1,4 +1,4 @@
-import type { RestaurantImages as RestaurantImageResourceTypes } from "@/features/profile/types/support/imageManage.types";
+import type { RestaurantResourceTypes as RestaurantImageResourceTypes } from "@/features/profile/types/support/imageManage.types";
 import { useState } from "react";
 
 
