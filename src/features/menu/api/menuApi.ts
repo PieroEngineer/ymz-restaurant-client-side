@@ -31,7 +31,7 @@ export const menuApi = {
 
   /**
    * ☁️ HOP 2: Upload direct file binary to S3 using the newly generated pre-signed token URL
-   */
+   */ // TODO: Consider to move it to the shared apis
   async uploadImageToS3(presignedUploadUrl: string, file: File): Promise<void> {  //TODO: handle it with fresh Axios clients ()
 
     const response = await fetch(presignedUploadUrl, {

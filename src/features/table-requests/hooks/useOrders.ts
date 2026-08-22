@@ -11,7 +11,7 @@ import { useCallback } from "react";
 
 export const useOrders = () => {
     const queryClient = useQueryClient();
-    const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-orders'];
+    const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-orders'];  // TODO: consider remove the ID from here because there is only 1 restaurant in the session
 
     const { data: customerOrders } = useSuspenseQuery<Order[]>({
         queryKey: queryKey,

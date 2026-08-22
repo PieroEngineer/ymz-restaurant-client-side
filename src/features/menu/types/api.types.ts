@@ -24,6 +24,20 @@ export interface CloudMenuGetPayload {
   dishes: CloudDishItemPayload[];
 }
 
+// ===== Response formats =====
+
+export interface SyncDataFirstResponse {
+  message: string;
+  // The backend returns an array of upload tokens only for the pages that requested a 'save' or 'update' action
+  presignedUrls: PresignedUrlMapping[];
+}
+
+export interface PresignedUrlMapping {    // Added structural types specifically for the new multi-hop transaction response
+  pageId: string;
+  uploadUrl: string; // The temporary pre-signed token URL to execute the PUT binary request
+  publicUrl: string; // The final permanent public read URL that will be saved in DynamoDB
+}
+
 // ===== Output Formats =====
 
 // Delta Diff Request Parameter Structures
@@ -38,19 +52,4 @@ export interface CloudMenuDiffPayload {
     | { id: string; action: 'update'; updatedFields: Partial<CloudDishItemPayload> }
     | { id: string; action: 'delete' }
   >;
-}
-
-
-// ===== Response formats =====
-
-export interface SyncDataFirstResponse {
-  message: string;
-  // The backend returns an array of upload tokens only for the pages that requested a 'save' or 'update' action
-  presignedUrls: PresignedUrlMapping[];
-}
-
-export interface PresignedUrlMapping {    // Added structural types specifically for the new multi-hop transaction response
-  pageId: string;
-  uploadUrl: string; // The temporary pre-signed token URL to execute the PUT binary request
-  publicUrl: string; // The final permanent public read URL that will be saved in DynamoDB
 }

@@ -35,33 +35,33 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
       
       console.log('⬆️  The diff to send is\n', diffPayload)
 
-      let syncResponseData: Awaited<ReturnType<typeof menuApi.pushMenuDeltaChanges>> | null = null;
+      //X let syncResponseData: Awaited<ReturnType<typeof menuApi.pushMenuDeltaChanges>> | null = null;
     
-        syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
+      const syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
 
-        if (syncResponseData.presignedUrls && syncResponseData.presignedUrls.length > 0) {
-          await Promise.all(
-            syncResponseData.presignedUrls.map(async (mapping) => {
-              const fileToUpload = localPageFiles[mapping.pageId];
-              if (!fileToUpload) return;
-    
-              try {
-                await menuApi.uploadImageToS3(
-                  mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),  // FIXME: Remove this hardcoding
-                  fileToUpload,
-                );
-              } catch (s3UploadError) {
-                throw new Error(
-                  `S3_UPLOAD_FAILURE|${mapping.pageId}|${s3UploadError instanceof Error ? s3UploadError.message : ''}`,
-                );
-              }
-            }),
-          );
-    
-          console.log('✅🖼️  All images where successfully processed');
-        }
-    
-        return syncResponseData.presignedUrls ?? []
+      if (syncResponseData.presignedUrls && syncResponseData.presignedUrls.length > 0) {
+        await Promise.all(
+          syncResponseData.presignedUrls.map(async (mapping) => {
+            const fileToUpload = localPageFiles[mapping.pageId];
+            if (!fileToUpload) return;
+  
+            try {
+              await menuApi.uploadImageToS3(
+                mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),  // FIXME: Remove this hardcoding
+                fileToUpload,
+              );
+            } catch (s3UploadError) {
+              throw new Error(
+                `S3_UPLOAD_FAILURE|${mapping.pageId}|${s3UploadError instanceof Error ? s3UploadError.message : ''}`,
+              );
+            }
+          }),
+        );
+  
+        console.log('✅🖼️  All images where successfully processed');
+      }
+  
+      return syncResponseData.presignedUrls ?? []
 
     },
     onSuccess: (presignedUrls) => {

@@ -1,12 +1,68 @@
+import Editpicicon from "@/features/profile/components/icon/Editpicicon";
 import Orangepencilicon from "@/features/profile/components/icon/Orangepencilicon";
 import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
 import PinIcon from "@/features/profile/components/icon/PinIcon";
+import { useInteraction } from "@/features/profile/hooks/useInteraction";
+import { useLocalImage } from "@/features/profile/hooks/useLocalImage";
+import type { Restaurant } from "@/features/profile/types/domain.types";
+import { useRef } from "react";
 
+interface ConfigurationAreaProps {
+    restaurantName: string;
+    onUpdateStringField: (fieldName: keyof Omit<Restaurant, "dishesToShow" | "coordinates">, newValue: string) => void;
+    phoneNumberToPay: string;
+    phoneNumberToContact: string;
+    qrUrl: string;
+    logoUrl: string;
+    dishesToShow: [string, string, string];
+    coordinates: [number, number];
+    onUpdateDemostrationImageUrl: (position: 0 | 1 | 2, newImageUrl: string) => void
+}
 
-export function ConfigurationArea(
-) {
+export function ConfigurationArea({
+    restaurantName,
+    onUpdateStringField,
+    phoneNumberToPay,
+    phoneNumberToContact,
+    qrUrl,
+    logoUrl,
+    dishesToShow,
+    coordinates,
+    onUpdateDemostrationImageUrl
+}: ConfigurationAreaProps) {
+
+    const updateImageInputRef = useRef<HTMLInputElement>(null);
+    //X const updateLogoInputRef = useRef<HTMLInputElement>(null);
+    //X const updateDishesToShowInputRef = useRef<HTMLInputElement>(null);
+
+    const interaction = useInteraction(updateImageInputRef)
+
+    const localImage = useLocalImage(
+        qrUrl, 
+        logoUrl, 
+        dishesToShow,
+        onUpdateStringField,
+        onUpdateDemostrationImageUrl
+    )
+
+    console.log(`🔎  Draft logoUrl ${logoUrl}`)
+    console.log(`🔎  Local logoUrl ${localImage.logoImageUrl}`)
+
+    const updateNameInputRef = useRef<HTMLInputElement>(null);
+    const updatePhoneNumberToPayInputRef = useRef<HTMLInputElement>(null);
+    const updatePhoneNumberToContactInputRef = useRef<HTMLInputElement>(null);
+    
     return (
     <div className="flex flex-row items-stretch">
+
+        <input
+            ref={updateImageInputRef}
+            type="file"
+            accept="image/*"
+            onChange={ (event) => localImage.onLocalImageImported(event, interaction.imageToEdit) }
+            className="hidden"
+        />
+        
 
         {/* Restaurant info card */}
         <section
@@ -14,8 +70,28 @@ export function ConfigurationArea(
             >
             {/* text next to icon */}
             <div className="flex justify-center items-center gap-2 font-accent">
-                {/* <span className="text-sm font-medium">{MOCK.scheduleLabel}</span> */}
-                <span className="text-4xl font-bold text-center">{"Pollitos chicken"}</span>
+
+                {interaction.isEditingName ? (
+                    <input
+                        type="text"
+                        ref={updateNameInputRef}
+                        className="text-4xl font-bold text-center"
+                        defaultValue={restaurantName}
+                        onBlur={()=>{
+                            onUpdateStringField("restaurantName", updateNameInputRef.current?.value ?? "")
+                            interaction.toggleNameEdition()
+                        }}
+                        autoFocus
+                    />
+                ) : (
+                    <span 
+                        className="text-4xl font-bold text-center"
+                        onClick={interaction.toggleNameEdition}
+                    >
+                        {restaurantName || "Click aquí..."}
+                    </span>
+                )}
+                
                 <Pencilicon2 className='size-8'/>
             </div>
 
@@ -79,12 +155,15 @@ export function ConfigurationArea(
                     <label className="text-md shrink-0">{"Núm. de contacto*:"}</label>
 
                     <input
-                        readOnly
-                        // value={value}
-                        value={"+51 950214782"}
+                        type="text"
+                        ref = {updatePhoneNumberToContactInputRef}
+                        defaultValue={phoneNumberToContact}
                         className={
                             "bg-white text-blue-700 text-sm rounded-md px-2 py-1 shadow-sm outline-none w-full max-w-38"
                         }
+                        onBlur={()=>{
+                            onUpdateStringField("peruvianContactNumber", updatePhoneNumberToContactInputRef.current?.value ?? "")
+                        }}
                     />
                 </div>
 
@@ -92,17 +171,21 @@ export function ConfigurationArea(
                     <label className="text-md shrink-0">{"Núm. de pago*:"}</label>
 
                     <input
-                        readOnly
-                        // value={value}
-                        value={"+51 950214782"}
+                        type="text"
+                        ref = {updatePhoneNumberToPayInputRef}
+                        defaultValue={phoneNumberToPay}
                         className={
                             "bg-white text-blue-700 text-sm rounded-md px-2 py-1 shadow-sm " +
                             "outline-none w-full max-w-38"
                         }
+                        onBlur={()=>{
+                            onUpdateStringField("peruvianPaymentNumber", updatePhoneNumberToPayInputRef.current?.value ?? "")
+                        }}
                     />
                 </div>
             </div>
-        </section>
+        </section> 
+        {/** TODO: Place a message to clarify that it's important to give a correct number */}
 
         {/* Restaurant media card */}
         <section
@@ -115,13 +198,17 @@ export function ConfigurationArea(
                 <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
                     {"QR de pago*:"}
                 </span>
-                <img
-                    // src={imageUrl}
-                    src={"https://placehold.co/48x48/ff751f/ffffff?text=1"}
-                    alt=""
-                    className="size-20 rounded-md object-cover shrink-0"
-                />
-                    <Orangepencilicon className='size-8  fill-brand-primary'/>
+                {localImage.qrImageUrl && (
+                    <img
+                        src={localImage.qrImageUrl}
+                        alt=""
+                        className="size-20 rounded-md object-cover shrink-0"
+                    />
+                )}
+                    <Orangepencilicon 
+                    onClick={() => { interaction.importNewLocalImage('QR') }}
+                    className='size-8  fill-brand-primary'
+                    />
             </div>
 
             <hr
@@ -133,13 +220,17 @@ export function ConfigurationArea(
                 <span className="text-xl font-medium" style={{ color: "#ff751f" }}>
                     {"Logo*:"}
                 </span>
-                <img
-                    // src={imageUrl}
-                    src={"https://placehold.co/48x48/ff751f/ffffff?text=2"}
-                    alt=""
-                    className="size-20 rounded-md object-cover shrink-0"
-                />
-                    <Orangepencilicon className='size-8  fill-brand-primary'/>
+                {localImage.logoImageUrl && (
+                    <img
+                        src={localImage.logoImageUrl}
+                        alt=""
+                        className="size-20 rounded-md object-cover shrink-0"
+                    />
+                )}
+                    <Orangepencilicon 
+                        onClick={ () => {interaction.importNewLocalImage('LOGO')} }
+                        className='size-8  fill-brand-primary'
+                    />
             </div>
 
             <hr
@@ -153,9 +244,36 @@ export function ConfigurationArea(
 
             {/* 3 icons horizontally ordered */}
             <div className="flex items-center gap-4 pt-1">
-                {/* icon-placeholder: social icon 1 */}
-                {/* icon-placeholder: social icon 2 */}
-                {/* icon-placeholder: social icon 3 */}
+                { localImage.frontImagesUrls[0] &&
+                    <div className="group relative inline-block h-50 w-75 overflow-hidden rounded-lg">  {/**✏️Add the clickables */}
+                   
+                    <img
+                        src={localImage.frontImagesUrls[0]}
+                        alt=""
+                        className="size-16 rounded-md object-cover shrink-0"
+                    />
+                    
+                    <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <Editpicicon className="size-8"/>
+                    </div>
+                </div>
+                }
+                
+                { localImage.frontImagesUrls[1] &&
+                    <img
+                        src={localImage.frontImagesUrls[1]}
+                        alt=""
+                        className="size-16 rounded-md object-cover shrink-0"
+                    />
+                }
+
+                { localImage.frontImagesUrls[2] &&
+                    <img
+                        src={localImage.frontImagesUrls[2]}
+                        alt=""
+                        className="size-16 rounded-md object-cover shrink-0"
+                    />
+                }
             </div>
         </section>
 

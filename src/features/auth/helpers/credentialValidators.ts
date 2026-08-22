@@ -16,28 +16,6 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Validates a Peruvian mobile number.
- * Criteria: Must be exactly 9 digits long and start with the number 9.
- * 
- * @param phone - The string or numeric phone input to validate
- * @returns boolean - True if the number matches Peruvian format criteria
- */
-export function isValidPeruvianNumber(phone: string | number): boolean {
-  // Convert to string and strip out spaces, dashes, or parentheses
-  const cleaned = phone.toString().replace(/[\s().-]/g, "");
-
-  // Optional: Strip out Peru's country code (+51 or 51) if included at the start
-  const targetNumber = cleaned.startsWith("51") && cleaned.length > 9 
-    ? cleaned.substring(2) 
-    : cleaned;
-
-  // Regex checks if the string is exactly 9 digits and starts with 9
-  const peruvianMobileRegex = /^9\d{8}$/;
-
-  return peruvianMobileRegex.test(targetNumber);
-}
-
-/**
  * Validates if a string has a minimum length of 5 characters.
  * 
  * @param input - The string value to check

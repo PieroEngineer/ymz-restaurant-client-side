@@ -1,8 +1,9 @@
 import { ConfigurationArea } from "@/features/profile/components/ConfigurationArea";
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
+import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 
 export default function RestaurantConfigPage() {
-
+  const restaurantInfo = useRestaurantInfo()
 
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
@@ -15,8 +16,34 @@ export default function RestaurantConfigPage() {
       </header>
 
       <main className="flex-1 w-full flex items-center justify-center gap-10 px-6 pb-1">
-        <ConfigurationArea />
-        <ConfirmationArea />
+        {restaurantInfo.isDownloading || !restaurantInfo.draft.restaurantId ? (
+          <section
+            className="bg-brand-navy text-white rounded-2xl shadow-lg flex flex-col items-center gap-4 px-10 py-8"
+            role="status"
+            aria-live="polite"
+          >
+            <div
+              className="size-10 animate-spin rounded-full border-4 border-white/30 border-t-brand-primary"
+              aria-hidden="true"
+            />
+            <span className="text-xl font-medium">Cargando información del restaurante...</span>
+          </section>
+        ) : (
+          <>
+            <ConfigurationArea 
+              restaurantName = {restaurantInfo.draft.restaurantName}
+              phoneNumberToPay = {restaurantInfo.draft.peruvianPaymentNumber}
+              phoneNumberToContact = {restaurantInfo.draft.peruvianContactNumber}
+              qrUrl = {restaurantInfo.draft.qrUrl}
+              logoUrl = {restaurantInfo.draft.logoUrl}
+              dishesToShow = {restaurantInfo.draft.dishesToShow}
+              coordinates = {restaurantInfo.draft.coordinates}
+              onUpdateStringField = {restaurantInfo.onUpdateTextField}
+              onUpdateDemostrationImageUrl = {restaurantInfo.onUpdateDemostrationImageUrl}
+            />
+            <ConfirmationArea />
+          </>
+        )}
       </main>
     </div>
   );
