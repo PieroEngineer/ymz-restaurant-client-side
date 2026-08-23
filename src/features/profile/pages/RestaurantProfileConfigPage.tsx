@@ -1,9 +1,18 @@
 import { ConfigurationArea } from "@/features/profile/components/ConfigurationArea";
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
+import { useDataState } from "@/features/profile/hooks/useDataState";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 
 export default function RestaurantConfigPage() {
   const restaurantInfo = useRestaurantInfo()
+  const dataState = useDataState(
+    restaurantInfo.remote?? null,
+    restaurantInfo.draft,
+    restaurantInfo.downloadError,
+    restaurantInfo.uploadError
+  )
+
+  console.log('🔎  Restaurant draft info', restaurantInfo.draft)
 
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
@@ -43,6 +52,7 @@ export default function RestaurantConfigPage() {
             />
             <ConfirmationArea 
               confirmSaving = {restaurantInfo.upload}
+              dataStatus = {dataState.state}
             />
           </>
         )}

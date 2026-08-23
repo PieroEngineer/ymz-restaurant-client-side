@@ -199,7 +199,7 @@ export function ConfigurationArea({
                 )}
                     <Orangepencilicon 
                     onClick={() => { interaction.importNewLocalImage('QR') }}
-                    className='size-8  fill-brand-primary'
+                    className='size-8  fill-brand-primary transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95'
                     />
             </div>
 
@@ -221,7 +221,7 @@ export function ConfigurationArea({
                 )}
                     <Orangepencilicon 
                         onClick={ () => {interaction.importNewLocalImage('LOGO')} }
-                        className='size-8  fill-brand-primary'
+                        className='size-8  fill-brand-primary transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95'
                     />
             </div>
 
@@ -238,15 +238,15 @@ export function ConfigurationArea({
             <div className="flex items-center gap-4 pt-1">
                 { dishesToShow[0] &&
                     <div 
-                        className="group relative inline-block overflow-hidden rounded-md"
+                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
                         onClick={() => { interaction.importNewLocalImage('FRONT1') }}
-                    >  {/**✏️Add the clickables */}
+                    >
                         <img
                             src={dishesToShow[0]}
                             alt=""
                             className="size-16 rounded-md object-cover shrink-0"
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <div className="absolute  justify-center items-center inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                             <Editpicicon className="size-10"/>
                         </div>
                     </div>
@@ -254,9 +254,9 @@ export function ConfigurationArea({
                 
                 { dishesToShow[1] &&
                     <div 
-                        className="group relative inline-block overflow-hidden rounded-md"
+                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
                         onClick={() => { interaction.importNewLocalImage('FRONT2') }}
-                    >  {/**✏️Add the clickables */}
+                    >
                         <img
                             src={dishesToShow[1]}
                             alt=""
@@ -273,9 +273,9 @@ export function ConfigurationArea({
 
                 { dishesToShow[2] &&
                     <div 
-                        className="group relative inline-block overflow-hidden rounded-md"
+                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
                         onClick={() => { interaction.importNewLocalImage('FRONT3') }}
-                    >  {/**✏️Add the clickables */}
+                    >
                         <img
                             src={dishesToShow[2]}
                             alt=""

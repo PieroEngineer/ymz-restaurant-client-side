@@ -1,0 +1,1 @@
+export type DataState = 'LOADING' | 'SYNC' | 'ERROR' | 'EDITED'
