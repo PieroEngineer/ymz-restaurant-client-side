@@ -49,7 +49,6 @@ export function ConfigurationArea({
             onChange={ (event) => onLocalImageImported(event, interaction.imageToEdit) }
             className="hidden"
         />
-        
 
         {/* Restaurant info card */}
         <section

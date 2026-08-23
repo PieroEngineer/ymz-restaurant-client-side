@@ -16,7 +16,7 @@ export function ConfirmationArea({
 
     const dataStatusIcon = {
         LOADING:  <CloudloadingIcon className='size-8 animate-pulse'/>,
-        SYNC:  <Checkicon className='size-8' stroke="green"/>,
+        SYNC:  <Checkicon className='size-6'/>,
         ERROR:  <Pencilicon2 className='size-8'/>,
         EDITED: <Pencilicon2 className='size-8'/>,
     }
@@ -33,7 +33,7 @@ export function ConfirmationArea({
                 {/* white rectangle: italic caption above a medium image */}
                 <div className="bg-white rounded-lg p-2 flex flex-col items-center gap-1.5 w-full">
                     <span className="italic text-md text-brand-primary">
-                    {"Como el usuario te encuentra"}
+                    {"Como el usuario te " + (dataStatus == 'SYNC' ? 'encuentra' : 'encontraría')}
                     </span>
                     <img
                     // src={MOCK.confirmationImageUrl}
@@ -49,8 +49,9 @@ export function ConfirmationArea({
                     {/* orange sub-button next to icon */}
                     <button
                         type="button"
-                        className="flex items-center gap-2 rounded-md px-4 py-1.5 shadow-sm"
+                        className="flex items-center gap-2 rounded-md px-4 py-1.5 shadow-sm transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
                         style={{ backgroundColor: "#ff751f" }}
+                        disabled={dataStatus != 'EDITED' && dataStatus != 'ERROR'}
                         onClick={confirmSaving}
                     >
                         <span className="text-white text-xl font-medium">
@@ -64,7 +65,7 @@ export function ConfirmationArea({
             </div>
 
             {/* Open restaurant button */}
-            <div className="flex flex-col items-center gap-1.5">
+            <div className="relative flex flex-col items-center gap-1.5">
                 {/* bold text above */}
                 <span className="text-xl font-bold text-slate-800">
                     {"Estado"}
@@ -84,10 +85,15 @@ export function ConfirmationArea({
 
                 {dataStatus=='ERROR' && (
                     <span className="italic text-md text-red-600">
-                        {"La última carga falló, por favor, reintentar"}
+                        {"La última carga falló, por favor, reintentar en unos momentos"}
                     </span>
                 )}
-                
+
+                <div className="absolute inset-0 bg-black/60 rounded-xl backdrop-blur-[1px] flex items-center justify-center cursor-not-allowed select-none">
+                    <span className="text-white text-sm font-bold tracking-wider uppercase">
+                        Próximamente
+                    </span>
+                </div>
             </div>
         </div>
     );
