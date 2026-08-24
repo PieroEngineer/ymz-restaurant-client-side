@@ -28,7 +28,6 @@ export function useLocalPageFile(
         const { files } = event.target;
         if (!files || files.length === 0) return;
 
-        const newFileEntries: Record<string, File> = {};
         const existingPageCount = menuPages.length;
 
         const webpFiles = await handleFilesParallel([...files])
@@ -41,7 +40,9 @@ export function useLocalPageFile(
         if (newPages.length === 0) return;
 
         importActions.onAddNewPages(newPages);
-        importActions.onStackNewLocalImagesInMap(newFileEntries);
+        importActions.onStackNewLocalImagesInMap(
+            Object.fromEntries(newPages.map((page, index) => [page.pageId, webpFiles[index]])),
+        );
         importActions.onSetCurrentActivePageIndex(existingPageCount);
 
         onQuitActiveEditCell();

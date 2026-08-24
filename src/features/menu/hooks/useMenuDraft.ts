@@ -40,6 +40,8 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
       const syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
 
       if (syncResponseData.presignedUrls && syncResponseData.presignedUrls.length > 0) {
+        console.log('🔎  Starting the upload the images')
+
         await Promise.all(
           syncResponseData.presignedUrls.map(async (mapping) => {
             const fileToUpload = localPageFiles[mapping.pageId];
@@ -59,6 +61,9 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
         );
   
         console.log('✅🖼️  All images where successfully processed');
+      }
+      else{
+        console.log('⚠️🔎  The upload the images could not start', syncResponseData.presignedUrls )
       }
   
       return syncResponseData.presignedUrls ?? []

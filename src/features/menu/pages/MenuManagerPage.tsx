@@ -43,6 +43,8 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     // Manage the local draft menu 
     const menuDraft = useMenuDraft(dbSnapshot, localPageMap.localPageFilesMap, localPageMap.onResetLocalImageMap)
 
+    console.log("🔎  The menu pages are ", menuDraft.draftMenuPages)
+
     // Control the current active page
     const activePage = useActivePage(menuDraft.draftMenuPages)
     
