@@ -36,12 +36,12 @@ export function useDataState(
         }
 
         if (!isValidPeruvianNumber(draftData.peruvianContactNumber)) {
-            setErrorMessage("El número de contacto no es válido.")
+            setErrorMessage("El número de contacto no es válido.\nDebe tener el formato peruano")
             return false
         }
 
         if (!isValidPeruvianNumber(draftData.peruvianPaymentNumber)) {
-            setErrorMessage("El número de pago no es válido.")
+            setErrorMessage("El número de pago no es válido.\nDebe tener el formato peruano")
             return false
         }
 
