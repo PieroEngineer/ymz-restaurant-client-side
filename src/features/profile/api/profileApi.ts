@@ -1,6 +1,6 @@
 import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
 import { toDomainRestaurant } from "@/features/profile/api/mappers/inboundMappers";
-import type { GetRestaurantInfoResponse, UploadRestaurantInfoPayload, UploadRestaurantInfoResponse } from "@/features/profile/types/api.types";
+import type { GetRestaurantInfoResponse, UpdateRestaurantInfoPayload, UploadRestaurantInfoResponse, InitializeRestaurantInfoPayload } from "@/features/profile/types/api.types";
 import type { Restaurant } from "@/features/profile/types/domain.types";
 import { axiosClient } from "@/shared/api/axiosClient";
 
@@ -14,8 +14,13 @@ export const profileApi = {
         return toDomainRestaurant(response.data);
     },
 
-    async uploadRestaurantInfo(payload: UploadRestaurantInfoPayload): Promise<UploadRestaurantInfoResponse>{
-        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info`, payload)
+    async updateRestaurantInfo(payload: UpdateRestaurantInfoPayload): Promise<UploadRestaurantInfoResponse>{
+        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info/update`, payload)
+        return response.data
+    },
+
+    async initializeRestaurantInfo(payload: InitializeRestaurantInfoPayload): Promise<UploadRestaurantInfoResponse>{
+        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info/initialize`, payload)
         return response.data
     },
 

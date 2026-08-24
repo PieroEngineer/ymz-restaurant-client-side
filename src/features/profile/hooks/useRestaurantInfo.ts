@@ -1,11 +1,11 @@
-import { toRemoteRestaurant } from "@/features/profile/api/mappers/outboundMappers";
+import { toRemoteRestaurantInitialization, toRemoteRestaurantUpdate } from "@/features/profile/api/mappers/outboundMappers";
 import { profileApi } from "@/features/profile/api/profileApi";
 import type { Restaurant } from "@/features/profile/types/domain.types";
 import type { RestaurantResourceTypes } from "@/features/profile/types/support/imageManage.types";
 import type { RestaurantStringRegularFields } from "@/features/profile/types/support/restaurantReduced.types";
 import { convertToWebP } from "@/shared/utils/imageConversors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 export function useRestaurantInfo(){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
@@ -28,8 +28,7 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
     }
   }, [remoteQuery.data]);
 
-
-  const remoteMutation = useMutation({  
+  const updateMutation = useMutation({
     mutationFn: async () => {
       console.log('⬆️  Trying to upload restaurant info')
 
@@ -48,11 +47,11 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
 
       const qrWasModified = snapshot.qrUrl != draftRestaurantInfo.qrUrl
 
-      const payload = toRemoteRestaurant(draftRestaurantInfo, logoWasModified, dishImagesWereModified, qrWasModified)
+      const payload = toRemoteRestaurantUpdate(draftRestaurantInfo, logoWasModified, dishImagesWereModified, qrWasModified)
 
       console.log('⬆️  Payload to send', JSON.stringify(payload))
 
-      const responseWithPresignedUrls = await profileApi.uploadRestaurantInfo(payload)
+      const responseWithPresignedUrls = await profileApi.updateRestaurantInfo(payload)
       
       console.log('⬆️  Restaurant info uploaded successfully', JSON.stringify(responseWithPresignedUrls))
 
@@ -80,7 +79,12 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
         const dishFile = draftRestaurantInfo.dishesToShowFiles[index]
 
         if (presignedUrl && dishFile) {
-          imageUploads.push(profileApi.uploadImageToS3(presignedUrl.replaceAll('172.18.0.2', 'localhost'), dishFile))
+          imageUploads.push(
+            profileApi.uploadImageToS3(
+              presignedUrl.replaceAll('172.18.0.2', 'localhost'),
+              dishFile
+            )
+          )
         }
       })
 
@@ -95,6 +99,70 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
     }
 
   })
+
+  const initializeMutation = useMutation({
+    mutationFn: async () => {
+      console.log('⬆️  Trying to upload restaurant info')
+      
+      const snapshot = queryClient.getQueryData<Restaurant>(restaurantQueryKey) ?? null
+
+      if(snapshot == null) return
+      if(draftRestaurantInfo == null) return
+
+      const dishImagesWereModified: [boolean, boolean, boolean] = [
+        snapshot.dishesToShowUrls[0] != draftRestaurantInfo.dishesToShowUrls[0],
+        snapshot.dishesToShowUrls[1] != draftRestaurantInfo.dishesToShowUrls[1],
+        snapshot.dishesToShowUrls[2] != draftRestaurantInfo.dishesToShowUrls[2]
+      ]
+
+      const payload = toRemoteRestaurantInitialization(draftRestaurantInfo, dishImagesWereModified)
+
+      console.log('⬆️  Payload to send', JSON.stringify(payload))
+
+      const responseWithPresignedUrls = await profileApi.initializeRestaurantInfo(payload)
+
+      console.log('⬆️  Restaurant info uploaded successfully', JSON.stringify(responseWithPresignedUrls))
+
+      const imageUploads: Promise<void>[] = []
+
+      if (responseWithPresignedUrls.logoPresignedUrl && draftRestaurantInfo.logoFile) {
+        imageUploads.push(
+          profileApi.uploadImageToS3(
+            responseWithPresignedUrls.logoPresignedUrl.replaceAll('172.18.0.2', 'localhost'), // FIXME: Remove this replacement from all the urls
+            draftRestaurantInfo.logoFile
+          )
+        )
+      }
+
+      if (responseWithPresignedUrls.paymentQrPresignedUrl && draftRestaurantInfo.qrFile) {
+        imageUploads.push(
+          profileApi.uploadImageToS3(
+            responseWithPresignedUrls.paymentQrPresignedUrl.replaceAll('172.18.0.2', 'localhost'),
+            draftRestaurantInfo.qrFile
+          )
+        )
+      }
+
+      responseWithPresignedUrls.dishesToShowPresignedUrls.forEach((presignedUrl, index) => {
+        const dishFile = draftRestaurantInfo.dishesToShowFiles[index]
+
+        if (presignedUrl && dishFile) {
+          imageUploads.push(
+            profileApi.uploadImageToS3(
+              presignedUrl.replaceAll('172.18.0.2', 'localhost'),
+              dishFile
+            )
+          )
+        }
+      })
+
+      await Promise.all(imageUploads) // TODO: Consider that there is a special logic later to make the data and image uploads as a transaction. (Perhaps this logic is only in the backend) 
+
+      queryClient.setQueryData(restaurantQueryKey, draftRestaurantInfo)
+      console.log('✅  All images uploaded successfully')
+    }
+  })
+
 
   const onLocalImageImported = async (event: React.ChangeEvent<HTMLInputElement>, selectedImage: RestaurantResourceTypes | null) => { // TODO: Move it to a new hook which cares of the local images
     if (!selectedImage) return;
@@ -155,9 +223,6 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
     event.target.value = '';
   }
 
-  
-
-
   return {
     
     draft: draftRestaurantInfo,
@@ -166,13 +231,15 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
     
     isDownloading: remoteQuery.isLoading,
     
-    isUploading: remoteMutation.isPending,
+    isUploading: updateMutation.isPending || initializeMutation.isPending,
     
     downloadError: remoteQuery.isError,
 
-    uploadError: remoteMutation.isError,
+    uploadError: updateMutation.isError || initializeMutation.isError,
     
-    upload: () => remoteMutation.mutate(),
+    update: () => updateMutation.mutate(),
+
+    initialize:() => initializeMutation.mutate(),
 
     onUpdateTextField: (fieldName: keyof RestaurantStringRegularFields, newValue: string) => {
       if(draftRestaurantInfo == null) return

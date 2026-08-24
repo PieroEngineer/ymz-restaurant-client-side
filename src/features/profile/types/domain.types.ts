@@ -11,7 +11,7 @@ export interface Restaurant{
     peruvianPaymentNumber: string,
     peruvianContactNumber: string,
     qrUrl: string,
-    qrFile: File | null
+    qrFile: File | null,
+    //isOpen TODO
+    isInitialized: boolean
 }
- 
-

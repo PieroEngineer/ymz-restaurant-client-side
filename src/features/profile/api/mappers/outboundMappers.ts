@@ -1,12 +1,12 @@
-import type { UploadRestaurantInfoPayload } from "@/features/profile/types/api.types";
+import type { InitializeRestaurantInfoPayload, UpdateRestaurantInfoPayload } from "@/features/profile/types/api.types";
 import type { Restaurant } from "@/features/profile/types/domain.types";
 
-export function toRemoteRestaurant(
+export function toRemoteRestaurantUpdate(
     local: Restaurant,
     logoWasModified: boolean,
     dishImagesWereModified: [boolean, boolean, boolean],
     qrWasModified: boolean
-): UploadRestaurantInfoPayload {
+): UpdateRestaurantInfoPayload {
     return {
         restaurantName: local.restaurantName,
         logoUrlRequired: logoWasModified,
@@ -18,5 +18,21 @@ export function toRemoteRestaurant(
         phoneNumberToPay: local.peruvianPaymentNumber,
         phoneNumberToContact: local.peruvianContactNumber,
         paymentQrUrlsRequired: qrWasModified
+    };
+}
+
+export function toRemoteRestaurantInitialization(
+    local: Restaurant,
+    dishImagesWereModified: [boolean, boolean, boolean],
+): InitializeRestaurantInfoPayload {
+    return {
+        restaurantName: local.restaurantName,
+        latitude: local.coordinates[0],
+        longitude: local.coordinates[1],
+        // openTime: local.openingTime,
+        // closeTime: local.closingTime,
+        dishesToShowUrlsRequired: dishImagesWereModified,
+        phoneNumberToPay: local.peruvianPaymentNumber,
+        phoneNumberToContact: local.peruvianContactNumber,
     };
 }

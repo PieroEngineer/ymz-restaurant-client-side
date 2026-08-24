@@ -2,8 +2,9 @@ import { ConfigurationArea } from "@/features/profile/components/ConfigurationAr
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
 import { useDataState } from "@/features/profile/hooks/useDataState";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
+import { useNavigate } from "@tanstack/react-router";
 
-export default function RestaurantConfigPage() {
+export function RestaurantConfigPage() {
   const restaurantInfo = useRestaurantInfo()
   const dataState = useDataState(
     restaurantInfo.remote?? null,
@@ -13,6 +14,7 @@ export default function RestaurantConfigPage() {
   )
 
   console.log('🔎  Restaurant draft info', restaurantInfo.draft)
+  const navigate = useNavigate(); // TanStack navigation hook instance
 
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
@@ -39,7 +41,7 @@ export default function RestaurantConfigPage() {
           </section>
         ) : (
           <>
-            <ConfigurationArea 
+            <ConfigurationArea // Consider pass update of the input error to remove it when the user starts to write
               restaurantName = {restaurantInfo.draft.restaurantName}
               phoneNumberToPay = {restaurantInfo.draft.peruvianPaymentNumber}
               phoneNumberToContact = {restaurantInfo.draft.peruvianContactNumber}
@@ -50,9 +52,26 @@ export default function RestaurantConfigPage() {
               onUpdateStringField = {restaurantInfo.onUpdateTextField}
               onLocalImageImported = {restaurantInfo.onLocalImageImported}
             />
-            <ConfirmationArea 
-              confirmSaving = {restaurantInfo.upload}
-              dataStatus = {dataState.state}
+            <ConfirmationArea
+              tryToSave = {() => {
+                if(restaurantInfo.remote == null) return
+
+                if(!dataState.validateInput()) return
+                
+                if(!restaurantInfo.remote.isInitialized){
+                  restaurantInfo.initialize()
+
+                  navigate({ to: '/menu' })
+                  // navigate({ to: '/hub' }) // FIXME
+                }
+                else{
+                  restaurantInfo.update()
+                }
+
+              }}
+              inputError={dataState.inputError}
+              loadingStatus = {dataState.loadingState}
+              isFirstTime = {!restaurantInfo.draft.isInitialized}
             />
           </>
         )}

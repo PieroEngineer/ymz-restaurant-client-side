@@ -49,6 +49,7 @@ export function ConfigurationArea({
             onChange={ (event) => onLocalImageImported(event, interaction.imageToEdit) }
             className="hidden"
         />
+        
 
         {/* Restaurant info card */}
         <section
@@ -235,62 +236,28 @@ export function ConfigurationArea({
 
             {/* 3 icons horizontally ordered */}
             <div className="flex items-center gap-4 pt-1">
-                { dishesToShow[0] &&
-                    <div 
-                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
-                        onClick={() => { interaction.importNewLocalImage('FRONT1') }}
+                {(['FRONT1', 'FRONT2', 'FRONT3'] as const).map((imageType, index) => (
+                    <button
+                        key={imageType}
+                        type="button"
+                        className="group relative size-16 overflow-hidden rounded-md bg-slate-300 transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
+                        onClick={() => { interaction.importNewLocalImage(imageType) }}
+                        aria-label={`Editar plato ${index + 1}`}
                     >
-                        <img
-                            src={dishesToShow[0]}
-                            alt=""
-                            className="size-16 rounded-md object-cover shrink-0"
-                        />
-                        <div className="absolute  justify-center items-center inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <Editpicicon className="size-10"/>
-                        </div>
-                    </div>
-                }
-                
-                { dishesToShow[1] &&
-                    <div 
-                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
-                        onClick={() => { interaction.importNewLocalImage('FRONT2') }}
-                    >
-                        <img
-                            src={dishesToShow[1]}
-                            alt=""
-                            className="size-16 rounded-md object-cover shrink-0"
-                        />
-                        
-                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <Editpicicon className="size-10"/>
-                        </div>
-                    </div>
-
-                    
-                }
-
-                { dishesToShow[2] &&
-                    <div 
-                        className="group relative inline-block overflow-hidden rounded-md transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
-                        onClick={() => { interaction.importNewLocalImage('FRONT3') }}
-                    >
-                        <img
-                            src={dishesToShow[2]}
-                            alt=""
-                            className="size-16 rounded-md object-cover shrink-0"
-                        />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <Editpicicon className="size-10"/>
-                        </div>
-                    </div>
-
-
-                    
-                }
+                        {dishesToShow[index] && (
+                            <img
+                                src={dishesToShow[index]}
+                                alt=""
+                                className="size-full object-cover"
+                            />
+                        )}
+                        <span className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <Editpicicon className="size-10" />
+                        </span>
+                    </button>
+                ))}
             </div>
         </section>
-
     </div>
   );
 }

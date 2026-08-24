@@ -5,13 +5,17 @@ import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
 import type { DataState } from "@/features/profile/types/support/dataState.types";
 
 interface ConfirmationAreaProps {
-    confirmSaving: () => void,
-    dataStatus: DataState
+    tryToSave: () => void,
+    inputError: string | null
+    loadingStatus: DataState,
+    isFirstTime: boolean,
 }
 
 export function ConfirmationArea({
-    confirmSaving,
-    dataStatus
+    tryToSave,
+    loadingStatus: loadingStatus,
+    isFirstTime,
+    inputError
 }: ConfirmationAreaProps) {
 
     const dataStatusIcon = {
@@ -33,7 +37,7 @@ export function ConfirmationArea({
                 {/* white rectangle: italic caption above a medium image */}
                 <div className="bg-white rounded-lg p-2 flex flex-col items-center gap-1.5 w-full">
                     <span className="italic text-md text-brand-primary">
-                    {"Como el usuario te " + (dataStatus == 'SYNC' ? 'encuentra' : 'encontraría')}
+                    {"Como el usuario te " + (loadingStatus == 'SYNC' ? 'encuentra' : 'encontraría')}
                     </span>
                     <img
                     // src={MOCK.confirmationImageUrl}
@@ -51,18 +55,30 @@ export function ConfirmationArea({
                         type="button"
                         className="flex items-center gap-2 rounded-md px-4 py-1.5 shadow-sm transition-transform duration-150 ease-in-out hover:scale-105 active:scale-95"
                         style={{ backgroundColor: "#ff751f" }}
-                        disabled={dataStatus != 'EDITED' && dataStatus != 'ERROR'}
-                        onClick={confirmSaving}
+                        disabled={loadingStatus != 'EDITED' && loadingStatus != 'ERROR'}
+                        onClick={tryToSave}
                     >
                         <span className="text-white text-xl font-medium">
-                        {"Guardar"}
+                        {isFirstTime ? "Empezar" : "Guardar"}
                         </span>
                     </button>
 
-                    {dataStatusIcon[dataStatus]}
+                    {dataStatusIcon[loadingStatus]}
                 </div>
 
             </div>
+
+            {loadingStatus=='ERROR' && (
+                <span className="italic text-md text-red-600">
+                    {"La última carga falló, por favor, reintentar en unos minutos"}
+                </span>
+            )}
+
+            {inputError != null && (
+                <span className="italic text-md text-red-600">
+                    {inputError}
+                </span>
+            )}
 
             {/* Open restaurant button */}
             <div className="relative flex flex-col items-center gap-1.5">
@@ -82,12 +98,6 @@ export function ConfirmationArea({
                     </span>
                     <Closeddooricon className = 'size-8'/>
                 </button>
-
-                {dataStatus=='ERROR' && (
-                    <span className="italic text-md text-red-600">
-                        {"La última carga falló, por favor, reintentar en unos momentos"}
-                    </span>
-                )}
 
                 <div className="absolute inset-0 bg-black/60 rounded-xl backdrop-blur-[1px] flex items-center justify-center cursor-not-allowed select-none">
                     <span className="text-white text-sm font-bold tracking-wider uppercase">

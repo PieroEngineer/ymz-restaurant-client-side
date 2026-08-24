@@ -16,6 +16,7 @@ export function toDomainRestaurant(dto: GetRestaurantInfoResponse): Restaurant {
         peruvianPaymentNumber: dto.phoneNumberToPay,
         peruvianContactNumber: dto.phoneNumberToContact,
         qrUrl: dto.paymentQrUrl,
-        qrFile: null
+        qrFile: null,
+        isInitialized: dto.isInitialized
     }
 }
