@@ -62,7 +62,6 @@ export function RestaurantConfigPage() {
                   restaurantInfo.initialize()
 
                   navigate({ to: '/menu' })
-                  // navigate({ to: '/hub' }) // FIXME
                 }
                 else{
                   restaurantInfo.update()

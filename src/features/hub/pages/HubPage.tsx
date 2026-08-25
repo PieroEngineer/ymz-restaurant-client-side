@@ -9,10 +9,11 @@ import options from '@/features/hub/assets/options.webp'
 import restaurant from '@/features/hub/assets/restaurant.webp'
 import trafficlight from '@/features/hub/assets/traffic-light.webp'
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
+import { openInNewTab } from '@/shared/utils/webActors';
 
 export function HubPage() {
   const navigate = useNavigate(); // TanStack navigation hook instance
-  
+
   return (
     <div className="w-screen h-screen bg-brand-background relative flex flex-col items-center justify-center px-12 overflow-hidden">
       
@@ -61,8 +62,8 @@ export function HubPage() {
 
         {/* COLUMN 4: Stacked Buttons Container */}
         <div className="grid grid-rows-2 gap-8 h-3/4">
-          <HubButton label="Contáctanos" imageSrc={mic} />
-          <HubButton label="Opciones" imageSrc={options} />
+          <HubButton label="Contáctanos" imageSrc={mic} onClick={() => openInNewTab('https://docs.google.com/forms/d/e/1FAIpQLSfvCrR8RdXhEWsrMl2j-spT3l0KmByA9kGqSrFRifHGRiU5Yg/viewform?usp=dialog')}/>
+          <HubButton label="Opciones" comingSoonCover = {true} imageSrc={options} />
         </div>
 
       </div>
