@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Default to LocalStack's standard edge port if no .env variable is configured yet
 const API_BASE_URL = 'http://localhost:4566/_aws/execute-api';
-const API_GATEWAY_ID = 'hfunvhsayi';
+const API_GATEWAY_ID = 'jlriokgrna';
 const STAGE = 'prod';
 
 const BASE_URL = /*import.meta.env.VITE_API_BASE_URL ||*/ `${API_BASE_URL}/${API_GATEWAY_ID}/${STAGE}`;

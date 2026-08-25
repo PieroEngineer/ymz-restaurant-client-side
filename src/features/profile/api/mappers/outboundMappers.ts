@@ -1,3 +1,4 @@
+import { formatPeruvianNumberWithCountryCode } from "@/features/profile/helpers/phoneNumberValidators";
 import type { InitializeRestaurantInfoPayload, UpdateRestaurantInfoPayload } from "@/features/profile/types/api.types";
 import type { Restaurant } from "@/features/profile/types/domain.types";
 
@@ -15,8 +16,8 @@ export function toRemoteRestaurantUpdate(
         // openTime: local.openingTime,
         // closeTime: local.closingTime,
         dishesToShowUrlsRequired: dishImagesWereModified,
-        phoneNumberToPay: local.peruvianPaymentNumber,
-        phoneNumberToContact: local.peruvianContactNumber,
+        phoneNumberToPay: formatPeruvianNumberWithCountryCode(local.peruvianPaymentNumber),
+        phoneNumberToContact: formatPeruvianNumberWithCountryCode(local.peruvianContactNumber),
         paymentQrUrlsRequired: qrWasModified
     };
 }
@@ -32,7 +33,7 @@ export function toRemoteRestaurantInitialization(
         // openTime: local.openingTime,
         // closeTime: local.closingTime,
         dishesToShowUrlsRequired: dishImagesWereModified,
-        phoneNumberToPay: local.peruvianPaymentNumber,
-        phoneNumberToContact: local.peruvianContactNumber,
+        phoneNumberToPay: formatPeruvianNumberWithCountryCode(local.peruvianPaymentNumber),
+        phoneNumberToContact: formatPeruvianNumberWithCountryCode(local.peruvianContactNumber),
     };
 }
