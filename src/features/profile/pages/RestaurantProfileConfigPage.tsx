@@ -90,7 +90,19 @@ export function RestaurantConfigPage() {
 
               isLoading = {location.isLoading}
               errorMessage = {location.error}
-              onLocate = {(gmaps_link: string) => {
+              onLocate = {(gmaps_link: string/*, coordinates: Coordinates*/) => {
+                switch (modalLocationModal.selectionMethod){
+                  case 'G_MAPS_LINK':
+                    location.setViaGoogleLink(gmaps_link)
+                    break;
+                  case 'BROWSER':
+                    location.setViaBrowser()
+                    break;
+                  // case 'MANUAL': // TODO
+                  //   location.setManually(coordinates)
+                  //   break;
+                }
+
                 if(modalLocationModal.selectionMethod === 'G_MAPS_LINK'){
                   location.setViaGoogleLink(gmaps_link)
                 }

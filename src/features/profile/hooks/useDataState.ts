@@ -35,6 +35,11 @@ export function useDataState(
             return false
         }
 
+        if(draftData.coordinates[0] === 0 && draftData.coordinates[1] === 0){   // TODO: Modify this to check if the coordinates are null instead of checking if they are 0,0
+            setErrorMessage("Debes seleccionar la ubicación de tu restaurante.")
+            return false
+        }
+
         if (!isValidPeruvianNumber(draftData.peruvianContactNumber)) {
             setErrorMessage("El número de contacto no es válido.\nDebe tener el formato peruano")
             return false

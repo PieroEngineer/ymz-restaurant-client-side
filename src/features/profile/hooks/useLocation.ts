@@ -13,7 +13,7 @@ export function useLocation(
         setIsLoading(true)
         setError(null)
 
-        const coordRegex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+        const coordRegex = /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/;
 
         // Fast check on short URL
         const initialMatch = googleMapsLink.match(coordRegex);
@@ -27,7 +27,7 @@ export function useLocation(
         }
         else{
             setIsLoading(false) 
-            setError(`Por favor, asegúrese que el link tenga el símbolo "@"`)
+            setError(`No se pudo obtener las coordenadas de este link`)
         }
         
         // const headers = {
@@ -103,6 +103,13 @@ export function useLocation(
         );
     }
 
+    const setManually = (coordinates: Coordinates) => {
+        onUpdateLocation(coordinates)
+        setError(null)
+        setIsLoading(false)
+        onSuccess()
+    }
+
     return {        
         isLoading,
         
@@ -110,7 +117,9 @@ export function useLocation(
         
         setViaGoogleLink,
         
-        setViaBrowser
+        setViaBrowser,
+        
+        setManually
     }
 
 }

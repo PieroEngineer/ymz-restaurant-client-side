@@ -11,7 +11,7 @@ interface LocationConfigurationModalProps {
 
     isLoading: boolean,
     errorMessage: string | null,
-    onLocate: (gmaps_link: string) => void,
+    onLocate: (gmaps_link: string/* TODO, coordinates: Coordinates*/) => void,
 }
 
 export function LocationConfigurationModal({
@@ -26,6 +26,9 @@ export function LocationConfigurationModal({
     if (!isOpen) return null; 
 
     const linkInputRef = useRef<HTMLInputElement>(null);
+
+    // const latitudeInputRef = useRef<HTMLInputElement>(null); // TODO
+    // const longitudeInputRef = useRef<HTMLInputElement>(null);
 
     const [linkText, setLinkText] = useState('')
 
