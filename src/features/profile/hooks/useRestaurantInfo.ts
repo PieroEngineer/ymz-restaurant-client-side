@@ -281,8 +281,7 @@ export function useRestaurantInfo(){  // TODO: Consider to divide this hook betw
       })
     },
 
-    onLocalImageImported: onLocalImageImported
-
+    onLocalImageImported: onLocalImageImported,
 
   }
 }

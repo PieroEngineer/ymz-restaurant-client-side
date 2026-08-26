@@ -17,6 +17,7 @@ interface ConfigurationAreaProps {
     dishesToShow: [string, string, string];
     coordinates: [number, number];
     onLocalImageImported: (event: React.ChangeEvent<HTMLInputElement>, selectedImage: RestaurantResourceTypes | null) => void;
+    onOpenLocationModal: () => void;
 }
 
 export function ConfigurationArea({
@@ -28,7 +29,8 @@ export function ConfigurationArea({
     logoUrl,
     dishesToShow,
     coordinates,
-    onLocalImageImported
+    onLocalImageImported,
+    onOpenLocationModal
 }: ConfigurationAreaProps) {
 
     const updateImageInputRef = useRef<HTMLInputElement>(null);
@@ -133,10 +135,15 @@ export function ConfigurationArea({
                 <div className="flex items-center justify-between gap-2">
                     <label className="text-md shrink-0">{"Ubicación*:"}</label>
 
+                    <span className="text-md shrink-0 text-gray-500">
+                        {coordinates[0] === 0 && coordinates[1] === 0 ? "No asignada" : `${coordinates[0].toFixed(6)}, ${coordinates[1].toFixed(6)}`}   {/**TODO: Change the empty coordinates by null (but it needs backend changes) */}
+                    </span>
+
                     <button
                         type="button"
                         className="bg-transparent rounded-md p-1.5 shadow-sm
                                 flex items-center justify-center shrink-0"
+                        onClick={onOpenLocationModal}
                         aria-label={"Edición de ubicación"}
                     >
                         <PinIcon className='size-8'/>

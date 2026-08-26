@@ -1,17 +1,24 @@
 import { ConfigurationArea } from "@/features/profile/components/ConfigurationArea";
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
+import { LocationConfigurationModal } from "@/features/profile/components/LocationConfigurationModal";
 import { useDataState } from "@/features/profile/hooks/useDataState";
+import { useLocation } from "@/features/profile/hooks/useLocation";
+import { useLocationModal } from "@/features/profile/hooks/useLocationModal";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 import { useNavigate } from "@tanstack/react-router";
 
 export function RestaurantConfigPage() {
   const restaurantInfo = useRestaurantInfo()
+
   const dataState = useDataState(
     restaurantInfo.remote?? null,
     restaurantInfo.draft,
     restaurantInfo.downloadError,
     restaurantInfo.uploadError
   )
+
+  const modalLocationModal = useLocationModal()
+  const location = useLocation(restaurantInfo.onUpdateCoordinates, modalLocationModal.toggleOpening)
 
   console.log('🔎  Restaurant draft info', restaurantInfo.draft)
   const navigate = useNavigate(); // TanStack navigation hook instance
@@ -51,6 +58,7 @@ export function RestaurantConfigPage() {
               coordinates = {restaurantInfo.draft.coordinates}
               onUpdateStringField = {restaurantInfo.onUpdateTextField}
               onLocalImageImported = {restaurantInfo.onLocalImageImported}
+              onOpenLocationModal = {modalLocationModal.toggleOpening}
             />
             <ConfirmationArea
               tryToSave = {() => {
@@ -71,6 +79,25 @@ export function RestaurantConfigPage() {
               inputError={dataState.inputError}
               loadingStatus = {dataState.loadingState}
               isFirstTime = {!restaurantInfo.draft.isInitialized}
+            />
+
+            <LocationConfigurationModal
+              isOpen = {modalLocationModal.isOpen}
+
+              currentMethod = {modalLocationModal.selectionMethod}
+              onSelectMethod = {modalLocationModal.selectMethod}
+              onClose = {modalLocationModal.toggleOpening}
+
+              isLoading = {location.isLoading}
+              errorMessage = {location.error}
+              onLocate = {(gmaps_link: string) => {
+                if(modalLocationModal.selectionMethod === 'G_MAPS_LINK'){
+                  location.setViaGoogleLink(gmaps_link)
+                }
+                else{
+                  location.setViaBrowser()
+                }
+              }}
             />
           </>
         )}

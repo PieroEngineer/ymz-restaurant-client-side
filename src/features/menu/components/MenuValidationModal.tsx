@@ -1,5 +1,6 @@
-import { type InvalidDishDetail, formatPageNumbersList } from '@/features/menu/helpers/menuValidators';
+import { formatPageNumbersList } from '@/features/menu/helpers/menuValidators';
 import type { MenuModalMode } from '@/features/menu/types/support/menuEditor.types';
+import type { InvalidDishDetail } from '@/features/menu/types/support/validation.types';
 
 
 interface MenuActionModalProps {
