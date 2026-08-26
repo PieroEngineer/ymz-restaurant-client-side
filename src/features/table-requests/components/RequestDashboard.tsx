@@ -96,7 +96,7 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
                   requestId = {tableRequest.requestId}
                   userName = {tableRequest.userName}
                   state = {tableRequest.state}
-                  checkpointTimestamp = {tableRequest.onQueuedTimestamp}
+                  expectedArrivalTime = {tableRequest.onQueuedTimestamp}
                   relatedInfo = {relatedInfo}
                   onAcceptCardFromQueue={requests.updateRequestStatus}
                   onDeclineRequest={handleDecline}
@@ -124,7 +124,7 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
                   requestId = {tableRequest.requestId}
                   userName = {tableRequest.userName}
                   state = {tableRequest.state}
-                  checkpointTimestamp = {tableRequest.onQueuedTimestamp}
+                  expectedArrivalTime = {tableRequest.onQueuedTimestamp}
                   relatedInfo = {relatedInfo}
                   onAcceptCardFromQueue={requests.updateRequestStatus}
                   onDeclineRequest={handleDecline}
@@ -147,7 +147,7 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
             {nomination: 'Pago', value: String(centsToDecimal(customerOrder.totalCostInCents))}
           ] ///, {nomination: 'A', value: ''};
 
-          const expectedArrivalTime = (customerOrder.arrivalTimeInMinutes*60_000) + customerOrder.onPaidTimeStamp;  // TODO: FIx the minutes difference here (It's giving an exrta minute when reload the page)
+          const expectedArrivalTime = (customerOrder.arrivalTimeInMinutes*60_000) + customerOrder.onPaidTimeStamp;  // TODO: minutes difference here (Check if it's giving an extra minute when reload the page)
           
           return (
             <div key={customerOrder.requestId} className="w-72 shrink-0">
@@ -155,7 +155,7 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
                 requestId = {customerOrder.requestId}  //
                 userName = {customerOrder.userName}
                 state = {'PAID'}
-                checkpointTimestamp = {expectedArrivalTime}
+                expectedArrivalTime = {expectedArrivalTime}
                 relatedInfo = {relatedInfo}
                 selectedOrder = {customerOrder.orderSelections}
                 onAcceptCardFromQueue={requests.updateRequestStatus}

@@ -15,12 +15,6 @@ import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon'
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 
-//X
-// import { useSuspenseQuery } from '@tanstack/react-query';
-// import { type TableRequestPayload } from '@/features/table-requests/types';
-// import { useRestaurantLiveRequests } from '@/features/table-requests/hooks/useRestaurantLiveRequests';
-// import { axiosClient } from '@/shared/api/axiosClient';
-
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
 
 type RequestDashboardScrollTarget = {

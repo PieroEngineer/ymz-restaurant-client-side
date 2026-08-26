@@ -9,7 +9,7 @@ interface TableRequestCardProps {
   requestId: string;
   userName: string;
   state: TableRequestState;
-  checkpointTimestamp: number;
+  expectedArrivalTime: number;
   relatedInfo: CardInfoItem[];
   selectedOrder?: OrderItem[]; // TODO: Use "Omit" if not all attributes are used
   onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void;
@@ -21,7 +21,7 @@ export function TableRequestCard({
   requestId,
   userName,
   state,
-  checkpointTimestamp,
+  expectedArrivalTime,
   relatedInfo,
   selectedOrder,
   onAcceptCardFromQueue,
@@ -70,7 +70,7 @@ export function TableRequestCard({
       <div className={`${currentConfig.colorBg} w-full py-1.5 px-4 flex items-center justify-center text-white font-sans text-xs font-semibold tracking-wider uppercase`}>
         <span>{currentConfig.label}</span>
         <span className="mx-2 opacity-60">|</span>
-        <DymamicTimer checkpointTimestamp={checkpointTimestamp} />
+        <DymamicTimer checkpointTimestamp={expectedArrivalTime} />
       </div>
 
       {/* SECTION 3: Information Space */}
