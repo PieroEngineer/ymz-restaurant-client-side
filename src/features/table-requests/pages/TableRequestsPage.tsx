@@ -4,8 +4,6 @@ import { ChannelProvider } from 'ably/react';
 
 // Import Feature Layers
 import { RequestDashboard } from '@/features/table-requests/components/RequestDashboard';
-// import { MOCK_TABLE_REQUESTS } from '@/features/table-requests/constants/mockRequests';
-
 import { ColoredExplorationIcon } from '@/features/table-requests/components/icons/ColoredExplorationIcon'; // TODO: It's possible to 
 import { LightExplorationIcon } from '@/features/table-requests/components/icons/LightExplorationIcon';        // toggle the color by 
 import { ColoredMgfGlassIcon } from '@/features/table-requests/components/icons/ColoredMgfGlassIcon';     // clicking, so only 2

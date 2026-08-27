@@ -2,11 +2,12 @@ import { OrderSummaryTable } from "@/features/table-requests/components/inlineTa
 import type { OrderItem, TableRequestState } from "@/features/table-requests/types/domain.types";
 
 interface DynamicCardAreaProps{
-    status: TableRequestState;
-    selectedOrder?: OrderItem[];
-    onAcceptCardFromQueue?: () => void;
-    onDeclineRequest?: () => void;
-    onTryToObservePaymentUrl?: () => void;
+  status: TableRequestState;
+  selectedOrder?: OrderItem[];
+  onAcceptCardFromQueue?: () => void;
+  onDeclineRequest?: () => void;
+  onTryToObservePaymentUrl?: () => void;
+  onFinalizeOrder?: () => void;
 }
 
 export function DynamicCardArea({
@@ -14,7 +15,8 @@ export function DynamicCardArea({
   selectedOrder = [],
   onAcceptCardFromQueue,
   /*onDeclineRequest TODO*/
-  onTryToObservePaymentUrl
+  onTryToObservePaymentUrl,
+  onFinalizeOrder
 }: DynamicCardAreaProps) {
   console.log(`🔎🍖  Order selections (In dynamic area):\n ${JSON.stringify(selectedOrder)}`)
   
@@ -60,13 +62,27 @@ export function DynamicCardArea({
         return (
           <div className="w-full flex flex-col gap-2">
             <OrderSummaryTable items={selectedOrder} />
-            <button
-              type="button"
-              onClick={() => onTryToObservePaymentUrl?.()}
-              className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
+
+            <div
+              className="flex items-center gap-1"
             >
-              Ver pago
-            </button>
+              <button
+                type="button"
+                onClick={() => onFinalizeOrder?.()}
+                className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
+              >
+                Finalizar
+              </button>
+              <button
+                type="button"
+                onClick={() => onTryToObservePaymentUrl?.()}
+                className="w-full py-2.5 rounded-xl bg-brand-navy text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
+              >
+                Ver pago
+              </button>
+            </div>
+
+            
           </div>
         );
 

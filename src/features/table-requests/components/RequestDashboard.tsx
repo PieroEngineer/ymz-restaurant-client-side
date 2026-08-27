@@ -164,9 +164,8 @@ export function RequestDashboard({
                 selectedOrder = {customerOrder.orderSelections}
                 onAcceptCardFromQueue={requests.updateRequestStatus}
                 onDeclineRequest={handleDecline}
-                onTryToObservePaymentUrl = {() => {
-                  console.log(`🔎🍖  Observing payment URL: ${customerOrder.paymentImageUrl}`)
-                  onTryToObservePaymentUrl(customerOrder.paymentImageUrl)}}
+                onTryToObservePaymentUrl = { () => { onTryToObservePaymentUrl(customerOrder.paymentImageUrl) } }
+                onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.requestId ) } }
               />
             </div>
           );

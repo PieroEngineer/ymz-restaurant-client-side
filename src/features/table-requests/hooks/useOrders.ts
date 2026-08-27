@@ -1,9 +1,10 @@
 import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
 import { toDomainOrder } from "@/features/table-requests/api/mappers/inboundMappers";
 import { requestApi } from "@/features/table-requests/api/requestApi";
-import type { OrderPreselectionPayload } from "@/features/table-requests/types/api.types";
+import { removeOrder } from "@/features/table-requests/helpers/handleRequestUpdates";
+import type { FinalizeOrderPayload, OrderPreselectionPayload } from "@/features/table-requests/types/api.types";
 import type { Order } from "@/features/table-requests/types/domain.types";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import type { Message } from "ably";
 import { useCallback } from "react";
 
@@ -17,6 +18,36 @@ export const useOrders = () => {
         queryKey: queryKey,
         queryFn: requestApi.getAllOrders
       }); 
+
+    const finalizeOrderMutation = useMutation({
+        mutationFn: async (orderId: string) => {
+            const orderToFinalizePayload: FinalizeOrderPayload = {
+                restaurantId: MOCK_MENU_RESTAURANT_ID,
+                orderId: orderId
+            } 
+
+            await requestApi.finilizeOrder(orderToFinalizePayload)
+        },
+        
+        onMutate: async (orderId: string) => {
+            await queryClient.cancelQueries({ queryKey: queryKey })
+
+            const previousOrders = queryClient.getQueryData<Order[]>(queryKey)
+
+            queryClient.setQueryData<Order[]>( queryKey, (prevOrders) => 
+                removeOrder(orderId, prevOrders)
+            )
+
+            return { previousOrders }
+        },
+
+        onError: (_error, _params, context) => {
+            if (context?.previousOrders) {
+                queryClient.setQueryData(queryKey, context.previousOrders);
+            }
+        }
+
+    })
       
     /**
      * High Performance Delta Updates:
@@ -25,6 +56,9 @@ export const useOrders = () => {
      */
     return {
         currentState: customerOrders,
+
+        finalizeOrder: (orderId: string) => finalizeOrderMutation.mutate(orderId),
+
         onOrderUpdate: useCallback((eventName: string, data: Message) => {queryClient.setQueryData<Order[]>(
             queryKey,
             (oldOrders = []) => {

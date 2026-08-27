@@ -5,20 +5,19 @@ import type { OrderItem, TableRequestState } from '@/features/table-requests/typ
 import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
 
 interface TableRequestCardProps {
-  //X requestData: TableRequest;
   requestId: string;
   userName: string;
   state: TableRequestState;
   expectedArrivalTime: number;
   relatedInfo: CardInfoItem[];
   selectedOrder?: OrderItem[]; // TODO: Use "Omit" if not all attributes are used
-  onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void;
+  onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void; // TODO: Remove the parameters from here, because there should be assigned previously (e.g. "onTryToObservePaymentUrl" and "onFinalizeOrder")
   onDeclineRequest?: (id: string) => void;
   onTryToObservePaymentUrl?: () => void;
+  onFinalizeOrder?: () => void;
 }
 
-export function TableRequestCard({
-  //X requestData, 
+export function TableRequestCard({  // TODO: Divide this UI component in different UI components to have more flexibility for each case and don't have all the parameters and callbacks crowed
   requestId,
   userName,
   state,
@@ -27,7 +26,8 @@ export function TableRequestCard({
   selectedOrder,
   onAcceptCardFromQueue,
   onDeclineRequest,
-  onTryToObservePaymentUrl
+  onTryToObservePaymentUrl,
+  onFinalizeOrder
 }: TableRequestCardProps) {
 
   // Configuration map for future scaling
@@ -93,6 +93,7 @@ export function TableRequestCard({
           onAcceptCardFromQueue = { () => onAcceptCardFromQueue?.(requestId, 'ACCEPTED') }  // TODO: This and the bellow function doesn't need the parameters here because they can be passed in the call of "TableRequestCard"
           onDeclineRequest = { () => onDeclineRequest?.(requestId) }  // TODO: It will be used once the websockets of the customer's client-side is in different screens
           onTryToObservePaymentUrl = {onTryToObservePaymentUrl}
+          onFinalizeOrder = {onFinalizeOrder}
         />
       </footer>
     </article>

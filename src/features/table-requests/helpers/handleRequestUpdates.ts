@@ -1,4 +1,4 @@
-import type { TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
+import type { Order, TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
 
 export const updateTableRequestState = (
     requestId: string,
@@ -16,3 +16,9 @@ export const removeTableRequest = (
     requests?: TableRequest[],
 ): TableRequest[] =>
   (requests ?? []).filter((request) => request.requestId !== requestId);
+
+export const removeOrder = (
+    orderId: string,
+    orders?: Order[],
+): Order[] =>
+  (orders ?? []).filter((order) => order.requestId !== orderId);

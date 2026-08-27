@@ -38,7 +38,7 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
           actor: "RESTAURANT"
         }
 
-        requestApi.denyRequest(requestDenial, requestId);
+        requestApi.denyRequest(requestDenial, requestId); /// Could the above code go in "onMutate"?
       },
 
       onMutate: async ({ requestId }: CancelRequestAttributes) => {

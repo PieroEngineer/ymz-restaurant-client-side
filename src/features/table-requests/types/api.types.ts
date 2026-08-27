@@ -32,13 +32,17 @@ export interface OrderPreselectionPayload{
   // customerArrived: Boolean,
   orderSelections: OrderItemPayload[],
   paymentImageUrl: string
-
 }
 interface OrderItemPayload{
   dishId: string
   dishName: string,
   quantity: number
   historicalUnitPriceInCents: number
+}
+
+export interface FinalizeOrderPayload{
+  restaurantId: string,
+  orderId: string
 }
 
 export interface CancelRequestPayload {
