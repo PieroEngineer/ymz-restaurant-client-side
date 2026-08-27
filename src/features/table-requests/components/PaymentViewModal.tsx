@@ -17,7 +17,7 @@ export function PaymentViewModal({
     return(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in">
              <div
-                className="rounded-2xl p-20 shadow-xl flex flex-col gap-5 bg-white items-center"
+                className="rounded-2xl p-8 shadow-xl flex flex-col gap-5 bg-white items-center"
             >
                 <span className="text-xl text-brand-navy text-center">Confirmación de pago</span>
 
@@ -54,7 +54,7 @@ export function PaymentViewModal({
 
                 <div className="w-1/2 h-1 bg-brand-primary shrink-0" />
                 
-                <span className="text-xl text-brand-navy text-center whitespace-pre-line">{'Tiempo de llegada y pago confirmados 😁\nSepara mesa y prepara la comida 👨‍🍳'}</span>
+                <span className="text-md text-brand-navy text-center whitespace-pre-line">{'Tiempo de llegada y pago confirmados 😁\nMomento de separar mesa y preparar la comida 👨‍🍳'}</span>
 
             </div>
         </div>
