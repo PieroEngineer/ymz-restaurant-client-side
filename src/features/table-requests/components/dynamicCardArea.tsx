@@ -6,9 +6,16 @@ interface DynamicCardAreaProps{
     selectedOrder?: OrderItem[];
     onAcceptCardFromQueue?: () => void;
     onDeclineRequest?: () => void;
+    onTryToObservePaymentUrl?: () => void;
 }
 
-export function DynamicCardArea({status, selectedOrder = [], onAcceptCardFromQueue, /*onDeclineRequest TODO*/}: DynamicCardAreaProps) {
+export function DynamicCardArea({
+  status,
+  selectedOrder = [],
+  onAcceptCardFromQueue,
+  /*onDeclineRequest TODO*/
+  onTryToObservePaymentUrl
+}: DynamicCardAreaProps) {
   console.log(`🔎🍖  Order selections (In dynamic area):\n ${JSON.stringify(selectedOrder)}`)
   
   switch (status) {
@@ -44,7 +51,24 @@ export function DynamicCardArea({status, selectedOrder = [], onAcceptCardFromQue
         return <p></p>;
     
       case 'PAID':
-      return OrderSummaryTable({items: selectedOrder})
+      // return OrderSummaryTable({items: selectedOrder})
+      {/*
+        Column
+          Summary Table
+          Button to try to observe payment url (onTryToObservePaymentUrl)
+        */}
+        return (
+          <div className="w-full flex flex-col gap-2">
+            <OrderSummaryTable items={selectedOrder} />
+            <button
+              type="button"
+              onClick={() => onTryToObservePaymentUrl?.()}
+              className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
+            >
+              Ver pago
+            </button>
+          </div>
+        );
 
     default:
       return <p></p>;

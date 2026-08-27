@@ -35,7 +35,8 @@ export interface Order {
   // currentDistanceInMeters: number,   // TODO
   onPaidTimeStamp: number,
   customerArrived: boolean,
-  orderSelections: OrderItem[]
+  orderSelections: OrderItem[],
+  paymentImageUrl: string
 }
 export interface OrderItem {
   dishId: string,

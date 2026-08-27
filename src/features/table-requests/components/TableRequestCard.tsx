@@ -14,6 +14,7 @@ interface TableRequestCardProps {
   selectedOrder?: OrderItem[]; // TODO: Use "Omit" if not all attributes are used
   onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void;
   onDeclineRequest?: (id: string) => void;
+  onTryToObservePaymentUrl?: () => void;
 }
 
 export function TableRequestCard({
@@ -25,7 +26,8 @@ export function TableRequestCard({
   relatedInfo,
   selectedOrder,
   onAcceptCardFromQueue,
-  onDeclineRequest
+  onDeclineRequest,
+  onTryToObservePaymentUrl
 }: TableRequestCardProps) {
 
   // Configuration map for future scaling
@@ -88,8 +90,9 @@ export function TableRequestCard({
         <DynamicCardArea
           status = { state }
           selectedOrder =  { selectedOrder }
-          onAcceptCardFromQueue = { () => onAcceptCardFromQueue?.(requestId, 'ACCEPTED') }
+          onAcceptCardFromQueue = { () => onAcceptCardFromQueue?.(requestId, 'ACCEPTED') }  // TODO: This and the bellow function doesn't need the parameters here because they can be passed in the call of "TableRequestCard"
           onDeclineRequest = { () => onDeclineRequest?.(requestId) }  // TODO: It will be used once the websockets of the customer's client-side is in different screens
+          onTryToObservePaymentUrl = {onTryToObservePaymentUrl}
         />
       </footer>
     </article>

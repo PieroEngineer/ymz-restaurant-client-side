@@ -89,7 +89,7 @@ export function LocationConfigurationModal({
                 {isLoading ? (
                     <div className="size-10 animate-spin rounded-full border-4 border-gray-300 border-t-brand-primary" aria-hidden="true" />
                 ) : (
-                    <div className="flex gap-3 justify-end mt-2 pt-3 border-t border-white/10">
+                <div className="flex gap-3 justify-end mt-2 pt-3 border-t border-white/10">
                     <button
                         onClick={onClose}
                         className="px-4 py-2 text-xl font-bold rounded-lg bg-brand-secondary text-white hover:bg-orange-50 active:scale-95 transition-all duration-200 shadow-md cursor-pointer"

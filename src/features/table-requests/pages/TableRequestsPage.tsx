@@ -14,6 +14,8 @@ import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
 import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
+import { PaymentViewModal } from '@/features/table-requests/components/PaymentViewModal';
+import { usePaymentViewModal } from '@/features/table-requests/hooks/usePaymentViewModal';
 
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
 
@@ -35,6 +37,10 @@ export function TableRequestsPage() {
       triggerKey: Date.now(),
     });
   };
+
+  const paymentViewModal = usePaymentViewModal()
+
+  console.log('🔎💸  Observed Payment URL:', paymentViewModal.observedPaymentUrl);
 
   return (
     <div className="relative w-full h-full overflow-hidden select-none">
@@ -131,11 +137,24 @@ export function TableRequestsPage() {
           {/* Scalable Container Delivery */}
 
           <ChannelProvider channelName={channelName}>
-            <RequestDashboard scrollTarget={dashboardScrollTarget}/>      
+            <RequestDashboard
+              scrollTarget={dashboardScrollTarget}
+              onTryToObservePaymentUrl = { (url: string | null) => {
+                paymentViewModal.toggleOpening()
+                paymentViewModal.setObservedPaymentUrl(url)
+              }}
+            />      
           </ChannelProvider>
 
         </div>
       </main>
+
+      <PaymentViewModal
+        isOpen = {paymentViewModal.isOpen}
+        paymentImageUrl = {paymentViewModal.observedPaymentUrl}
+        onClose = {paymentViewModal.toggleOpening}
+        // onContactUser = {() => {}}
+      />
 
     </div>
   );

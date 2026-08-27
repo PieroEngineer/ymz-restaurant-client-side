@@ -29,7 +29,7 @@ export const useOrders = () => {
             queryKey,
             (oldOrders = []) => {
                 switch (eventName) {
-                    case 'new-order-preselected':
+                    case 'order-confirmed':
                         const preselectedOrderPayload = data as OrderPreselectionPayload;
                         const order = toDomainOrder(preselectedOrderPayload)
                         // Insert new order at the top of the list

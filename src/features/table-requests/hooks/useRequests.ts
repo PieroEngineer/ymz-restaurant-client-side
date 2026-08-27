@@ -143,7 +143,7 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
 
                 return updateTableRequestState(updateInfoPayload.requestId, updateInfoPayload.newStatus, oldRequests)
 
-              case 'new-order-preselected':
+              case 'order-confirmed':
                 const preselectedOrderPayload = data as OrderPreselectionPayload;
                 const order = toDomainOrder(preselectedOrderPayload)
                 return removeTableRequest(order.requestId, oldRequests)

@@ -15,10 +15,13 @@ type RequestDashboardScrollTarget = {
 
 type RequestDashboardProps = {
   scrollTarget?: RequestDashboardScrollTarget | null;
+  onTryToObservePaymentUrl: (url: string | null) => void;
 };
 
-export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps) {
-  // TODO: Analyze if the above double GET request can be unified
+export function RequestDashboard({
+  scrollTarget = null,
+  onTryToObservePaymentUrl
+}: RequestDashboardProps) {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const queuedRequestsRef = useRef<HTMLDivElement>(null);
@@ -27,6 +30,7 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
 
   const requests = useRequests();
   const orders = useOrders();
+  // TODO: Analyze if the above double GET request can be unified
   
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
   useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate)
@@ -160,6 +164,9 @@ export function RequestDashboard({ scrollTarget = null }: RequestDashboardProps)
                 selectedOrder = {customerOrder.orderSelections}
                 onAcceptCardFromQueue={requests.updateRequestStatus}
                 onDeclineRequest={handleDecline}
+                onTryToObservePaymentUrl = {() => {
+                  console.log(`🔎🍖  Observing payment URL: ${customerOrder.paymentImageUrl}`)
+                  onTryToObservePaymentUrl(customerOrder.paymentImageUrl)}}
               />
             </div>
           );

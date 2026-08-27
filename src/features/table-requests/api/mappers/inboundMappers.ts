@@ -32,5 +32,6 @@ export function toDomainOrder(dto: OrderPreselectionPayload): Order {
             quantity: selection.quantity,
             historicalUnitPriceInCents: selection.historicalUnitPriceInCents,
         })),
+        paymentImageUrl: dto.paymentImageUrl
     };
 }

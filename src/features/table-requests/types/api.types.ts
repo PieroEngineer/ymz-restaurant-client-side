@@ -30,7 +30,9 @@ export interface OrderPreselectionPayload{
   // currentDistanceInMeters: number,   // TODO
   onPaidTimeStamp: number,
   // customerArrived: Boolean,
-  orderSelections: OrderItemPayload[]
+  orderSelections: OrderItemPayload[],
+  paymentImageUrl: string
+
 }
 interface OrderItemPayload{
   dishId: string
