@@ -40,7 +40,7 @@ export function PaymentViewModal({
                         onClick={onClose}
                         className="px-4 py-2 text-xl font-bold rounded-lg bg-brand-secondary text-white hover:bg-orange-50 active:scale-95 transition-all duration-200 shadow-md cursor-pointer"
                     >
-                        Cancelar
+                        Ok
                     </button>
 
                     {/* Render the confirmation action button unless hard-blocked by invalid text fields */}

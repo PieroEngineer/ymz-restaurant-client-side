@@ -11,6 +11,7 @@ interface TableRequestCardProps {
   expectedArrivalTime: number;
   relatedInfo: CardInfoItem[];
   selectedOrder?: OrderItem[]; // TODO: Use "Omit" if not all attributes are used
+  isTimesUp?: boolean; 
   onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void; // TODO: Remove the parameters from here, because there should be assigned previously (e.g. "onTryToObservePaymentUrl" and "onFinalizeOrder")
   onDeclineRequest?: (id: string) => void;
   onTryToObservePaymentUrl?: () => void;
@@ -24,6 +25,7 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
   expectedArrivalTime,
   relatedInfo,
   selectedOrder,
+  isTimesUp,
   onAcceptCardFromQueue,
   onDeclineRequest,
   onTryToObservePaymentUrl,
@@ -94,6 +96,7 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
           onDeclineRequest = { () => onDeclineRequest?.(requestId) }  // TODO: It will be used once the websockets of the customer's client-side is in different screens
           onTryToObservePaymentUrl = {onTryToObservePaymentUrl}
           onFinalizeOrder = {onFinalizeOrder}
+          isTimesUp = {isTimesUp} // TODO: It should be triggered by the re-render and for the countdown. The countdown is missing
         />
       </footer>
     </article>

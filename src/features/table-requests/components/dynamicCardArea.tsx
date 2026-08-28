@@ -8,6 +8,7 @@ interface DynamicCardAreaProps{
   onDeclineRequest?: () => void;
   onTryToObservePaymentUrl?: () => void;
   onFinalizeOrder?: () => void;
+  isTimesUp?: boolean;
 }
 
 export function DynamicCardArea({
@@ -16,7 +17,8 @@ export function DynamicCardArea({
   onAcceptCardFromQueue,
   /*onDeclineRequest TODO*/
   onTryToObservePaymentUrl,
-  onFinalizeOrder
+  onFinalizeOrder,
+  isTimesUp
 }: DynamicCardAreaProps) {
   console.log(`🔎🍖  Order selections (In dynamic area):\n ${JSON.stringify(selectedOrder)}`)
   
@@ -66,13 +68,15 @@ export function DynamicCardArea({
             <div
               className="flex items-center gap-1"
             >
-              <button
-                type="button"
-                onClick={() => onFinalizeOrder?.()}
-                className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
-              >
-                Finalizar
-              </button>
+              {isTimesUp===true && (
+                <button
+                  type="button"
+                  onClick={() => onFinalizeOrder?.()}
+                  className="w-full py-2.5 rounded-xl bg-brand-primary text-white font-sans text-xs font-bold uppercase tracking-wider cursor-pointer transition-shadow hover:shadow-lg active:scale-98"
+                >
+                  Finalizar
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => onTryToObservePaymentUrl?.()}

@@ -166,6 +166,7 @@ export function RequestDashboard({
                 onDeclineRequest={handleDecline}
                 onTryToObservePaymentUrl = { () => { onTryToObservePaymentUrl(customerOrder.paymentImageUrl) } }
                 onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.requestId ) } }
+                isTimesUp = {expectedArrivalTime < Date.now() ? true : false} 
               />
             </div>
           );
