@@ -8,6 +8,8 @@ import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 import { useNavigate } from "@tanstack/react-router";
 
 export function RestaurantConfigPage() {
+  const navigate = useNavigate(); // TODO: This go within the hooks, no here.
+
   const restaurantInfo = useRestaurantInfo()
 
   const dataState = useDataState(
@@ -21,7 +23,6 @@ export function RestaurantConfigPage() {
   const location = useLocation(restaurantInfo.onUpdateCoordinates, modalLocationModal.toggleOpening)
 
   console.log('🔎  Restaurant draft info', restaurantInfo.draft)
-  const navigate = useNavigate(); // TanStack navigation hook instance
 
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">

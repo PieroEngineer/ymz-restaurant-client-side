@@ -18,15 +18,15 @@ const AuthRoute = createRoute({ // TODO: Pass the route string to a type
 // Index Route: Maps the root URL ("/") directly to your fullscreen HubPage
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/hub',  // FIXME: This is the correct name because the initial screen will be the auth
-  path: '/',
+  path: '/hub',  // FIXME: This is the correct name because the initial screen will be the auth
+  // path: '/',
   component: HubPage,
 });
 
 const profileEditionRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/',
-  path: '/profileEdition',
+  path: '/',
+  // path: '/profileEdition',
   component: RestaurantConfigPage,
 });
 

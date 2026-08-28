@@ -2,14 +2,17 @@ import { RealtimeProvider } from '@/app/providers/AblyProvider';
 import { QueryProvider } from '@/app/providers/QueryProvider';
 import { RouterProvider } from '@tanstack/react-router';
 import { router } from '@/app/router';
+import { AuthInitProvider } from '@/app/providers/AuthInitProvider';
 
 function App() {
   return (
     <QueryProvider>
-      <RealtimeProvider>
-        {/* Let TanStack Router handle the view injection automatically */}
-        <RouterProvider router={router} />
-      </RealtimeProvider>
+      <AuthInitProvider>
+        <RealtimeProvider>
+          {/* Let TanStack Router handle the view injection automatically */}
+          <RouterProvider router={router} />
+        </RealtimeProvider>
+      </AuthInitProvider>
     </QueryProvider>
   );
 }

@@ -69,6 +69,9 @@ export function InputCard({
 
                 <div className="grow"></div>
                 <div className={`flex gap-4 ${authMode.mode == "signingUp" ? 'flex-row-reverse' : ''}`}>
+                    
+                    {/** FIXME: Include the conditional "isLoading" to hide the buttons when it's loading  */}
+                    
                     <button
                         type="button"
                         onClick={()=>{

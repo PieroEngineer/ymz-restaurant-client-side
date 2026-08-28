@@ -8,7 +8,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 
-export function useRestaurantInfo(){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
+export function useRestaurantInfo(
+){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
   const queryClient = useQueryClient();
 
   const restaurantQueryKey = ['restaurant', 'information'];

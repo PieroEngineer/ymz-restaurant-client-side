@@ -1,16 +1,23 @@
 import { useState } from "react"
 import { isBlank, isValidEmail, isValidPassword } from "@/features/auth/helpers/credentialValidators";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { authService } from "@/features/auth/api/authService";
+import type { SignInPayload, SignUpPayload } from "@/features/auth";
+import { useNavigate } from "@tanstack/react-router";
+import { getAuthErrorMessage } from "@/features/auth/utils/authErrorMapper";
 
 export function useAuthentification(
     email: string,
     password: string
 ){
-    const [termsAcceptance, setTermsAcceptance] = useState(false)
-    
-    const [errorMessageInAuth, setErrorMessageInAuth] = useState("")
+    const navigate = useNavigate()
 
-    return{
-        trySignIn: () => {
+    const [termsAcceptance, setTermsAcceptance] = useState(false)    
+    const [errorMessageInAuth, setErrorMessageInAuth] = useState("")
+    const queryClient = useQueryClient();
+
+    const singInMutation = useMutation({
+        mutationFn: async () => {
 
             if (isBlank(email)) {
                 setErrorMessageInAuth('El correo electrónico es obligatorio.')
@@ -28,11 +35,31 @@ export function useAuthentification(
             }
 
             console.log(`🔎  Trying to sign in with ${email} ${password}`)
-            ///✏️Try to sign In
+
+            const credentialsPayload: SignInPayload = {
+                email,
+                password
+            }
+
+            await authService.signIn(credentialsPayload)
         },
-        
-        trySignUp: () => {
-            
+        onSuccess: async () => {
+            console.log('✅  Sign in successful')
+
+            // Refresh user profile query state immediately after login
+            queryClient.invalidateQueries({ queryKey: ['authUser'] });
+
+            navigate({ to: '/hub' })
+        },
+
+        onError: (error: any) => {
+            console.log('❌  Sign in failed', error)
+            setErrorMessageInAuth('Error al iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.')
+        }
+    })
+
+    const signUpMutation = useMutation({
+        mutationFn: async () => {
             if (isBlank(email)) {
                 setErrorMessageInAuth('El correo electrónico es obligatorio.')
                 return
@@ -59,8 +86,32 @@ export function useAuthentification(
             }
             
             console.log(`🔎  Trying to sign Up with ${email} ${password}`)
-            ///✏️Try to sign up
+
+            const credentialsPayload: SignUpPayload = {
+                email,
+                password
+            }
+
+            try{
+                await authService.signUp(credentialsPayload)
+            } catch(error){
+                throw new Error(getAuthErrorMessage(error));
+            }
         },
+        onSuccess: () => {
+            navigate({ to: '/restaurantProfile' })
+        },
+
+        onError: (error: any) => {
+            console.log('❌  Sign up failed', error)
+            setErrorMessageInAuth(error.message)
+        }
+    })
+
+    return{
+        trySignIn: () => singInMutation.mutate(),
+        
+        trySignUp: () => signUpMutation.mutate(),
 
         termsAcceptance,
         
