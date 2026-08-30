@@ -16,7 +16,9 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
   // Initial load fetches currently open requests via Axios
     const { data: tableRequests } = useSuspenseQuery<TableRequest[]>({
       queryKey: queryKey,
-      queryFn: requestApi.getAllRequests
+      queryFn: requestApi.getAllRequests,
+      staleTime: 0,
+      refetchOnMount: 'always'
     });
 
     const {mutate: denyRequestMutation/*, isPending*/} = useMutation({

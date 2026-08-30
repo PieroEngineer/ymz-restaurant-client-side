@@ -16,7 +16,9 @@ export const useOrders = () => {
 
     const { data: customerOrders } = useSuspenseQuery<Order[]>({
         queryKey: queryKey,
-        queryFn: requestApi.getAllOrders
+        queryFn: requestApi.getAllOrders,
+        staleTime: 0,
+        refetchOnMount: 'always'
       }); 
 
     const finalizeOrderMutation = useMutation({
