@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
-import { useRequests } from '@/features/table-requests/hooks/useRequests';
-import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTimeDashboard';
 import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 import type { RequestDashboardScrollSection } from '@/features/table-requests/types/support/requestDashboard.types';
+import type { Order, TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
+import type { Message } from 'ably';
 
 type RequestDashboardScrollTarget = {
   section: RequestDashboardScrollSection;
@@ -16,11 +16,23 @@ type RequestDashboardScrollTarget = {
 type RequestDashboardProps = {
   scrollTarget?: RequestDashboardScrollTarget | null;
   onTryToObservePaymentUrl: (url: string | null) => void;
+  requests: {
+    currentState: TableRequest[];
+    onRequestUpdated: (eventName: string, data: Message) => void;
+    updateRequestStatus: (requestId: string, newState: TableRequestState) => void;
+  };
+  orders: {
+    currentState: Order[];
+    onOrderUpdate: (eventName: string, data: Message) => void;
+    finalizeOrder: (orderId: string) => void;
+  };
 };
 
 export function RequestDashboard({
   scrollTarget = null,
-  onTryToObservePaymentUrl
+  onTryToObservePaymentUrl,
+  requests,
+  orders,
 }: RequestDashboardProps) {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -28,10 +40,6 @@ export function RequestDashboard({
   const readyRequestsRef = useRef<HTMLDivElement>(null);
   const paidRequestsRef = useRef<HTMLDivElement>(null);
 
-  const requests = useRequests();
-  const orders = useOrders();
-  // TODO: Analyze if the above double GET request can be unified
-  
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
   useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate)
 

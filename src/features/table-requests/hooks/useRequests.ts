@@ -6,7 +6,7 @@ import { removeTableRequest, updateTableRequestState } from "@/features/table-re
 import type { CancelRequestPayload, OrderPreselectionPayload, RequestUpdatePayload as UpdateRequestPayload, TableRequestPayload, UpdateInfoPayload, DenyRequestPayload } from "@/features/table-requests/types/api.types";
 import type { TableRequest, TableRequestState } from "@/features/table-requests/types/domain.types";
 import type { CancelRequestAttributes, UpdateStatusAttributes } from "@/features/table-requests/types/support/cardFields.types";
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Message } from "ably";
 
 export const useRequests = () => {  // TODO: Some throwed errors aren't cached, cover them after tests
@@ -14,7 +14,7 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
     const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
 
   // Initial load fetches currently open requests via Axios
-    const { data: tableRequests } = useSuspenseQuery<TableRequest[]>({
+    const { data: tableRequests, isPending } = useQuery<TableRequest[]>({
       queryKey: queryKey,
       queryFn: requestApi.getAllRequests,
       staleTime: 0,
@@ -128,7 +128,8 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
      * and surgically mutate the TanStack Query array cache in real-time.
      */
     return {
-      currentState: tableRequests,
+      currentState: tableRequests ?? [],
+      isPending,
       onRequestUpdated: useCallback((eventName: string, data: Message /*TODO: Incorrect type*/) => {queryClient.setQueryData<TableRequest[]>(
           queryKey,
           (oldRequests = []) => {

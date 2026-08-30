@@ -14,6 +14,8 @@ import { CookingIcon } from '@/features/table-requests/components/icons/CookingI
 import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { PaymentViewModal } from '@/features/table-requests/components/PaymentViewModal';
 import { usePaymentViewModal } from '@/features/table-requests/hooks/usePaymentViewModal';
+import { useRequests } from '@/features/table-requests/hooks/useRequests';
+import { useOrders } from '@/features/table-requests/hooks/useOrders';
 
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
 
@@ -37,6 +39,9 @@ export function TableRequestsPage() {
   };
 
   const paymentViewModal = usePaymentViewModal()
+  const requests = useRequests();
+  const orders = useOrders();
+  const isLoading = requests.isPending || orders.isPending;
 
   console.log('🔎💸  Observed Payment URL:', paymentViewModal.observedPaymentUrl);
 
@@ -134,15 +139,31 @@ export function TableRequestsPage() {
           
           {/* Scalable Container Delivery */}
 
-          <ChannelProvider channelName={channelName}>
-            <RequestDashboard
-              scrollTarget={dashboardScrollTarget}
-              onTryToObservePaymentUrl = { (url: string | null) => {
-                paymentViewModal.toggleOpening()
-                paymentViewModal.setObservedPaymentUrl(url)
-              }}
-            />      
-          </ChannelProvider>
+          {isLoading ? (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-5 text-center animate-fade-in">
+              <div className="relative size-16" role="status" aria-label="Cargando solicitudes">
+                <span className="absolute inset-0 rounded-full border-4 border-brand-primary/20" />
+                <span className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-primary animate-spin" />
+                <span className="absolute inset-1/3 rounded-full bg-brand-primary/15" />
+              </div>
+              <div>
+                <h2 className="font-heading text-xl font-bold text-brand-navy">Cargando solicitudes</h2>
+                <p className="mt-1 font-sans text-sm text-brand-navy/50">Estamos preparando tu espacio de trabajo.</p>
+              </div>
+            </div>
+          ) : (
+            <ChannelProvider channelName={channelName}>
+              <RequestDashboard
+                requests={requests}
+                orders={orders}
+                scrollTarget={dashboardScrollTarget}
+                onTryToObservePaymentUrl = { (url: string | null) => {
+                  paymentViewModal.toggleOpening()
+                  paymentViewModal.setObservedPaymentUrl(url)
+                }}
+              />
+            </ChannelProvider>
+          )}
 
         </div>
       </main>

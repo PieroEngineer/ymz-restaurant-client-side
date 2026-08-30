@@ -3,8 +3,8 @@ import type { TableRequestState } from "@/features/table-requests/types/domain.t
 // ===== Input Formats =====
 export interface TableRequestPayload {
   requestId: string,
-  userName: string,
   userId: string,
+  userName: string,
   groupSize: number,
   onQueuedTimestamp: number,
   state: TableRequestState,
