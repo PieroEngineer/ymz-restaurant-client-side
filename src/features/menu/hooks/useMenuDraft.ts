@@ -49,7 +49,7 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
   
             try {
               await menuApi.uploadImageToS3(
-                mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),  // FIXME: Remove this hardcoding
+                mapping.uploadUrl.replaceAll('172.18.0.2', 'localhost'),
                 fileToUpload,
               );
             } catch (s3UploadError) {

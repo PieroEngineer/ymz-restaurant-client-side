@@ -14,7 +14,9 @@ interface InputCardProps{
     onTryToSignUp: () => void,
 
     issueMessage: string,
-    cleanIssueMessage: () => void
+    cleanIssueMessage: () => void,
+
+    isLoading: boolean
 }
 
 export function InputCard({ 
@@ -27,7 +29,8 @@ export function InputCard({
     onTryToSignIn,
     onTryToSignUp,
     issueMessage,
-    cleanIssueMessage
+    cleanIssueMessage,
+    isLoading
 }: InputCardProps) {
 
     const authMode = useAuthMode()
@@ -68,48 +71,55 @@ export function InputCard({
                 </span>
 
                 <div className="grow"></div>
-                <div className={`flex gap-4 ${authMode.mode == "signingUp" ? 'flex-row-reverse' : ''}`}>
-                    
-                    {/** FIXME: Include the conditional "isLoading" to hide the buttons when it's loading  */}
-                    
-                    <button
-                        type="button"
-                        onClick={()=>{
-                            if(authMode.mode == "signingIn") {
-                                authMode.setSignUpMode()
-                            }
-                            else{
-                                onTryToSignUp()
-                            }
 
-                        }}
-                        className={`flex items-center gap-2 rounded-md ${authMode.mode == "signingIn" ? 'bg-brand-primary' : 'bg-brand-blue'} px-4 py-1.5 shadow-sm`}
-                        style={{ backgroundColor: "brand-primary" }}
-                    >
-                        <span className="text-white text-xl font-medium">
-                            {authMode.mode=="signingUp" ? "Crear" : "Crear cuenta"}
-                        </span>
-                    </button>
+                {/** FIXME: Include the conditional "isLoading" to hide the buttons when it's loading  */}
+                {isLoading ? (
+                    <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-primary"></div>
+                    </div>
+                ):(
+                    <div className={`flex gap-4 ${authMode.mode == "signingUp" ? 'flex-row-reverse' : ''}`}>
+                
+                        <button
+                            type="button"
+                            onClick={()=>{
+                                if(authMode.mode == "signingIn") {
+                                    authMode.setSignUpMode()
+                                }
+                                else{
+                                    onTryToSignUp()
+                                }
 
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if(authMode.mode == "signingUp") {
-                                authMode.setSignInMode()
-                            }
-                            else{
-                                onTryToSignIn()
-                            }
-                        }}
-                        className={`flex items-center gap-2 ${authMode.mode == "signingIn" ? 'bg-brand-blue' : 'bg-brand-primary'} rounded-md px-4 py-1.5 shadow-sm`}
-                        style={{ backgroundColor: "brand-blue" }}
-                    >
-                        <span 
-                        className="text-white text-xl font-medium">
-                            {authMode.mode=="signingIn" ? "Acceder" : "Ya tengo cuenta"}
-                        </span>
-                    </button>
-                </div>
+                            }}
+                            className={`flex items-center gap-2 rounded-md ${authMode.mode == "signingIn" ? 'bg-brand-primary' : 'bg-brand-blue'} px-4 py-1.5 shadow-sm`}
+                            style={{ backgroundColor: "brand-primary" }}
+                        >
+                            <span className="text-white text-xl font-medium">
+                                {authMode.mode=="signingUp" ? "Crear" : "Crear cuenta"}
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if(authMode.mode == "signingUp") {
+                                    authMode.setSignInMode()
+                                }
+                                else{
+                                    onTryToSignIn()
+                                }
+                            }}
+                            className={`flex items-center gap-2 ${authMode.mode == "signingIn" ? 'bg-brand-blue' : 'bg-brand-primary'} rounded-md px-4 py-1.5 shadow-sm`}
+                            style={{ backgroundColor: "brand-blue" }}
+                        >
+                            <span 
+                            className="text-white text-xl font-medium">
+                                {authMode.mode=="signingIn" ? "Acceder" : "Ya tengo cuenta"}
+                            </span>
+                        </button>
+                    </div>
+                )}
+                
 
             </div>
         )

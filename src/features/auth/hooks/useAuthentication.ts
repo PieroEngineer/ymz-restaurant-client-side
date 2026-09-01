@@ -49,7 +49,7 @@ export function useAuthentification(
             // Refresh user profile query state immediately after login
             queryClient.invalidateQueries({ queryKey: ['authUser'] });
 
-            navigate({ to: '/hub' })
+            navigate({ to: '/' })
         },
 
         onError: (error: any) => {
@@ -109,6 +109,8 @@ export function useAuthentification(
     })
 
     return{
+        isLoading: singInMutation.isPending || signUpMutation.isPending,
+
         trySignIn: () => singInMutation.mutate(),
         
         trySignUp: () => signUpMutation.mutate(),

@@ -61,7 +61,7 @@ export function useRestaurantInfo(
       if (responseWithPresignedUrls.logoPresignedUrl && draftRestaurantInfo.logoFile) {
         imageUploads.push(
           profileApi.uploadImageToS3(
-            responseWithPresignedUrls.logoPresignedUrl.replaceAll('172.18.0.2', 'localhost'), // FIXME: Remove this replacement from all the urls
+            responseWithPresignedUrls.logoPresignedUrl.replaceAll('172.18.0.2', 'localhost'),
             draftRestaurantInfo.logoFile
           )
         )
@@ -129,7 +129,7 @@ export function useRestaurantInfo(
       if (responseWithPresignedUrls.logoPresignedUrl && draftRestaurantInfo.logoFile) {
         imageUploads.push(
           profileApi.uploadImageToS3(
-            responseWithPresignedUrls.logoPresignedUrl.replaceAll('172.18.0.2', 'localhost'), // FIXME: Remove this replacement from all the urls
+            responseWithPresignedUrls.logoPresignedUrl.replaceAll('172.18.0.2', 'localhost'),
             draftRestaurantInfo.logoFile
           )
         )
