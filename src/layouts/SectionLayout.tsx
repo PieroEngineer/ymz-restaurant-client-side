@@ -63,7 +63,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <button onClick = {() => navigate({ to: '/menu' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <MenuIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-              Menu
+              Mi Menú
             </span>
           </button>
 

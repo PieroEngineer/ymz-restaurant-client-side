@@ -80,10 +80,10 @@ export function RequestDashboard({
           </span>
         </div>
         <h3 className="font-heading font-bold text-brand-navy text-lg mb-1">
-          Live Stream Workspace Active
+          Escuchando las solicitudes de mesa en tiempo real
         </h3>
-        <p className="text-brand-navy/50 font-sans text-xs leading-relaxed">
-          Waiting for incoming live table requests from clients...
+        <p className="text-brand-navy/50 font-sans text-xs leading-relaxed whitespace-pre-line">
+          {'Tan pronto un cliente mande una solicitud, aparecerá aquí...\n(Recuerda inicializar tu perfil en "Mi restaurante" y "Mi Menú")'}
         </p>
       </div>
     );
@@ -138,7 +138,7 @@ export function RequestDashboard({
                   state = {tableRequest.state}
                   expectedArrivalTime = {tableRequest.onQueuedTimestamp}
                   relatedInfo = {relatedInfo}
-                  onAcceptCardFromQueue={requests.updateRequestStatus}
+                  onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
                   onDeclineRequest={handleDecline}
                 />
               </div>
@@ -170,7 +170,7 @@ export function RequestDashboard({
                 expectedArrivalTime = {expectedArrivalTime}
                 relatedInfo = {relatedInfo}
                 selectedOrder = {customerOrder.orderSelections}
-                onAcceptCardFromQueue={requests.updateRequestStatus}
+                onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
                 onDeclineRequest={handleDecline}
                 onTryToObservePaymentUrl = { () => { onTryToObservePaymentUrl(customerOrder.paymentImageUrl) } }
                 onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.requestId ) } }
