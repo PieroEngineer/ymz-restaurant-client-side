@@ -83,7 +83,7 @@ export function RequestDashboard({
           Escuchando las solicitudes de mesa en tiempo real
         </h3>
         <p className="text-brand-navy/50 font-sans text-xs leading-relaxed whitespace-pre-line">
-          {'Tan pronto un cliente mande una solicitud, aparecerá aquí...\n(Recuerda inicializar tu perfil en "Mi restaurante" y "Mi Menú")'}
+          {'Tan pronto un cliente mande una solicitud, aparecerá aquí...\n(Recuerda inicializar tu perfil en "Mi Restaurante" y "Mi Menú")'}
         </p>
       </div>
     );
