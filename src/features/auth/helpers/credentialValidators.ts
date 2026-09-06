@@ -24,7 +24,7 @@ export function isValidEmail(email: string): boolean {
  */
 export function isValidPassword(pw: string): boolean {
   // Check the character length
-  return pw.length >= 5;
+  return pw.length >= 8;
 }
 
 export const isBlank = (str: string | null | undefined): boolean => {

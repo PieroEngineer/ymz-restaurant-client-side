@@ -76,7 +76,7 @@ export function useAuthentification(
             }
             
             if (!isValidPassword(password)) {
-                setErrorMessageInAuth('La contraseña debe tener al menos 5 caracteres.')
+                setErrorMessageInAuth('La contraseña debe tener al menos 8 caracteres.')
                 return
             }
 
