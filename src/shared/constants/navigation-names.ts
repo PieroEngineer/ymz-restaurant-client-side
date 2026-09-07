@@ -2,7 +2,7 @@ export const NavigationPaths = {
   Auth: '/',
   Hub: '/hub',
   RestaurantInitialization: '/profileInitialization',
-  RequestDashboard: '/dashboard',
+  RequestDashboard: '/requestDashboard',
   RestaurantProfile: '/restaurantProfile',
   Menu: '/menu',
 } as const;

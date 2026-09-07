@@ -2,11 +2,12 @@ import { authService } from '@/features/auth/api/authService';
 import axios from 'axios';
 
 // Default to LocalStack's standard edge port if no .env variable is configured yet
-const API_BASE_URL = 'http://localhost:4566/_aws/execute-api';
-const API_GATEWAY_ID = '9mailuwoqt';
-const STAGE = 'prod';
+// const API_BASE_URL = 'http://localhost:4566/_aws/execute-api';
+// const API_GATEWAY_ID = '9mailuwoqt';
+// const STAGE = 'prod';
+// const BASE_URL = /*import.meta.env.VITE_API_BASE_URL ||*/ `${API_BASE_URL}/${API_GATEWAY_ID}/${STAGE}`;
 
-const BASE_URL = /*import.meta.env.VITE_API_BASE_URL ||*/ `${API_BASE_URL}/${API_GATEWAY_ID}/${STAGE}`;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const axiosClient = axios.create({
   baseURL: BASE_URL,
@@ -20,7 +21,12 @@ export const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   async (config) => {
     const token = await authService.getIdToken();
-    if (token) {
+
+    
+    // CRITICAL: S3 rejects presigned URL uploads if an unknown Authorization Bearer header is present!
+    const isS3DirectUpload = config.url?.includes('s3.amazonaws.com');
+
+    if (token && !isS3DirectUpload) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

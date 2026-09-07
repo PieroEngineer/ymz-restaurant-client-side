@@ -41,7 +41,7 @@ export const menuApi = {
     });
 
     if (!response.ok) {
-      throw new Error(`🔴  Direct S3 binary allocation failed with status code: ${response.status}`);
+      throw new Error(`🔴  Direct S3 (With CDN) binary allocation failed with status code: ${response.status}`);
     }
   },
 
