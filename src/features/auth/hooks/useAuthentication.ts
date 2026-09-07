@@ -5,6 +5,7 @@ import { authService } from "@/features/auth/api/authService";
 import type { SignInPayload, SignUpPayload } from "@/features/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { getAuthErrorMessage } from "@/features/auth/utils/authErrorMapper";
+import { NavigationPaths } from "@/shared/constants/navigation-names";
 
 export function useAuthentification(
     email: string,
@@ -49,7 +50,7 @@ export function useAuthentification(
             // Refresh user profile query state immediately after login
             queryClient.invalidateQueries({ queryKey: ['authUser'] });
 
-            navigate({ to: '/' })
+            navigate({ to: NavigationPaths.Hub })
         },
 
         onError: (error: any) => {
@@ -99,7 +100,7 @@ export function useAuthentification(
             }
         },
         onSuccess: () => {
-            navigate({ to: '/restaurantProfile' })
+            navigate({ to: NavigationPaths.RestaurantInitialization })
         },
 
         onError: (error: any) => {

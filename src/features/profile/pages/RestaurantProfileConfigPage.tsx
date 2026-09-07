@@ -5,6 +5,7 @@ import { useDataState } from "@/features/profile/hooks/useDataState";
 import { useLocation } from "@/features/profile/hooks/useLocation";
 import { useLocationModal } from "@/features/profile/hooks/useLocationModal";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
+import { NavigationPaths } from "@/shared/constants/navigation-names";
 import { useNavigate } from "@tanstack/react-router";
 
 export function RestaurantConfigPage() {
@@ -70,7 +71,7 @@ export function RestaurantConfigPage() {
                 if(!restaurantInfo.remote.isInitialized){
                   restaurantInfo.initialize()
 
-                  navigate({ to: '/menu' })
+                  navigate({ to: NavigationPaths.Menu })
                 }
                 else{
                   restaurantInfo.update()

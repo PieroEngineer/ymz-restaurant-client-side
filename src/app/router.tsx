@@ -5,35 +5,34 @@ import { SectionLayout } from '@/layouts/SectionLayout';
 import { MenuManagerPage } from '@/features/menu/pages/MenuManagerPage';
 import { AuthScreen } from '@/features/auth/pages/AuthPage';
 import { RestaurantConfigPage } from '@/features/profile/pages/RestaurantProfileConfigPage';
+import { NavigationPaths } from '@/shared/constants/navigation-names';
 
 // Root Route: Acts as the absolute base container wrapper
 const rootRoute = createRootRoute();
 
 const AuthRoute = createRoute({ // TODO: Pass the route string to a type
   getParentRoute: () => rootRoute,
-  path: '/auth',
+  path: NavigationPaths.Auth,
   component: AuthScreen,
 });
 
 // Index Route: Maps the root URL ("/") directly to your fullscreen HubPage
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/hub',  // FIXME: This is the correct name because the initial screen will be the auth
-  path: '/',
+  path: NavigationPaths.Hub,
   component: HubPage,
 });
 
-const profileEditionRoute = createRoute({
+const profileInitializationRoute = createRoute({
   getParentRoute: () => rootRoute,
-  // path: '/',
-  path: '/profileEdition',
+  path: NavigationPaths.RestaurantInitialization,
   component: RestaurantConfigPage,
 });
 
 // Dashboard Route: Maps the ("/dashboard") path and wraps its children inside your layout
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard',
+  path: NavigationPaths.RequestDashboard,
   component: () => (
     /* Configured layout context rule: hiding top-right logo parameter */
     <SectionLayout showLogo={false}> 
@@ -44,7 +43,7 @@ const dashboardRoute = createRoute({
 
 const restaurantProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
-    path: '/restaurantProfile',
+    path: NavigationPaths.RestaurantProfile,
   component: () => (
     /* Configured layout context rule: hiding top-right logo parameter */
     <SectionLayout showLogo={false}> 
@@ -55,7 +54,7 @@ const restaurantProfileRoute = createRoute({
 
 const menuRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/menu',
+  path: NavigationPaths.Menu,
   component: () => (
     <SectionLayout showLogo={false}>
       <MenuManagerPage />
@@ -64,7 +63,7 @@ const menuRoute = createRoute({
 });
 
 // Create the unified router instance passing our route definitions
-const routeTree = rootRoute.addChildren([AuthRoute, profileEditionRoute, indexRoute, dashboardRoute, menuRoute, restaurantProfileRoute]);
+const routeTree = rootRoute.addChildren([AuthRoute, profileInitializationRoute, indexRoute, dashboardRoute, menuRoute, restaurantProfileRoute]);
 
 export const router = createRouter({ routeTree });
 

@@ -10,6 +10,7 @@ import restaurant from '@/features/hub/assets/restaurant.webp'
 import trafficlight from '@/features/hub/assets/traffic-light.webp'
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
 import { openInNewTab } from '@/shared/utils/webActors';
+import { NavigationPaths } from '@/shared/constants/navigation-names';
 
 export function HubPage() {
   const navigate = useNavigate(); // TanStack navigation hook instance
@@ -43,15 +44,15 @@ export function HubPage() {
               label="Solicitudes de mesa" 
               imageSrc={trafficlight} 
               contentPadding="p-10" // Generous, easily controllable custom padding
-              onClick={() => navigate({ to: '/dashboard' })}
+              onClick={() => navigate({ to: NavigationPaths.RequestDashboard })}
             />
           </div>
         </div>
 
         {/* COLUMN 2: Stacked Buttons Container */}
         <div className="grid grid-rows-2 gap-8 h-3/4">
-          <HubButton label="Mi Restaurante" imageSrc={restaurant} onClick={() => navigate({ to: '/restaurantProfile' })}/>
-          <HubButton label="Mi Menú" imageSrc={menu} onClick={() => navigate({ to: '/menu' })}/>
+          <HubButton label="Mi Restaurante" imageSrc={restaurant} onClick={() => navigate({ to: NavigationPaths.RestaurantProfile })}/>
+          <HubButton label="Mi Menú" imageSrc={menu} onClick={() => navigate({ to: NavigationPaths.Menu })}/>
         </div>
 
         {/* COLUMN 3: Stacked Buttons Container */}

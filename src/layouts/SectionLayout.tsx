@@ -8,6 +8,7 @@ import { HouseIcon } from '@/shared/components/icons/HouseIcon';
 import { RequestIcon } from '@/shared/components/icons/RequestIcon';
 import { ExitIcon } from '@/shared/components/icons/ExitIcon';
 import { StoreIcon } from '@/shared/components/icons/StoreIcon';
+import { NavigationPaths } from '@/shared/constants/navigation-names';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
@@ -60,7 +61,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <div className="mx-4 my-2 border-t border-brand-navy/20 shrink-0" />
 
           {/* Menu Option */}
-          <button onClick = {() => navigate({ to: '/menu' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: NavigationPaths.Menu })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <MenuIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Mi Menú
@@ -68,7 +69,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           </button>
 
           {/* Dashboard Option */}
-          <button onClick = {() => navigate({ to: '/dashboard' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: NavigationPaths.RequestDashboard })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <RequestIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Solicitudes
@@ -76,7 +77,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           </button>
 
           {/* Profile Option */}
-          <button onClick = {() => navigate({ to: '/restaurantProfile' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: NavigationPaths.RestaurantProfile })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <StoreIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Mi Restaurante
@@ -87,7 +88,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <div className="mt-auto pt-4 flex flex-col gap-2">
             <div className="mx-4 mb-2 border-t border-brand-navy/20 shrink-0" />
             
-            <button onClick={() => navigate({ to: '/auth' })} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
+            <button onClick={() => navigate({ to: NavigationPaths.Auth })} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
               <ExitIcon className='size-7' />
               <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
                 Salir
