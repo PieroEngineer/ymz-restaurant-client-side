@@ -26,6 +26,7 @@ type RequestDashboardProps = {
     onOrderUpdate: (eventName: string, data: Message) => void;
     finalizeOrder: (orderId: string) => void;
   };
+  realTimeChannelName: string;
 };
 
 export function RequestDashboard({
@@ -33,6 +34,7 @@ export function RequestDashboard({
   onTryToObservePaymentUrl,
   requests,
   orders,
+  realTimeChannelName
 }: RequestDashboardProps) {
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export function RequestDashboard({
   const paidRequestsRef = useRef<HTMLDivElement>(null);
 
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
-  useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate)
+  useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate, realTimeChannelName)
 
   const handleDecline = (id: string) => {
     console.log(`Declined request: ${id}`); // TODO

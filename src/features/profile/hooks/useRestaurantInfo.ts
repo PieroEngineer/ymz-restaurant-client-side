@@ -2,24 +2,25 @@ import { toRemoteRestaurantInitialization, toRemoteRestaurantUpdate } from "@/fe
 import { profileApi } from "@/features/profile/api/profileApi";
 import type { Restaurant } from "@/features/profile/types/domain.types";
 import type { RestaurantResourceTypes } from "@/features/profile/types/support/imageManage.types";
+import type { RestaurantQueryKey } from "@/features/profile/types/query.types";
 import type { RestaurantStringRegularFields } from "@/features/profile/types/support/restaurantReduced.types";
 import { convertToWebP } from "@/shared/utils/imageConversors";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 
-export function useRestaurantInfo(
-){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
+export function useRestaurantInfo( restaurantId: string | undefined ){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
   const queryClient = useQueryClient();
 
-  const restaurantQueryKey = ['restaurant', 'information'];
+  const restaurantQueryKey: RestaurantQueryKey = ['restaurant', 'information', { restaurantId }];
 
   const [draftRestaurantInfo, setDraftRestaurantInfo] = useState<Restaurant | null>(null)
   const hasInitializedDraft = useRef(false);
 
   const remoteQuery = useQuery({
     queryKey: restaurantQueryKey,
-    queryFn: profileApi.getRestaurantInfo
+    queryFn: profileApi.getRestaurantInfo,
+    enabled: !!restaurantId
   });
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export function useRestaurantInfo(
 
       if(snapshot == null) return
       if(draftRestaurantInfo == null) return
+      if(restaurantId === undefined) return
 
       const logoWasModified = snapshot.logoUrl != draftRestaurantInfo.logoUrl
 
@@ -52,7 +54,7 @@ export function useRestaurantInfo(
 
       console.log('⬆️  Payload to send', JSON.stringify(payload))
 
-      const responseWithPresignedUrls = await profileApi.updateRestaurantInfo(payload)
+      const responseWithPresignedUrls = await profileApi.updateRestaurantInfo(payload, restaurantId)
       
       console.log('⬆️  Restaurant info uploaded successfully', JSON.stringify(responseWithPresignedUrls))
 
@@ -109,6 +111,7 @@ export function useRestaurantInfo(
 
       if(snapshot == null) return
       if(draftRestaurantInfo == null) return
+      if(restaurantId === undefined) return
 
       const dishImagesWereModified: [boolean, boolean, boolean] = [
         snapshot.dishesToShowUrls[0] != draftRestaurantInfo.dishesToShowUrls[0],
@@ -120,7 +123,7 @@ export function useRestaurantInfo(
 
       console.log('⬆️  Payload to send', JSON.stringify(payload))
 
-      const responseWithPresignedUrls = await profileApi.initializeRestaurantInfo(payload)
+      const responseWithPresignedUrls = await profileApi.initializeRestaurantInfo(payload, restaurantId)
 
       console.log('⬆️  Restaurant info uploaded successfully', JSON.stringify(responseWithPresignedUrls))
 

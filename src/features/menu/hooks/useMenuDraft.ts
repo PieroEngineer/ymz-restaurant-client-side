@@ -8,7 +8,13 @@ import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelp
 import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
 import { decimalToCents, ensureCostFormat } from '@/shared/utils/moneyConversors';
 
-export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Record<string, File> = {}, onResetLocalImageMap: () => void) {
+export function useMenuDraft(
+  initialMenu: Menu | undefined,
+  localPageFiles: Record<string,
+  File> = {},
+  onResetLocalImageMap: () => void,
+  loggedRestaurantId: string | undefined
+) {
   
   const [syncMenu, useSyncMenu] = useState<Menu>({menuPages: [], dishes: []})
 
@@ -30,14 +36,13 @@ export function useMenuDraft(initialMenu: Menu | undefined, localPageFiles: Reco
     mutationFn: async () => {
       console.log('⬆️  Trying to upload data')
       if(initialMenu ===undefined) return []
+      if(loggedRestaurantId === undefined) return
       
       const diffPayload = generateDiffPayload(draftMenuPages, draftDishItems, initialMenu);
       
       console.log('⬆️  The diff to send is\n', diffPayload)
-
-      //X let syncResponseData: Awaited<ReturnType<typeof menuApi.pushMenuDeltaChanges>> | null = null;
     
-      const syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload);
+      const syncResponseData = await menuApi.pushMenuDeltaChanges(diffPayload, loggedRestaurantId);
 
       if (syncResponseData.presignedUrls && syncResponseData.presignedUrls.length > 0) {
         console.log('🔎  Starting the upload the images')

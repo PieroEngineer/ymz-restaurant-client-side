@@ -1,11 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { menuApi } from '@/features/menu/api/menuApi';
-import { menuQueryKeys } from '@/features/menu/api/menuQueryKeys';
+import type { MenuQueryKey } from '@/features/menu/types/query.types';
 
-export function UseMenuDatasetQuery() {
+export function UseMenuDatasetQuery(restaurantId: string | undefined) {
+
+  const menuQueryKey: MenuQueryKey = ['menu', 'dataset', { restaurantId }]
+
   return useQuery({
-    queryKey: menuQueryKeys.dataset(),
-    queryFn: menuApi.FetchMenuDataset
+    queryKey: menuQueryKey,
+    queryFn: menuApi.FetchMenuDataset,
+    enabled: !!restaurantId
   });
 }

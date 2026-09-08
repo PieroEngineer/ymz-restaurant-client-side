@@ -1,26 +1,33 @@
-import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
 import { toDomainRestaurant } from "@/features/profile/api/mappers/inboundMappers";
 import type { GetRestaurantInfoResponse, UpdateRestaurantInfoPayload, UploadRestaurantInfoResponse, InitializeRestaurantInfoPayload } from "@/features/profile/types/api.types";
 import type { Restaurant } from "@/features/profile/types/domain.types";
+import type { RestaurantQueryKey } from "@/features/profile/types/query.types";
 import { axiosClient } from "@/shared/api/axiosClient";
+import type { QueryFunctionContext } from "@tanstack/react-query";
+
 
 
 export const profileApi = {
 
-    async getRestaurantInfo( ): Promise<Restaurant>{
+    async getRestaurantInfo({ queryKey }: QueryFunctionContext<RestaurantQueryKey> ): Promise<Restaurant>{
+        const [, , { restaurantId }] = queryKey;
         
-        const response = await axiosClient.get<GetRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info`)
+        if (restaurantId === undefined) {
+            throw new Error("🔴 Undefined restaurant ID provided in query key.");
+        }
+
+        const response = await axiosClient.get<GetRestaurantInfoResponse>(`restaurants/${restaurantId}/info`)
 
         return toDomainRestaurant(response.data);
     },
 
-    async updateRestaurantInfo(payload: UpdateRestaurantInfoPayload): Promise<UploadRestaurantInfoResponse>{
-        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info/update`, payload)
+    async updateRestaurantInfo(payload: UpdateRestaurantInfoPayload, restaurantId: string): Promise<UploadRestaurantInfoResponse>{
+        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${restaurantId}/info/update`, payload)
         return response.data
     },
 
-    async initializeRestaurantInfo(payload: InitializeRestaurantInfoPayload): Promise<UploadRestaurantInfoResponse>{
-        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/info/initialize`, payload)
+    async initializeRestaurantInfo(payload: InitializeRestaurantInfoPayload, restaurantId: string): Promise<UploadRestaurantInfoResponse>{
+        const response = await axiosClient.post<UploadRestaurantInfoResponse>(`restaurants/${restaurantId}/info/initialize`, payload)
         return response.data
     },
 

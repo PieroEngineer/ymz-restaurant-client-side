@@ -1,30 +1,35 @@
-import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
 import { toDomainOrder } from "@/features/table-requests/api/mappers/inboundMappers";
 import { requestApi } from "@/features/table-requests/api/requestApi";
 import { removeOrder } from "@/features/table-requests/helpers/handleRequestUpdates";
 import type { FinalizeOrderPayload, OrderPreselectionPayload } from "@/features/table-requests/types/api.types";
 import type { Order } from "@/features/table-requests/types/domain.types";
+import type { OrderQueryKey } from "@/features/table-requests/types/query.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Message } from "ably";
 import { useCallback } from "react";
 
 
 
-export const useOrders = () => {
+export const useOrders = ( loggedRestaurantId: string | undefined ) => {
     const queryClient = useQueryClient();
-    const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-orders'];  // TODO: consider remove the ID from here because there is only 1 restaurant in the session
+    const queryKey: OrderQueryKey = ['restaurant', 'active-orders', { restaurantId: loggedRestaurantId }];  // TODO: consider remove the ID from here because there is only 1 restaurant in the session
 
-    const { data: customerOrders, isPending } = useQuery<Order[]>({
+    const { data: customerOrders, isPending } = useQuery/*<Order[]>*/({
         queryKey: queryKey,
         queryFn: requestApi.getAllOrders,
+        enabled: !!loggedRestaurantId,
         staleTime: 0,
         refetchOnMount: 'always'
       }); 
 
     const finalizeOrderMutation = useMutation({
         mutationFn: async (orderId: string) => {
+            if(loggedRestaurantId === undefined) {
+                throw new Error("🔴Logged restaurant ID is undefined. Cannot deny request.");
+            }
+
             const orderToFinalizePayload: FinalizeOrderPayload = {
-                restaurantId: MOCK_MENU_RESTAURANT_ID,
+                restaurantId: loggedRestaurantId,
                 orderId: orderId
             } 
 

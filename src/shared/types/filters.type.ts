@@ -1,0 +1,1 @@
+export type RestaurantFilters = { restaurantId: string  | undefined};

@@ -6,12 +6,15 @@ import { useLocation } from "@/features/profile/hooks/useLocation";
 import { useLocationModal } from "@/features/profile/hooks/useLocationModal";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 import { NavigationPaths } from "@/shared/constants/navigation-names";
+import { useAuthUser } from "@/shared/hooks/useAuthUser";
 import { useNavigate } from "@tanstack/react-router";
 
 export function RestaurantConfigPage() {
   const navigate = useNavigate(); // TODO: This go within the hooks, no here.
 
-  const restaurantInfo = useRestaurantInfo()
+  const authUser = useAuthUser()
+
+  const restaurantInfo = useRestaurantInfo(authUser.data?.userId)
 
   const dataState = useDataState(
     restaurantInfo.remote?? null,

@@ -2,18 +2,18 @@ import { axiosClient } from '@/shared/api/axiosClient';
 import type { CloudMenuDiffPayload, CloudMenuGetPayload, SyncDataFirstResponse } from '@/features/menu/types/api.types';
 import { toDomainMenu } from '@/features/menu/api/mappers/inboundMappers';
 import type { Menu } from '@/features/menu/types/domain.types';
-
-// 🧪 Testing Parameters Configuration Placeholders
-export const MOCK_MENU_RESTAURANT_ID = '4258e0fa-6b3c-43bc-a6d8-82c5835d608d';
+import type { QueryFunctionContext } from '@tanstack/react-query';
+import type { MenuQueryKey } from '@/features/menu/types/query.types';
 
 export const menuApi = {
 
   /**
    * Pulls the current saved state payload profile out of the cloud database
    */
-  async FetchMenuDataset(): Promise<Menu> {
+  async FetchMenuDataset({ queryKey }: QueryFunctionContext<MenuQueryKey>): Promise<Menu> {
+    const [, , { restaurantId }] = queryKey;
   
-    const response = await axiosClient.get<CloudMenuGetPayload>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/menu`);
+    const response = await axiosClient.get<CloudMenuGetPayload>(`restaurants/${restaurantId}/menu`);
 
     return toDomainMenu(response.data);
   },
@@ -21,10 +21,10 @@ export const menuApi = {
   /**
    * Pushes the optimized delta changes package to the cloud processing services
    */
-  async pushMenuDeltaChanges(payload: CloudMenuDiffPayload): Promise<SyncDataFirstResponse> {
+  async pushMenuDeltaChanges(payload: CloudMenuDiffPayload, restaurantId: string): Promise<SyncDataFirstResponse> {
 
     // Axios handles stringifying the JSON payload body automatically
-    const response = await axiosClient.post<SyncDataFirstResponse>(`restaurants/${MOCK_MENU_RESTAURANT_ID}/menu`, payload);
+    const response = await axiosClient.post<SyncDataFirstResponse>(`restaurants/${restaurantId}/menu`, payload);
 
     return response.data;
   },

@@ -1,4 +1,3 @@
-import { MOCK_MENU_RESTAURANT_ID } from "@/features/menu/api/menuApi";
 import { useCallback } from 'react';
 import { toDomainOrder, toDomainTableRequest } from "@/features/table-requests/api/mappers/inboundMappers";
 import { requestApi } from "@/features/table-requests/api/requestApi";
@@ -8,15 +7,17 @@ import type { TableRequest, TableRequestState } from "@/features/table-requests/
 import type { CancelRequestAttributes, UpdateStatusAttributes } from "@/features/table-requests/types/support/cardFields.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Message } from "ably";
+import type { RequestQueryKey } from '@/features/table-requests/types/query.types';
 
-export const useRequests = () => {  // TODO: Some throwed errors aren't cached, cover them after tests
+export const useRequests = ( loggedRestaurantId: string | undefined ) => {  // TODO: Some throwed errors aren't cached, cover them after tests
     const queryClient = useQueryClient();
-    const queryKey = ['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests'];
+    const queryKey: RequestQueryKey = ['restaurant', 'active-requests', { restaurantId: loggedRestaurantId }];
 
   // Initial load fetches currently open requests via Axios
-    const { data: tableRequests, isPending } = useQuery<TableRequest[]>({
+    const { data: tableRequests, isPending } = useQuery/*<TableRequest[]>*/({
       queryKey: queryKey,
       queryFn: requestApi.getAllRequests,
+      enabled: !!loggedRestaurantId,
       staleTime: 0,
       refetchOnMount: 'always'
     });
@@ -24,7 +25,7 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
     const {mutate: denyRequestMutation/*, isPending*/} = useMutation({
       mutationFn: async ({ requestId }: CancelRequestAttributes) => {
         
-        const currentTableRequests = queryClient.getQueryData<TableRequest[]>(['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests']) 
+        const currentTableRequests = queryClient.getQueryData<TableRequest[]>(queryKey) 
         if(currentTableRequests === undefined){
           throw new Error("🔴Current table requests are undefined. Cannot update request status.");
         }
@@ -34,9 +35,13 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
           throw new Error(`🔴Request with ID ${requestId} not found in current table requests.`);
         }
 
+      if(loggedRestaurantId === undefined) {
+        throw new Error("🔴Logged restaurant ID is undefined. Cannot deny request.");
+      }
+
         const requestDenial: DenyRequestPayload = {
           userId: currentRequest.userId,
-          restaurantId: MOCK_MENU_RESTAURANT_ID,
+          restaurantId: loggedRestaurantId,
           actor: "RESTAURANT"
         }
 
@@ -73,7 +78,7 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
     mutationFn: async ({ requestId, newState }: UpdateStatusAttributes) => {
 
       // TODO: Find get the request of the user from "currentTableRequests" and confirm if the transition if valid (e.g. Going from queued to accepted is valid)
-      const currentTableRequests = queryClient.getQueryData<TableRequest[]>(['restaurant', MOCK_MENU_RESTAURANT_ID, 'active-requests']) 
+      const currentTableRequests = queryClient.getQueryData<TableRequest[]>(queryKey) 
       if(currentTableRequests === undefined){
         throw new Error("🔴Current table requests are undefined. Cannot update request status.");
       }
@@ -83,13 +88,17 @@ export const useRequests = () => {  // TODO: Some throwed errors aren't cached, 
         throw new Error(`🔴Request with ID ${requestId} not found in current table requests.`);
       }
 
+      if(loggedRestaurantId === undefined) {
+        throw new Error("🔴Logged restaurant ID is undefined. Cannot update request status.");
+      }
+
       const requestUpdate: UpdateRequestPayload = { /// Consider Don't use "Payload" our the API handler. So, this line should have a local entity
         userId: currentRequest.userId,
         requestId: requestId,
         newState: newState,
       }
 
-      await requestApi.updateStatus(requestUpdate);
+      await requestApi.updateStatus(requestUpdate, loggedRestaurantId);
     },
 
     onMutate: async ({requestId, newState}) => {

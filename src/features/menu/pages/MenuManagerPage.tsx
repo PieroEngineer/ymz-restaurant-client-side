@@ -18,6 +18,7 @@ import { MenuActionModal } from "@/features/menu/components/MenuValidationModal"
 import { AddPageIcon } from "@/features/menu/components/icons/AddPageIcon";
 import { UpdatePageIcon } from "@/features/menu/components/icons/UpdatePageIcon";
 import { RemovePageIcon } from "@/features/menu/components/icons/RemovePageIcon";
+import { useAuthUser } from "@/shared/hooks/useAuthUser";
 
 export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" where necessary
 
@@ -29,8 +30,9 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
 
     
     // ===== 🌐 Data Fetching & Mutations =====
+    const authUser = useAuthUser()
 
-    const { data: dbSnapshot, isLoading: isDownloading, isError: isErrorInDownload } = UseMenuDatasetQuery();
+    const { data: dbSnapshot, isLoading: isDownloading, isError: isErrorInDownload } = UseMenuDatasetQuery(authUser.data?.userId);
 
     // ===== 🔢 Page hooks =====
 
@@ -41,7 +43,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     const activeEditCell = useActiveEditCell()
     
     // Manage the local draft menu 
-    const menuDraft = useMenuDraft(dbSnapshot, localPageMap.localPageFilesMap, localPageMap.onResetLocalImageMap)
+    const menuDraft = useMenuDraft(dbSnapshot, localPageMap.localPageFilesMap, localPageMap.onResetLocalImageMap, authUser.data?.userId)
 
     console.log("🔎  The menu pages are ", menuDraft.draftMenuPages)
 

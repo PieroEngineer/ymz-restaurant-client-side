@@ -12,5 +12,3 @@ export const useCartStore = create<RestaurantState>((set) => ({
     setRestaurantInfo: (restaurant: Restaurant) => set({ restaurantInfo: restaurant})
 
 }))
-
-///✏️In the request profile, set the 

@@ -11,11 +11,11 @@ import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/Li
 import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
 import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
-import { MOCK_MENU_RESTAURANT_ID } from '@/features/menu/api/menuApi';
 import { PaymentViewModal } from '@/features/table-requests/components/PaymentViewModal';
 import { usePaymentViewModal } from '@/features/table-requests/hooks/usePaymentViewModal';
 import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
+import { useAuthUser } from '@/shared/hooks/useAuthUser';
 
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
 
@@ -29,7 +29,6 @@ export function TableRequestsPage() {
   const [explorationMode, setExplorationMode] = useState(false);
   const [dashboardScrollTarget, setDashboardScrollTarget] = useState<RequestDashboardScrollTarget | null>(null);
 
-  const channelName = `restaurant:${MOCK_MENU_RESTAURANT_ID}:ops`;
 
   const scrollDashboardTo = (section: RequestDashboardScrollSection) => { // TODO: Move it to a hook
     setDashboardScrollTarget({
@@ -38,9 +37,13 @@ export function TableRequestsPage() {
     });
   };
 
+  const authUser = useAuthUser()
+
+  const channelName = `restaurant:${authUser.data?.userId}:ops`;
+
   const paymentViewModal = usePaymentViewModal()
-  const requests = useRequests();
-  const orders = useOrders();
+  const requests = useRequests(authUser.data?.userId);
+  const orders = useOrders(authUser.data?.userId);
   const isLoading = requests.isPending || orders.isPending;
 
   console.log('🔎💸  Observed Payment URL:', paymentViewModal.observedPaymentUrl);
@@ -161,6 +164,7 @@ export function TableRequestsPage() {
                   paymentViewModal.toggleOpening()
                   paymentViewModal.setObservedPaymentUrl(url)
                 }}
+                realTimeChannelName={channelName}
               />
             </ChannelProvider>
           )}
