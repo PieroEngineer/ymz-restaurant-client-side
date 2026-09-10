@@ -16,6 +16,7 @@ export function useAuthentification(
 
     useEffect(() => {
         if( loggedUserId !== undefined ){
+            console.log(`✅  User is already logged in with userId: ${loggedUserId}. Redirecting to Hub page.`)
             navigate({ to: NavigationPaths.Hub })
         }
     }, [])
