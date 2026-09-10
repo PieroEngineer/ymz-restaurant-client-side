@@ -15,6 +15,7 @@ export function useInteraction(
         toggleNameEdition: () => setIsEditingName((prev) =>!prev),
 
         navigateToMaps: (coordinates: [number, number]) => {
+            coordinates
             ///Convert link into google maps link   /// https://www.google.com/maps/search/?api=1&query={lat},{lon}
             ///Trigger the opening of another tab with the link
         },
