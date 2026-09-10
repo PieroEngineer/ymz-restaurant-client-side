@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { isBlank, isValidEmail, isValidPassword } from "@/features/auth/helpers/credentialValidators";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authService } from "@/features/auth/api/authService";
@@ -9,9 +9,16 @@ import { NavigationPaths } from "@/shared/constants/navigation-names";
 
 export function useAuthentification(
     email: string,
-    password: string
-){
+    password: string,
+    loggedUserId: string | undefined
+){  
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if( loggedUserId !== null ){
+            navigate({ to: NavigationPaths.Hub })
+        }
+    }, [])
 
     const [termsAcceptance, setTermsAcceptance] = useState(false)    
     const [errorMessageInAuth, setErrorMessageInAuth] = useState("")
@@ -43,9 +50,10 @@ export function useAuthentification(
             }
 
             await authService.signIn(credentialsPayload)
+
         },
         onSuccess: async () => {
-            console.log('✅  Sign in successful')
+            console.log('✅  Sign in successful from the auth page')
 
             // Refresh user profile query state immediately after login
             queryClient.invalidateQueries({ queryKey: ['authUser'] });
@@ -54,8 +62,10 @@ export function useAuthentification(
         },
 
         onError: (error: any) => {
-            console.log('❌  Sign in failed', error)
-            setErrorMessageInAuth('Error al iniciar sesión. Por favor, verifica tus credenciales e intenta nuevamente.')
+            
+            console.log(`❌  Sign in failed ${error.name}: ${error.message}`, )
+
+            setErrorMessageInAuth(error.message)
         }
     })
 
@@ -95,6 +105,9 @@ export function useAuthentification(
 
             try{
                 await authService.signUp(credentialsPayload)
+
+                await authService.signIn(credentialsPayload)
+
             } catch(error){
                 throw new Error(getAuthErrorMessage(error));
             }

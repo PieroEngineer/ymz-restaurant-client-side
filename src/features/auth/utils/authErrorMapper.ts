@@ -1,7 +1,7 @@
 /**
  * Maps Cognito SDK exceptions to localized, user-friendly error messages.
  */
-export const getAuthErrorMessage = (error: unknown): string => {
+export const getAuthErrorMessage = (error: unknown): string => {  // TODO: Create a similar one for the mobile app
   if (error instanceof Error) {
     switch (error.name) {
       case 'UsernameExistsException':

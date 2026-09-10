@@ -3,11 +3,14 @@ import { PresentationCard } from "@/features/auth/components/PresentationCard";
 import authBackground from "@/assets/images/auth-bg.webp";
 import { useAuthentification } from "@/features/auth/hooks/useAuthentication";
 import { useCredentials } from "@/features/auth/hooks/useCredentials";
+import { useAuthUser } from "@/shared/hooks/useAuthUser";
 
 export function AuthScreen(){
 
+    const authUser = useAuthUser()
+
     const credentials = useCredentials()
-    const auth = useAuthentification(credentials.typedEmail, credentials.typedPassword)
+    const auth = useAuthentification(credentials.typedEmail, credentials.typedPassword, authUser.data?.userId)
 
     return (
         <div

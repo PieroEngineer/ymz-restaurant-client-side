@@ -16,7 +16,11 @@ export const profileApi = {
             throw new Error("🔴 Undefined restaurant ID provided in query key.");
         }
 
+        console.log('🔎  Fetching restaurant info for ID:', restaurantId);
+
         const response = await axiosClient.get<GetRestaurantInfoResponse>(`restaurants/${restaurantId}/info`)
+
+        console.log('🔎  Received restaurant info response:', response.data);
 
         return toDomainRestaurant(response.data);
     },

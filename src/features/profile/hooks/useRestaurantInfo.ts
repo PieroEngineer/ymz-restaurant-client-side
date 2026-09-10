@@ -12,6 +12,8 @@ import { useEffect, useRef, useState } from "react";
 export function useRestaurantInfo( restaurantId: string | undefined ){  // TODO: Consider to divide this hook between "Just fetch/upload data" and "just handle draft"
   const queryClient = useQueryClient();
 
+  console.log('🔎  useRestaurantInfo hook called with restaurantId:', restaurantId);
+
   const restaurantQueryKey: RestaurantQueryKey = ['restaurant', 'information', { restaurantId }];
 
   const [draftRestaurantInfo, setDraftRestaurantInfo] = useState<Restaurant | null>(null)

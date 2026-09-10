@@ -33,10 +33,12 @@ export const authService = {
    * Authenticates user and issues JWT tokens to local browser storage.
    */
   async signIn(payload: SignInPayload): Promise<void> {
+    console.log('🔎  Signing in user with email:', payload.email);
     await signIn({
       username: payload.email,
       password: payload.password,
     });
+    console.log('✅  User signed in successfully.');
   },
 
   /**
@@ -54,13 +56,17 @@ export const authService = {
       const user = await getCurrentUser();
       const attributes = await fetchUserAttributes();
 
+      console.log('🔎  Current authenticated user profile:', user);
+      console.log('🔎  Current authenticated user attributes:', attributes);
+
       return {
         userId: user.userId,
         // username: user.username,
         email: attributes.email,
       };
-    } catch {
+    } catch(error) {
       // User is unauthenticated / Session expired
+      console.log('🚩  Error when trying to get the user profile: ', error);
       return null;
     }
   },
