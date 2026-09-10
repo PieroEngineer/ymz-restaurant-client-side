@@ -15,7 +15,7 @@ export function useAuthentification(
     const navigate = useNavigate()
 
     useEffect(() => {
-        if( loggedUserId !== null ){
+        if( loggedUserId !== undefined ){
             navigate({ to: NavigationPaths.Hub })
         }
     }, [])
