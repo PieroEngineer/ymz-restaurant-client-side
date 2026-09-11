@@ -9,14 +9,17 @@ import { RequestIcon } from '@/shared/components/icons/RequestIcon';
 import { ExitIcon } from '@/shared/components/icons/ExitIcon';
 import { StoreIcon } from '@/shared/components/icons/StoreIcon';
 import { NavigationPaths } from '@/shared/constants/navigation-names';
+import { useAuthUser } from '@/shared/hooks/useAuthUser';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
   showLogo?: boolean; // Dynamic parameter to toggle top-right logo visibility
 }
 
-export function SectionLayout({ children, showLogo = true }: SectionLayoutProps) {
+export function SectionLayout({ children, showLogo = true }: SectionLayoutProps) {  // TODO: Include these bellow lines in hooks
   const navigate = useNavigate(); // TanStack navigation hook instance
+
+  const authUser = useAuthUser()
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -50,7 +53,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
         <nav className="flex-1 px-4 py-2 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
           
           {/* Main Hub Option */}
-          <button onClick = {() => navigate({ to: '/' })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+          <button onClick = {() => navigate({ to: NavigationPaths.Hub })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <HouseIcon className='size-10'/>
             <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Inicio
@@ -88,7 +91,9 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <div className="mt-auto pt-4 flex flex-col gap-2">
             <div className="mx-4 mb-2 border-t border-brand-navy/20 shrink-0" />
             
-            <button onClick={() => navigate({ to: NavigationPaths.Auth })} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80">
+            <button onClick={() => authUser.signOut()} 
+              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80"
+            >
               <ExitIcon className='size-7' />
               <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
                 Salir
