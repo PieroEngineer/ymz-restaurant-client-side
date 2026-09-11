@@ -4,6 +4,8 @@ import authBackground from "@/assets/images/auth-bg.webp";
 import { useAuthentification } from "@/features/auth/hooks/useAuthentication";
 import { useCredentials } from "@/features/auth/hooks/useCredentials";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
+import { useTermsModal } from "@/features/auth/hooks/useTermsModal";
+import { TermsModal } from "@/features/auth/components/termsModal";
 
 export function AuthScreen(){
 
@@ -11,6 +13,8 @@ export function AuthScreen(){
 
     const credentials = useCredentials()
     const auth = useAuthentification(credentials.typedEmail, credentials.typedPassword, authUser.data?.userId)
+
+    const termsModal = useTermsModal()
 
     return (
         <div
@@ -32,12 +36,18 @@ export function AuthScreen(){
                     issueMessage={auth.issueMessage}
                     cleanIssueMessage = {auth.cleanIssueMessage}
                     isLoading={auth.isLoading}
+                    onOpenTermsModal={termsModal.toggleOpening}
                 />
             </div>
 
             <span className="font-heading text-2xl text-brand-primary shadow-lg" style={{ color: "brand-navy", backgroundColor: "white",  padding: "2px 6px",  borderRadius: "4px"  }}>
                 {"¡Yummizi les da la bienvenida!"}
             </span>
+
+            <TermsModal
+                isOpen={termsModal.isOpen}
+                onClose={termsModal.toggleOpening}
+            />
         </div>
     )
 }

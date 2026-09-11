@@ -1,10 +1,11 @@
 import { authService } from '@/features/auth/api/authService';
 import { NavigationPaths } from '@/shared/constants/navigation-names';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 
 export const useAuthUser = () => {
   const navigate = useNavigate(); // TanStack navigation hook instance
+  const queryClient = useQueryClient();
 
   const getUserQuery = useQuery({
     queryKey: ['authUser'],
@@ -15,9 +16,14 @@ export const useAuthUser = () => {
 
   const signOutMutation = useMutation({
     mutationFn: async () => {
+      console.log("🔎  Signing out user...")
       await authService.signOut()
+      
+      await queryClient.invalidateQueries({ queryKey: ['authUser'] });
     },
     onSuccess: () => {
+
+      console.log("🔎  Signed out user successfully.")
       navigate({to: NavigationPaths.Auth})
     }
   })

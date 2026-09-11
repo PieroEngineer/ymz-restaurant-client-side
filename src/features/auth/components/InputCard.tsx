@@ -16,7 +16,9 @@ interface InputCardProps{
     issueMessage: string,
     cleanIssueMessage: () => void,
 
-    isLoading: boolean
+    isLoading: boolean,
+
+    onOpenTermsModal: () => void
 }
 
 export function InputCard({ 
@@ -30,7 +32,8 @@ export function InputCard({
     onTryToSignUp,
     issueMessage,
     cleanIssueMessage,
-    isLoading
+    isLoading,
+    onOpenTermsModal
 }: InputCardProps) {
 
     const authMode = useAuthMode()
@@ -57,10 +60,13 @@ export function InputCard({
                     onClick = {onTermsAcceptanceToggled}
                     ></div>
                     <span className="font-accent text-brand-navy pl-2">
-                        {"Acepto los "}
+                        {"Acepto los"}
                     </span>
-                    <span className="underline font-accent text-brand-secondary">
-                        {" Términos y Condiciones"}
+                    <span 
+                        className="underline font-accent text-brand-secondary"
+                        onClick={onOpenTermsModal}
+                    >
+                        {"Términos y Condiciones"}
                     </span>
                 </div>
                 )}
