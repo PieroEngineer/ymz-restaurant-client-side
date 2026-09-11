@@ -32,18 +32,15 @@ export function useAuthentification(
         mutationFn: async () => {
 
             if (isBlank(email)) {
-                setErrorMessageInAuth('El correo electrónico es obligatorio.')
-                return
+                throw new Error('El correo electrónico es obligatorio.')
             }
 
             if (!isValidEmail(email)) {
-                setErrorMessageInAuth('Debe ingresar un correo con formato válido')
-                return
+                throw new Error('Debe ingresar un correo con formato válido')
             }
 
             if (isBlank(password)) {
-                setErrorMessageInAuth('El contraseña es obligatoria.')
-                return
+                throw new Error('El contraseña es obligatoria.')
             }
 
             console.log(`🔎  Trying to sign in with ${email} ${password}`)
@@ -76,28 +73,23 @@ export function useAuthentification(
     const signUpMutation = useMutation({
         mutationFn: async () => {
             if (isBlank(email)) {
-                setErrorMessageInAuth('El correo electrónico es obligatorio.')
-                return
+                throw new Error('El correo electrónico es obligatorio.')
             }
 
             if (!isValidEmail(email)) {
-                setErrorMessageInAuth('Debe ingresar un correo con formato válido')
-                return
+                throw new Error('Debe ingresar un correo con formato válido')
             }
 
             if (isBlank(password)) {
-                setErrorMessageInAuth('El contraseña es obligatoria.')
-                return
+                throw new Error('El contraseña es obligatoria.')
             }
             
             if (!isValidPassword(password)) {
-                setErrorMessageInAuth('La contraseña debe tener al menos 8 caracteres.')
-                return
+                throw new Error('La contraseña debe tener al menos 8 caracteres.')
             }
 
             if (!termsAcceptance) {
-                setErrorMessageInAuth('Debes aceptar los términos y condiciones.')
-                return
+                throw new Error('Debes aceptar los términos y condiciones.')
             }
             
             console.log(`🔎  Trying to sign Up with ${email} ${password}`)
