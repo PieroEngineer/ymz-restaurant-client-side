@@ -72,9 +72,17 @@ export function InputCard({
                 )}
 
                 {/* Red italic text below */}
-                <span className="italic text-md text-red-600">
-                    {issueMessage}
-                </span>
+                {issueMessage !== "" && (
+                    <span className="italic text-md text-red-600">
+                        {issueMessage}
+                    </span>
+                )}
+
+                {authMode.mode == "signingUp" && (
+                    <span className="font-accent text-brand-navy pl-2 whitespace-pre-line">
+                        {"Al menos:\n+ 8 caracteres + 1 mayúscula\n+ 1 minúscula + 1 número\n+ 1 símbolo"}
+                    </span>
+                )}
 
                 <div className="grow"></div>
 

@@ -23,9 +23,11 @@ export function isValidEmail(email: string): boolean {
  * @returns boolean - True if the string meets the 5-character requirement
  */
 export function isValidPassword(pw: string): boolean {
-  // Check the character length
-  return pw.length >= 8;
+  // Requires >= 8 chars, 1 uppercase, 1 lowercase, 1 number, and 1 symbol
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+  return passwordRegex.test(pw);
 }
+
 
 export const isBlank = (str: string | null | undefined): boolean => {
   return !str || str.trim().length === 0;
