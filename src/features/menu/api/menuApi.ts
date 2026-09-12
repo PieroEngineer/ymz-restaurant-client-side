@@ -34,11 +34,15 @@ export const menuApi = {
    */ // TODO: Consider to move it to the shared apis
   async uploadImageToS3(presignedUploadUrl: string, file: File): Promise<void> {  //TODO: handle it with fresh Axios clients ()
 
+    console.log("🔎  Uploading file to S3 with presigned URL:", presignedUploadUrl);
+
     const response = await fetch(presignedUploadUrl, {
       method: 'PUT',
       headers: { 'Content-Type': file.type }, // Enforce exact content type matching for AWS Signature S3 validity
       body: file
     });
+
+    console.log("🔎  S3 upload response status:", response.status);
 
     if (!response.ok) {
       throw new Error(`🔴  Direct S3 (With CDN) binary allocation failed with status code: ${response.status}`);
