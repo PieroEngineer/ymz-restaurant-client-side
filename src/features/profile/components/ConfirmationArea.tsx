@@ -1,7 +1,7 @@
-import Checkicon from "@/features/profile/components/icon/Checkicon";
-import Closeddooricon from "@/features/profile/components/icon/Closeddooricon";
-import CloudloadingIcon from "@/features/profile/components/icon/Cloudloadingicon";
-import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
+import Checkicon from "@/features/profile/components/icons/Checkicon";
+import Closeddooricon from "@/features/profile/components/icons/Closeddooricon";
+import CloudloadingIcon from "@/features/profile/components/icons/Cloudloadingicon";
+import Pencilicon2 from "@/features/profile/components/icons/Pencilicon2";
 import type { DataState } from "@/features/profile/types/support/dataState.types";
 
 interface ConfirmationAreaProps {

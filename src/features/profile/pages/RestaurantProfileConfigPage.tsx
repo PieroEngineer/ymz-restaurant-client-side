@@ -1,5 +1,6 @@
 import { ConfigurationArea } from "@/features/profile/components/ConfigurationArea";
 import { ConfirmationArea } from "@/features/profile/components/ConfirmationArea";
+import { Videoicon } from "@/shared/components/icons/Videoicon";
 import { LocationConfigurationModal } from "@/features/profile/components/LocationConfigurationModal";
 import { useDataState } from "@/features/profile/hooks/useDataState";
 import { useLocation } from "@/features/profile/hooks/useLocation";
@@ -7,6 +8,7 @@ import { useLocationModal } from "@/features/profile/hooks/useLocationModal";
 import { useRestaurantInfo } from "@/features/profile/hooks/useRestaurantInfo";
 import { NavigationPaths } from "@/shared/constants/navigation-names";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
+import { openInNewTab } from "@/shared/utils/webActors";
 import { useNavigate } from "@tanstack/react-router";
 
 export function RestaurantConfigPage() {
@@ -31,11 +33,18 @@ export function RestaurantConfigPage() {
   return (
     <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
       <header
-        className="w-full bg-brand-navy rounded-b-2xl shadow-lg flex items-center justify-center py-3 px-6 shrink-0"
+        className="relative w-200 bg-brand-navy rounded-b-2xl shadow-lg flex items-center justify-center py-3 px-6 shrink-0"
       >
-        <h1 className="text-white text-lg font-semibold tracking-wide">
+        <h1 className="text-white text-3xl font-semibold tracking-wide">
           Mi restaurante
         </h1>
+
+        <button
+          className="absolute right-0 top-0 h-full w-12 bg-white rounded-b-2xl flex items-center justify-center hover:scale-[1.1] cursor-pointer"
+          onClick={() => openInNewTab('https://www.youtube.com/shorts/CcFNBwfFkHY')}  // TODO: Move to a hook  ///✏️
+        >
+          <Videoicon className='size-8'/>
+        </button>
       </header>
 
       <main className="flex-1 w-full flex items-center justify-center gap-10 px-6 pb-1">

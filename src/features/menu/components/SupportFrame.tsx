@@ -1,10 +1,10 @@
-import { InfoIcon } from "@/features/menu/components/icons/InfoIcon";
 import { CurvedArrowIcon } from "@/features/menu/components/icons/CurvedArrowIcon";
+import { Videoicon } from "@/shared/components/icons/Videoicon";
 
 interface SupportFrameProps {
   onUndo?: () => void;
   onRedo?: () => void;
-  onHelp?: () => void;
+  onHelp: () => void;
   canUndo?: boolean;
   canRedo?: boolean;
 }
@@ -17,10 +17,10 @@ export function SupportFrame({ onUndo, onRedo, onHelp, canUndo = false, canRedo 
       <button 
         type="button" 
         onClick={onHelp}
-        className="w-8 h-8 rounded-md flex items-center justify-center hover:scale-[1.1] cursor-pointer transition-colors"
+        className="p-3  bg-white rounded-md flex items-center justify-center hover:scale-[1.1] cursor-pointer transition-colors"
         title="Documentation help"
       >
-        <InfoIcon className='size-8'/>
+        <Videoicon className='size-8'/>
       </button>
             
       {/* Thin separation anchor line segment right next to first icon */}

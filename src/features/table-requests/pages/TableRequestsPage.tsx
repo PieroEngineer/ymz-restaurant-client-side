@@ -16,6 +16,8 @@ import { usePaymentViewModal } from '@/features/table-requests/hooks/usePaymentV
 import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
+import Videoicon from '@/shared/components/icons/Videoicon';
+import { openInNewTab } from '@/shared/utils/webActors';
 
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid';
 
@@ -52,10 +54,17 @@ export function TableRequestsPage() {
     <div className="relative w-full h-full overflow-hidden select-none">
       
       {/* TOP-CENTER TITLE BANNER RECTANGLE */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-brand-navy px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue">
+      <div className="relative top-0 w-200 left-1/2 -translate-x-1/2 bg-brand-navy px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue">
         <h1 className="font-heading mx-30 my-1 font-bold text-white text-xl lg:text-5xl tracking-wide whitespace-nowrap">
           Solicitudes para mesa
         </h1>
+
+        <button
+          className="absolute right-0 top-0 h-full w-12 bg-white rounded-b-2xl flex items-center justify-center hover:scale-[1.1] cursor-pointer"
+          onClick={() => openInNewTab('https://www.youtube.com/shorts/CcFNBwfFkHY')}  // TODO: Move to a hook  ///✏️
+        >
+          <Videoicon className='size-8'/>
+        </button>
       </div>
 
       {/* TOP-RIGHT COMPACT ALTERNATING IMAGE CONTROLLER */}
@@ -66,12 +75,12 @@ export function TableRequestsPage() {
           <button 
             type="button"
             onClick={() => setExplorationMode(true)}
-            className="size-15 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
+            className="size-12 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
           >
             {explorationMode ? (
-                <ColoredMgfGlassIcon className="size-15 text-brand-primary scale-105" />
+                <ColoredMgfGlassIcon className="size-12 text-brand-primary scale-105" />
             ) : (
-                <LightMgfGlassIcon className="size-15 text-brand-primary scale-105" />
+                <LightMgfGlassIcon className="size-12 text-brand-primary scale-105" />
             )}
           </button>
           
@@ -79,12 +88,12 @@ export function TableRequestsPage() {
           <button 
             type="button"
             onClick={() => setExplorationMode(false)}
-            className="size-15 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
+            className="size-12 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
           >
             {explorationMode ? (
-                <LightExplorationIcon className="size-15 text-brand-primary scale-105" />
+                <LightExplorationIcon className="size-12 text-brand-primary scale-105" />
             ) : (
-                <ColoredExplorationIcon className="size-15 text-brand-primary scale-105" />
+                <ColoredExplorationIcon className="size-12 text-brand-primary scale-105" />
             )}
           </button>
 
@@ -136,8 +145,8 @@ export function TableRequestsPage() {
       </div>
 
       {/* WORKSPACE GRID FRAME: RESERVED FOR INCOMING LIVE TABLE REQUESTS */}
-      {/* Positioned cleanly below the header banners (pt-24) and to the right of the status rail (pl-24) */}
-      <main className="w-full h-full pt-28 pl-24 pr-4 pb-2 overflow-hidden">
+      {/* Positioned cleanly below the header banners (pt-15) and to the right of the status rail (pl-24) */}
+      <main className="w-full h-full pt-15 pl-24 pr-4 pb-2 overflow-hidden">
         <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-2 transition-colors duration-300">
           
           {/* Scalable Container Delivery */}

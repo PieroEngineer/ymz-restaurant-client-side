@@ -19,6 +19,7 @@ import { AddPageIcon } from "@/features/menu/components/icons/AddPageIcon";
 import { UpdatePageIcon } from "@/features/menu/components/icons/UpdatePageIcon";
 import { RemovePageIcon } from "@/features/menu/components/icons/RemovePageIcon";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
+import { openInNewTab } from "@/shared/utils/webActors";
 
 export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" where necessary
 
@@ -195,6 +196,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
                 // onRedo={handlers.redo}
                 // canUndo={canUndo}
                 // canRedo={canRedo}
+                onHelp={() => openInNewTab('https://www.youtube.com/shorts/CcFNBwfFkHY')}  // TODO: Move to a hook  ///✏️
               />
             </div>
     

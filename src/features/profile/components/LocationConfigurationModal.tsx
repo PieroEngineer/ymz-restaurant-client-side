@@ -1,4 +1,4 @@
-import Pinicon from "@/features/profile/components/icon/PinIcon";
+import Pinicon from "@/features/profile/components/icons/PinIcon";
 import type { CoordinatesSelectionMethodToken } from "@/features/profile/types/support/coordinates.type";
 import { useRef, useState } from "react";
 

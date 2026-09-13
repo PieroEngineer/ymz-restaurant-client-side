@@ -1,7 +1,7 @@
-import Editpicicon from "@/features/profile/components/icon/Editpicicon";
-import Orangepencilicon from "@/features/profile/components/icon/Orangepencilicon";
-import Pencilicon2 from "@/features/profile/components/icon/Pencilicon2";
-import PinIcon from "@/features/profile/components/icon/PinIcon";
+import Editpicicon from "@/features/profile/components/icons/Editpicicon";
+import Orangepencilicon from "@/features/profile/components/icons/Orangepencilicon";
+import Pencilicon2 from "@/features/profile/components/icons/Pencilicon2";
+import PinIcon from "@/features/profile/components/icons/PinIcon";
 import { useInteraction } from "@/features/profile/hooks/useInteraction";
 import type { RestaurantResourceTypes } from "@/features/profile/types/support/imageManage.types";
 import type { RestaurantStringRegularFields } from "@/features/profile/types/support/restaurantReduced.types";
