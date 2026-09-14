@@ -135,7 +135,7 @@ export function ConfigurationArea({
                 <div className="flex items-center justify-between gap-2">
                     <label className="text-md shrink-0">{"Ubicación*:"}</label>
 
-                    <span className="text-md shrink-0 text-gray-500">
+                    <span className="text-md shrink-0 text-white">
                         {coordinates[0] === 0 && coordinates[1] === 0 ? "No asignada" : `${coordinates[0].toFixed(6)}, ${coordinates[1].toFixed(6)}`}   {/**TODO: Change the empty coordinates by null (but it needs backend changes) */}
                     </span>
 

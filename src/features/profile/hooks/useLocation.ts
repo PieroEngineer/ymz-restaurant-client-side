@@ -19,21 +19,15 @@ export function useLocation(
         const matches = [...googleMapsLink.matchAll(coordRegex)];
         const initialMatch = matches[matches.length - 1] || null;
         if (initialMatch) {
-            console.log('🔎  There was a fast match');
 
-            console.log(`🔎  Updating coordinates: ${initialMatch[1]}, ${initialMatch[2]}`);
             onUpdateLocation([parseFloat(initialMatch[1]), parseFloat(initialMatch[2])])
 
-            console.log('🔎  Set error as null');
             setError(null)
             
-            console.log('🔎 Set loading as false');
             setIsLoading(false)
             
-            console.log('🔎  On sucess callback');
             onSuccess()
 
-            console.log('🔎  Returning from function');
             return
         }
         else{
