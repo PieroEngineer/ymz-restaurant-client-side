@@ -268,11 +268,13 @@ export function useRestaurantInfo( restaurantId: string | undefined ){  // TODO:
     },
 
     onUpdateCoordinates: (newCoordinates: [number, number]) => {
-      if(draftRestaurantInfo == null) return
+      setDraftRestaurantInfo((currentDraft) => {
+        if (currentDraft == null) return currentDraft
 
-      setDraftRestaurantInfo({
-        ...draftRestaurantInfo,
-        coordinates: newCoordinates
+        return {
+          ...currentDraft,
+          coordinates: newCoordinates
+        }
       })
     },
 

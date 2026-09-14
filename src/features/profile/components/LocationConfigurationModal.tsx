@@ -1,6 +1,6 @@
 import Pinicon from "@/features/profile/components/icons/PinIcon";
 import type { CoordinatesSelectionMethodToken } from "@/features/profile/types/support/coordinates.type";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 interface LocationConfigurationModalProps {
     isOpen: boolean,
@@ -23,14 +23,12 @@ export function LocationConfigurationModal({
     errorMessage,
     onLocate
 }: LocationConfigurationModalProps){
-    if (!isOpen) return null; 
-
     const linkInputRef = useRef<HTMLInputElement>(null);
 
     // const latitudeInputRef = useRef<HTMLInputElement>(null); // TODO
     // const longitudeInputRef = useRef<HTMLInputElement>(null);
 
-    const [linkText, setLinkText] = useState('')
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in">
@@ -72,10 +70,6 @@ export function LocationConfigurationModal({
                         type="text"
                         ref={linkInputRef}
                         className="text-4xl font-bold text-center shadow-[0_8px_16px_rgba(0,21,96,0.2)] rounded-md"
-                        defaultValue={linkText}
-                        onBlur={()=>{
-                            setLinkText(linkInputRef.current?.value ?? "")
-                        }}
                         autoFocus
                     />
                 )}
@@ -99,7 +93,7 @@ export function LocationConfigurationModal({
 
                     {/* Render the confirmation action button unless hard-blocked by invalid text fields */}
                     <button
-                        onClick={() => {onLocate(linkText)}}
+                        onClick={() => onLocate(linkInputRef.current?.value ?? "")}
                         className={`px-4 py-2 text-xl font-bold rounded-lg bg-brand-blue text-white active:scale-95 transition-all duration-200 shadow-md cursor-pointer `}
                     >
                         Localizar

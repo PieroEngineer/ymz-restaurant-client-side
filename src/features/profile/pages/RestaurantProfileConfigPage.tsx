@@ -116,13 +116,6 @@ export function RestaurantConfigPage() {
                   //   location.setManually(coordinates)
                   //   break;
                 }
-
-                if(modalLocationModal.selectionMethod === 'G_MAPS_LINK'){
-                  location.setViaGoogleLink(gmaps_link)
-                }
-                else{
-                  location.setViaBrowser()
-                }
               }}
             />
           </>
