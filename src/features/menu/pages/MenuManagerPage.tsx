@@ -196,7 +196,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
                 // onRedo={handlers.redo}
                 // canUndo={canUndo}
                 // canRedo={canRedo}
-                onHelp={() => openInNewTab('https://www.youtube.com/shorts/CcFNBwfFkHY')}  // TODO: Move to a hook  ///✏️
+                onHelp={() => openInNewTab('https://youtu.be/fAfyB8eCOTE?si=IyJrbG87fycQ-Rmz&t=58')}  // TODO: Move to a hook
               />
             </div>
     

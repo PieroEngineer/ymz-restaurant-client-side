@@ -41,7 +41,7 @@ export function RestaurantConfigPage() {
 
         <button
           className="absolute right-0 top-0 h-full w-12 bg-white rounded-b-2xl flex items-center justify-center hover:scale-[1.1] cursor-pointer"
-          onClick={() => openInNewTab('https://www.youtube.com/shorts/CcFNBwfFkHY')}  // TODO: Move to a hook  ///✏️
+          onClick={() => openInNewTab('https://youtu.be/fAfyB8eCOTE?si=lnL_LOnFzgXjCmfn')}  // TODO: Move to a hook  ///✏️
         >
           <Videoicon className='size-8'/>
         </button>
