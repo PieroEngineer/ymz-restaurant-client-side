@@ -17,7 +17,7 @@ export function useAuthentification(
     useEffect(() => {
         if( loggedUserId !== undefined ){
             console.log(`✅  User is already logged in with userId: ${loggedUserId}. Redirecting to Hub page.`)
-            navigate({ to: NavigationPaths.Hub })   // FIXME: Maybe it's going to have a race condition with the navigation in the onSuccess of the signInMutation.
+            navigate({ to: NavigationPaths.Hub })   // TODO: Maybe it's going to have a race condition with the navigation in the onSuccess of the signInMutation.
         }
         else{
             console.log(`🔎  No user is currently logged in. Staying on the Auth page. ${loggedUserId}`)
