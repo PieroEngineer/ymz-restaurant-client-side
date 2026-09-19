@@ -14,7 +14,7 @@ export const useAuthUser = () => {
     retry: false,
   });
 
-  const signOutMutation = useMutation({
+  const signOutMutation = useMutation({ // TODO: Remove it from here or bring all the auth functions here (For now, I preffer the first one)
     mutationFn: async () => {
       console.log("🔎  Signing out user...")
       await authService.signOut()

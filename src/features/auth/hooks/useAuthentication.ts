@@ -52,12 +52,12 @@ export function useAuthentification(
 
             await authService.signIn(credentialsPayload)
 
+            await queryClient.invalidateQueries({ queryKey: ['authUser'] });
         },
         onSuccess: async () => {
             console.log('✅  Sign in successful from the auth page')
 
             // Refresh user profile query state immediately after login
-            queryClient.invalidateQueries({ queryKey: ['authUser'] });
 
             navigate({ to: NavigationPaths.Hub })
         },
@@ -104,11 +104,14 @@ export function useAuthentification(
 
                 await authService.signIn(credentialsPayload)
 
+                await queryClient.invalidateQueries({ queryKey: ['authUser'] });
+                
             } catch(error){
                 throw new Error(getAuthErrorMessage(error));
             }
         },
         onSuccess: () => {
+            
             navigate({ to: NavigationPaths.RestaurantInitialization })
         },
 
