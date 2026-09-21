@@ -90,7 +90,7 @@ export function DishChart({
   const buttonInStandBy = syncStatus === 'Synchronized' || syncStatus === 'Downloading' || syncStatus === 'Uploading';  // TODO: Move to a hook
 
   return (
-    <div className="w-full h-auto lg:h-full min-h-[28rem] lg:min-h-0 items-center bg-white rounded-2xl lg:rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col gap-3 lg:gap-5 p-3 sm:p-4 lg:p-6">
+    <div className="w-full h-auto lg:h-full min-h-112 lg:min-h-0 items-center bg-white rounded-2xl lg:rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col gap-3 lg:gap-5 p-3 sm:p-4 lg:p-6">
       
       {/* 🚀 TOP CENTER CLOUD WORKFORCE CONTROL SYSTEM BAR HEADER ZONE */}
       <div className="top-4 left-1/2 flex w-full flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3 z-20">
@@ -111,7 +111,7 @@ export function DishChart({
       </div>
 
       <div className="w-full flex-none lg:flex-1 overflow-y-visible lg:overflow-y-auto overflow-x-auto">
-        <table className="w-full min-w-[42rem] lg:min-w-0 border-collapse text-left font-heading text-brand-navy">
+        <table className="w-full min-w-2xl lg:min-w-0 border-collapse text-left font-heading text-brand-navy">
           
           <thead>
             <tr className="border-b-2 border-brand-navy/10">
@@ -129,7 +129,7 @@ export function DishChart({
                 key={dish.id} 
                 /* 🧭 Feature: Clicking anywhere on a row takes you to its respective page */
                 onClick={() => onRowClicked(dish.parentPageId)}
-                className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-[3.25rem] lg:h-14 cursor-pointer"
+                className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-13 lg:h-14 cursor-pointer"
               >
 
                 {/* 🔢 Dynamic computed index label cell (Static, non-editable) */}
