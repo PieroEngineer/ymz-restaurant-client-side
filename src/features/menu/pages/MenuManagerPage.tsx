@@ -130,21 +130,21 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             <MenuActionButton
               text="Añadir páginas"
               onClick={localPageFile.importNewLocalImage}
-              icon={<AddPageIcon className="size-15" />}
+              icon={<AddPageIcon className="size-8 sm:size-10 lg:size-15" />}
             />
     
             <MenuActionButton
               text="Actualizar imagen"
               onClick={localPageFile.replaceWithLocalImage}
               disabled={menuDraft.draftMenuPages.length === 0}
-              icon={<UpdatePageIcon className="size-15" />}
+              icon={<UpdatePageIcon className="size-8 sm:size-10 lg:size-15" />}
             />
     
             <MenuActionButton
               text="Borrar página"
               onClick={modalValidation.onConfirmDeletition}
               disabled={menuDraft.draftMenuPages.length === 0}
-              icon={<RemovePageIcon className="size-15" />}
+              icon={<RemovePageIcon className="size-8 sm:size-10 lg:size-15" />}
             />
     
             <input
@@ -173,7 +173,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
               />
             </div>
     
-            <div className="flex-1 min-h-0 w-full flex justify-center">
+            <div className="flex-1 min-h-0 w-full flex justify-center lg:block">
               <MenuDisplay
                 activeImageSrc={activePage.currentActivePage ? activePage.currentActivePage.imageUrl : null}
                 currentPageId={activePage.currentActivePage?.pageId ?? null}
@@ -189,7 +189,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             </div>
           </div>
     
-          <div className="w-full lg:w-130 flex flex-col items-stretch min-h-[55dvh] lg:h-screen shrink-0">
+          <div className="w-full lg:w-130 flex flex-col items-stretch min-h-0 lg:h-screen shrink-0">
             <div className="min-h-14 lg:h-16 shrink-0 flex justify-center w-full">
               <SupportFrame
                 // onUndo={handlers.undo}   // TODO Retake it when undo & redo come back
@@ -200,7 +200,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
               />
             </div>
     
-            <div className="flex-1 py-3 lg:pb-4 lg:pt-4 min-h-0">
+            <div className="flex-none lg:flex-1 py-3 lg:pb-4 lg:pt-4 lg:min-h-0">
               <DishChart
                 items={menuDraft.dishesWithOrder}
                 activeEditCell={activeEditCell.currentActiveEditCell}
