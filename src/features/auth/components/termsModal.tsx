@@ -12,11 +12,11 @@ export function TermsModal({
     if (!isOpen) return null; 
 
     return(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in px-[max(0.75rem,env(safe-area-inset-left))] py-[max(0.75rem,env(safe-area-inset-top))] pr-[max(0.75rem,env(safe-area-inset-right))] pb-[max(0.75rem,env(safe-area-inset-bottom))]">
              <div
-                className="w-200 h-100 rounded-2xl p-3 shadow-xl flex flex-col gap-5 bg-white items-center"
+                className="flex h-auto max-h-[calc(100dvh-2rem)] w-[min(50rem,calc(100vw-1.5rem))] flex-col items-center gap-3 rounded-2xl bg-white p-3 shadow-xl md:h-100 md:gap-5"
             >
-                <article className="prose dark:prose-invert max-w-none text-justify overflow-y-auto">
+                <article className="prose dark:prose-invert max-w-none min-h-0 flex-1 overflow-y-auto text-justify">
                     <h1 className="text-brand-navy">TÉRMINOS Y CONDICIONES DE USO Y ASOCIACIÓN PARA RESTAURANTES ALIADOS - YUMMIZI</h1>
                     <p className="font-semibold text-sm text-brand-navy dark:text-brand-navy">
                         Última actualización: Septiembre 2026
@@ -227,7 +227,7 @@ export function TermsModal({
                 <div className="flex gap-3 justify-end mt-2 pt-3 border-t border-white/10">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-xl font-bold rounded-lg bg-brand-secondary text-white hover:bg-orange-50 active:scale-95 transition-all duration-200 shadow-md cursor-pointer"
+                        className="min-h-11 cursor-pointer rounded-lg bg-brand-secondary px-4 py-2 text-lg font-bold text-white shadow-md transition-all duration-200 hover:bg-orange-50 active:scale-95 md:text-xl"
                     >
                         Listo
                     </button>

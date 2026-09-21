@@ -1,11 +1,13 @@
 import { InputCard } from "@/features/auth/components/InputCard";
 import { PresentationCard } from "@/features/auth/components/PresentationCard";
-import authBackground from "@/assets/images/auth-bg.webp";
 import { useAuthentification } from "@/features/auth/hooks/useAuthentication";
 import { useCredentials } from "@/features/auth/hooks/useCredentials";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
 import { useTermsModal } from "@/features/auth/hooks/useTermsModal";
 import { TermsModal } from "@/features/auth/components/termsModal";
+import { AuthPageShell } from "@/features/auth/components/AuthPageShell";
+import { AuthCardsLayout } from "@/features/auth/components/AuthCardsLayout";
+import { AuthWelcomeBanner } from "@/features/auth/components/AuthWelcomeBanner";
 
 export function AuthScreen(){
 
@@ -17,12 +19,8 @@ export function AuthScreen(){
     const termsModal = useTermsModal()
 
     return (
-        <div
-            className="h-screen w-screen overflow-hidden bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center gap-5"
-            style={{ backgroundImage: `url(${authBackground})` }}
-        >
-            
-            <div className="flex gap-2 items center">
+        <AuthPageShell>
+            <AuthCardsLayout>
                 <PresentationCard/>
                 <InputCard
                     email={credentials.typedEmail}
@@ -38,16 +36,14 @@ export function AuthScreen(){
                     isLoading={auth.isLoading}
                     onOpenTermsModal={termsModal.toggleOpening}
                 />
-            </div>
+            </AuthCardsLayout>
 
-            <span className="font-heading text-2xl text-brand-primary shadow-lg" style={{ color: "brand-navy", backgroundColor: "white",  padding: "2px 6px",  borderRadius: "4px"  }}>
-                {"¡Yummizi les da la bienvenida!"}
-            </span>
+            <AuthWelcomeBanner />
 
             <TermsModal
                 isOpen={termsModal.isOpen}
                 onClose={termsModal.toggleOpening}
             />
-        </div>
+        </AuthPageShell>
     )
 }

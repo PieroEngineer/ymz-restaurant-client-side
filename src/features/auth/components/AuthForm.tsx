@@ -14,9 +14,9 @@ export function AuthForm({ email, onEmailChanged, password, onPasswordChanged, c
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
     return(
-        <div className="flex flex-col gap-3 self-start" >
+        <div className="flex w-full flex-col gap-2 self-stretch md:gap-3 md:self-start max-md:landscape:gap-1.5" >
 
-            <span className="font-heading text-2xl text-brand-navy">
+            <span className="font-heading text-xl text-brand-navy md:text-2xl max-md:landscape:text-lg">
                 {"Correo:"}
             </span>
 
@@ -24,17 +24,15 @@ export function AuthForm({ email, onEmailChanged, password, onPasswordChanged, c
                 type = "email"
                 ref = {emailInputRef}
                 defaultValue={email}
-                className={
-                    "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
-                    "outline-none w-full "
-                }
+                autoComplete="email"
+                className="min-h-11 w-full rounded-md bg-white px-3 py-2 text-base text-blue-700 shadow-sm outline-none max-md:landscape:min-h-10"
                 onBlur={() => {
                     onEmailChanged(emailInputRef.current?.value ?? "")
                     cleanIssueMessage()
                 }}
             />
 
-            <span className="font-heading text-2xl text-brand-navy">
+            <span className="font-heading text-xl text-brand-navy md:text-2xl max-md:landscape:text-lg">
                 {"Contraseña:"}
             </span>
 
@@ -42,10 +40,8 @@ export function AuthForm({ email, onEmailChanged, password, onPasswordChanged, c
                 type = "password"
                 ref = {passwordInputRef}
                 defaultValue={password}
-                className={
-                    "bg-white text-blue-700 text-md rounded-md px-2 py-1 shadow-sm " +
-                    "outline-none w-full "
-                }
+                autoComplete="current-password"
+                className="min-h-11 w-full rounded-md bg-white px-3 py-2 text-base text-blue-700 shadow-sm outline-none max-md:landscape:min-h-10"
                 onBlur = {() => {
                     onPasswordChanged(passwordInputRef.current?.value ?? "")
                     cleanIssueMessage()
