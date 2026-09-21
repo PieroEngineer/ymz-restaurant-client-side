@@ -28,9 +28,9 @@ export function MenuActionModal({
   const isDestructive = mode === 'CONFIRM_DELETE' || mode === 'INVALID_DISHES';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm font-sans animate-fade-in p-4">
       <div 
-        className="w-120 rounded-2xl p-6 shadow-2xl text-white flex flex-col gap-5 border border-white/10"
+        className="w-full max-w-120 max-h-[calc(100dvh-2rem)] rounded-2xl p-4 sm:p-6 shadow-2xl text-white flex flex-col gap-4 sm:gap-5 border border-white/10 overflow-hidden"
         style={{ backgroundColor: '#d94500' }}
       >
         {/* 🏷️ Dynamic Header Section */}
@@ -41,7 +41,7 @@ export function MenuActionModal({
             {(mode === 'EMPTY_PAGES' || mode === 'INVALID_DISHES') && '😯'}
           </span>
 
-          <h3 className="text-xl font-bold tracking-tight">
+          <h3 className="text-lg sm:text-xl font-bold tracking-tight">
             {mode === 'CONFIRM_DELETE' && 'Remover página del menú'}
             {mode === 'CONFIRM_SYNC' && 'Guardar tu menu'}
             {mode === 'EMPTY_PAGES' && 'Páginas sin comidas asignadas'}
@@ -51,7 +51,7 @@ export function MenuActionModal({
         </div>
 
         {/* 💬 Dynamic Body Content Section */}
-        <div className="text-base leading-relaxed text-orange-50 font-medium overflow-y-auto max-h-60 pr-1">
+        <div className="text-sm sm:text-base leading-relaxed text-orange-50 font-medium overflow-y-auto max-h-60 pr-1">
           {mode === 'CONFIRM_DELETE' && (
             <p>
               ¿Deseas eliminar <span className="font-extrabold">La página {activePageNumber}</span>? Esta acción también eliminará las comidas adjuntas a esta página.
@@ -91,7 +91,7 @@ export function MenuActionModal({
         </div>
 
         {/* Modal Operational Footer Controls (Action Button Grid Blocks) */}
-        <div className="flex gap-3 justify-end mt-2 pt-3 border-t border-white/10">
+        <div className="flex flex-col-reverse sm:flex-row gap-3 justify-end mt-2 pt-3 border-t border-white/10">
 
           <button
             onClick={onClose}

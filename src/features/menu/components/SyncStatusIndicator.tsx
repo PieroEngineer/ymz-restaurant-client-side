@@ -36,9 +36,9 @@ export function SyncStatusIndicator({ status }: SyncStatusIndicatorProps) {
   const currentTheme = layoutMap[status];
 
   return (
-    <div className={`flex items-center gap-1.5 px-3 py-1 border rounded-full text-md font-sans font-bold select-none transition-all duration-200 ${currentTheme.bg}`}>
-      <span>{currentTheme.icon}</span>
-      <span>{currentTheme.label}</span>
+    <div className={`flex min-w-0 items-center justify-center gap-1.5 px-3 py-2 sm:py-1 border rounded-full text-sm lg:text-md font-sans font-bold select-none transition-all duration-200 ${currentTheme.bg}`}>
+      <span className="shrink-0">{currentTheme.icon}</span>
+      <span className="truncate">{currentTheme.label}</span>
     </div>
   );
 }

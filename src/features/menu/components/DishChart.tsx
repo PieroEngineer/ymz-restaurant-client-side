@@ -90,17 +90,17 @@ export function DishChart({
   const buttonInStandBy = syncStatus === 'Synchronized' || syncStatus === 'Downloading' || syncStatus === 'Uploading';  // TODO: Move to a hook
 
   return (
-    <div className="w-full h-full items-center bg-white rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col gap-5 p-6">
+    <div className="w-full h-full items-center bg-white rounded-2xl lg:rounded-3xl shadow-yummizi border border-brand-navy/5 flex flex-col gap-3 lg:gap-5 p-3 sm:p-4 lg:p-6">
       
       {/* 🚀 TOP CENTER CLOUD WORKFORCE CONTROL SYSTEM BAR HEADER ZONE */}
-      <div className="top-4 left-1/2 flex items-center gap-3 z-20">
+      <div className="top-4 left-1/2 flex w-full flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3 z-20">
         <SyncStatusIndicator status={syncStatus} />
         
         <button
           type="button"
           onClick={onSyncRequested}
           disabled={buttonInStandBy}
-          className={`px-4 py-1 rounded-full text-md font-sans font-bold transition-all shadow-sm flex items-center gap-1 border ${
+          className={`px-4 py-2 sm:py-1 rounded-full text-sm lg:text-md font-sans font-bold transition-all shadow-sm flex items-center justify-center gap-1 border whitespace-nowrap ${
             buttonInStandBy
               ? 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed shadow-none'
               : 'bg-brand-primary text-white border-brand-primary hover:bg-[#e06114] active:scale-95 cursor-pointer'
@@ -110,16 +110,16 @@ export function DishChart({
         </button>
       </div>
 
-      <div className="w-full flex-1 overflow-y-scroll overflow-x-auto">
-        <table className="w-full border-collapse text-left font-heading text-brand-navy">
+      <div className="w-full flex-1 overflow-y-auto overflow-x-auto">
+        <table className="w-full min-w-2xl border-collapse text-left font-heading text-brand-navy">
           
           <thead>
             <tr className="border-b-2 border-brand-navy/10">
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase px-4">N°</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Nombre</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Costo</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Tiempo de prep.</th>
-              <th className="pb-4 text-base md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-4">Dispon.</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase px-3 lg:px-4">N°</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Nombre</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Costo</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Tiempo de prep.</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Dispon.</th>
             </tr>
           </thead>
           
@@ -129,7 +129,7 @@ export function DishChart({
                 key={dish.id} 
                 /* 🧭 Feature: Clicking anywhere on a row takes you to its respective page */
                 onClick={() => onRowClicked(dish.parentPageId)}
-                className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-14 cursor-pointer"
+                className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-13 lg:h-14 cursor-pointer"
               >
 
                 {/* 🔢 Dynamic computed index label cell (Static, non-editable) */}
@@ -139,7 +139,7 @@ export function DishChart({
 
                 {/* 🏷️ ITEM NAME ROW COMPONENT CELL */}
                 <td 
-                  className="border-l border-brand-navy/10 px-4"  // |-> X add cursor text 
+                  className="border-l border-brand-navy/10 px-3 lg:px-4"  // |-> X add cursor text 
                   onClick={(e) => {
                     e.stopPropagation(); // Stop row click navigation from resetting things
                     setActiveEditCell({ id: dish.id, field: 'name' });
@@ -157,7 +157,7 @@ export function DishChart({
                       className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-medium"
                     />
                   ) : (
-                    <span className={`block text-sm truncate max-w-55 ${!dish.name && 'text-slate-300 font-normal italic'}`}>
+                    <span className={`block text-sm truncate max-w-48 lg:max-w-55 ${!dish.name && 'text-slate-300 font-normal italic'}`}>
                       {dish.name || 'Tap to name...'}
                     </span>
                   )}
@@ -165,7 +165,7 @@ export function DishChart({
 
                 {/* 💵 ITEM COST ROW COMPONENT CELL */}
                 <td 
-                  className="border-l border-brand-navy/10 px-4"
+                  className="border-l border-brand-navy/10 px-3 lg:px-4"
                   onClick={() => setActiveEditCell({ id: dish.id, field: 'priceCents' })}
                 >
                   {activeEditCell?.id === dish.id && activeEditCell?.field === 'priceCents' ? (
@@ -196,7 +196,7 @@ export function DishChart({
 
                 {/* ⏱️ ITEM PREPARATION TIME COMPONENT CELL */}
                 <td 
-                  className="border-l border-brand-navy/10 px-4"
+                  className="border-l border-brand-navy/10 px-3 lg:px-4"
                   onClick={() => setActiveEditCell({ id: dish.id, field: 'prepTime' })}
                 >
                   {activeEditCell?.id === dish.id && activeEditCell?.field === 'prepTime' ? (
@@ -217,7 +217,7 @@ export function DishChart({
                 </td>
 
                 {/* ✅ ITEM AVAILABILITY COMPONENT CELL */}
-                <td className="border-l border-brand-navy/10 px-4">
+                <td className="border-l border-brand-navy/10 px-3 lg:px-4">
                   <button
                     type="button"
                     onClick={(e) => {

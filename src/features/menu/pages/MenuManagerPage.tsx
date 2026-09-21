@@ -114,9 +114,9 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     // ===== 🖼️User interface =====
 
     return (
-        <div className="w-full h-full flex gap-6 items-stretch overflow-hidden bg-brand-background select-none px-4">
-          <div className="w-30 flex flex-col gap-4 pt-20 pb-5 shrink-0 h-full items-center">
-            <div className="flex-none w-3/4">
+        <div className="w-full min-h-dvh lg:h-full flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 items-stretch overflow-y-auto lg:overflow-hidden bg-brand-background select-none px-3 sm:px-4 py-3 lg:py-0">
+          <div className="w-full lg:w-30 flex flex-row lg:flex-col gap-2 sm:gap-3 lg:gap-4 lg:pt-20 lg:pb-5 shrink-0 lg:h-full items-stretch lg:items-center overflow-x-auto lg:overflow-visible pb-1">
+            <div className="flex-none w-32 sm:w-36 lg:w-3/4">
               <PageChanger
                 currentPage={menuDraft.draftMenuPages.length > 0 ? activePage.activePageIndex + 1 : 0}
                 totalPages={menuDraft.draftMenuPages.length}
@@ -125,7 +125,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
               />
             </div>
     
-            <hr className="w-full border-slate-200 my-1" />
+            <hr className="hidden lg:block w-full border-slate-200 my-1" />
     
             <MenuActionButton
               text="Añadir páginas"
@@ -165,15 +165,15 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             />
           </div>
     
-          <div className="flex-1 flex flex-col gap-2 pb-3 items-center h-screen min-w-[320px]">
-            <div className="h-16 shrink-0 flex justify-center">
+          <div className="flex-1 flex flex-col gap-2 lg:pb-3 items-center min-h-[70dvh] sm:min-h-[75dvh] lg:h-screen lg:min-w-[320px]">
+            <div className="min-h-14 lg:h-16 shrink-0 flex justify-center w-full">
               <ViewSelector
                 comingSoonCover={true}
                 onToggleView={(mode) => console.log(`Inject code: Switch grid viewport profile to ${mode}`)}
               />
             </div>
     
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 w-full flex justify-center">
               <MenuDisplay
                 activeImageSrc={activePage.currentActivePage ? activePage.currentActivePage.imageUrl : null}
                 currentPageId={activePage.currentActivePage?.pageId ?? null}
@@ -189,8 +189,8 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             </div>
           </div>
     
-          <div className="w-112.5 lg:w-130 flex flex-col items-stretch h-screen shrink-0">
-            <div className="h-16 shrink-0 flex justify-center">
+          <div className="w-full lg:w-130 flex flex-col items-stretch min-h-[55dvh] lg:h-screen shrink-0">
+            <div className="min-h-14 lg:h-16 shrink-0 flex justify-center w-full">
               <SupportFrame
                 // onUndo={handlers.undo}   // TODO Retake it when undo & redo come back
                 // onRedo={handlers.redo}
@@ -200,7 +200,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
               />
             </div>
     
-            <div className="flex-1 pb-4 pt-4 min-h-0">
+            <div className="flex-1 py-3 lg:pb-4 lg:pt-4 min-h-0">
               <DishChart
                 items={menuDraft.dishesWithOrder}
                 activeEditCell={activeEditCell.currentActiveEditCell}

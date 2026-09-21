@@ -142,7 +142,7 @@ export function MenuDisplay({
 
   return (
     <div 
-      className="w-auto h-full bg-white border-3 shadow-yummizi border-brand-navy rounded-3xl flex flex-col justify-center items-center relative overflow-hidden"
+      className="w-full lg:w-auto h-full min-h-96 bg-white border-2 sm:border-3 shadow-yummizi border-brand-navy rounded-2xl lg:rounded-3xl flex flex-col justify-center items-center relative overflow-hidden"
       onMouseMove={handleCanvasMouseMove}
       onMouseUp={handleCanvasMouseUp}
       onMouseLeave={handleCanvasMouseUp} // Auto-drop if mouse slips entirely out of the display box
@@ -160,15 +160,15 @@ export function MenuDisplay({
 
       {activeImageSrc ? (
         /* 🗺️ ACTIVE COMPONENT VIEW CANVAS PATH */
-        <div className="relative w-full h-full flex flex-col items-center p-2 overflow-auto">
-          <span className="text-md block text-brand-primary italic flex-none">Clickea sobre el menu para añadir una referencia 👇🏻</span>
-          <div className="relative min-h-0 inline-block h-full select-none items-center cursor-crosshair">
+        <div className="relative w-full h-full flex flex-col items-center gap-2 p-2 overflow-auto">
+          <span className="text-xs sm:text-sm lg:text-md block text-brand-primary italic flex-none text-center leading-tight px-2">Clickea sobre el menu para añadir una referencia 👇🏻</span>
+          <div className="relative min-h-0 inline-block flex-1 max-w-full select-none items-center cursor-crosshair">
             <img 
               ref={imageRef}
               src={activeImageSrc} 
               onClick={handleImageCanvasClick}
               alt="Active Restaurant Menu Page Layout" 
-              className="w-auto h-full object-contain pointer-events-auto rounded-lg" 
+              className="w-auto h-full max-w-full object-contain pointer-events-auto rounded-lg" 
             />
 
             {activePagePins.map((pin) => {
@@ -189,7 +189,7 @@ export function MenuDisplay({
                     draggingPinIdRef.current = pin.id;
                   }}
                   /* 🔥 Crucial Fix: Changed pointer-events-none to auto, added grip styling changes */
-                  className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform ${
+                  className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform touch-none ${
                     draggingPinId === pin.id ? 'cursor-grabbing scale-125 z-40' : 'cursor-grab hover:scale-110 z-30'
                   }`}
                   style={{ left: `${pin.coordinateXInMenu*100}%`, top: `${pin.coordinateYInMenu*100}%` }}
@@ -264,9 +264,9 @@ export function MenuDisplay({
         <button 
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full h-full flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-slate-50 transition-colors"
+                    className="w-full h-full min-h-96 flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-slate-50 transition-colors text-center"
         >
-          <p className="text-brand-navy font-accents text-2xl leading-relaxed">
+          <p className="text-brand-navy font-accents text-xl sm:text-2xl leading-relaxed">
             Presiona aquí para agregar <br />páginas de menú
           </p>
           <PlusIcon className='size-12'/>
