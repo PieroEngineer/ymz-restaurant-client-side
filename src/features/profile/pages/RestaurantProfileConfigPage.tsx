@@ -31,11 +31,11 @@ export function RestaurantConfigPage() {
   console.log('🔎  Restaurant draft info', restaurantInfo.draft)
 
   return (
-    <div className="h-screen w-screen bg-white overflow-hidden flex flex-col items-center">
+    <div className="h-dvh lg:h-screen w-full lg:w-screen bg-white overflow-y-auto lg:overflow-hidden flex flex-col items-center">
       <header
-        className="relative w-200 bg-brand-navy rounded-b-2xl shadow-lg flex items-center justify-center py-3 px-6 shrink-0"
+        className="relative w-full lg:w-200 bg-brand-navy rounded-b-2xl shadow-lg flex items-center justify-center py-3 px-14 sm:px-16 lg:px-6 shrink-0"
       >
-        <h1 className="text-white text-3xl font-semibold tracking-wide">
+        <h1 className="text-white text-2xl sm:text-3xl font-semibold tracking-wide text-center">
           Mi restaurante
         </h1>
 
@@ -47,10 +47,10 @@ export function RestaurantConfigPage() {
         </button>
       </header>
 
-      <main className="flex-1 w-full flex items-center justify-center gap-10 px-6 pb-1">
+      <main className="flex-1 w-full flex flex-col landscape:flex-row lg:flex-row items-stretch landscape:items-center lg:items-center justify-start landscape:justify-center lg:justify-center gap-4 landscape:gap-5 lg:gap-10 px-3 sm:px-4 lg:px-6 py-4 lg:pt-0 lg:pb-1">
         {restaurantInfo.isDownloading || restaurantInfo.draft == null ? (
           <section
-            className="bg-brand-navy text-white rounded-2xl shadow-lg flex flex-col items-center gap-4 px-10 py-8"
+            className="bg-brand-navy text-white rounded-2xl shadow-lg flex flex-col items-center gap-4 px-6 sm:px-10 py-8"
             role="status"
             aria-live="polite"
           >
@@ -58,7 +58,7 @@ export function RestaurantConfigPage() {
               className="size-10 animate-spin rounded-full border-4 border-white/30 border-t-brand-primary"
               aria-hidden="true"
             />
-            <span className="text-xl font-medium">Cargando información del restaurante...</span>
+            <span className="text-lg sm:text-xl font-medium text-center">Cargando información del restaurante...</span>
           </section>
         ) : (
           <>

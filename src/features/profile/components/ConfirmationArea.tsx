@@ -26,24 +26,24 @@ export function ConfirmationArea({
     }
 
     return (
-        <div className="flex flex-col items-center gap-6">
+        <div className="w-full landscape:w-auto lg:w-auto flex flex-col items-center gap-4 lg:gap-6">
             
             {/* Confirmation sub container */}
             <div
-                className="bg-brand-navy rounded-2xl shadow-lg
+                className="w-full landscape:w-72 lg:w-auto bg-brand-navy rounded-2xl shadow-lg
                             flex flex-col items-center
                             gap-2.5 p-4"
             >
                 {/* white rectangle: italic caption above a medium image */}
                 <div className="bg-white rounded-lg p-2 flex flex-col items-center gap-1.5 w-full">
-                    <span className="italic text-md text-brand-primary">
+                    <span className="italic text-sm sm:text-md text-brand-primary text-center">
                     {"Como el usuario te " + (loadingStatus == 'SYNC' ? 'encuentra' : 'encontraría')}
                     </span>
                     <img
                     // src={MOCK.confirmationImageUrl}
                     src={"https://placehold.co/160x90/e5e7eb/6b7280?text=Vista+previa"}
                     alt=""
-                    className="rounded-md w-full h-45 object-cover"
+                    className="rounded-md w-full h-36 sm:h-45 landscape:h-28 lg:h-45 object-cover"
                     />
                 </div>
 
@@ -58,7 +58,7 @@ export function ConfirmationArea({
                         disabled={loadingStatus != 'EDITED' && loadingStatus != 'ERROR'}
                         onClick={tryToSave}
                     >
-                        <span className="text-white text-xl font-medium">
+                    <span className="text-white text-lg sm:text-xl font-medium">
                         {isFirstTime ? "Empezar" : "Guardar"}
                         </span>
                     </button>
@@ -69,13 +69,13 @@ export function ConfirmationArea({
             </div>
 
             {loadingStatus=='ERROR' && (
-                <span className="italic text-md text-red-600">
+                <span className="italic text-sm sm:text-md text-red-600 text-center">
                     {"La última carga falló, por favor, reintentar en unos minutos"}
                 </span>
             )}
 
             {inputError != null && (
-                <span className="italic text-md text-red-600">
+                <span className="italic text-sm sm:text-md text-red-600 text-center">
                     {inputError}
                 </span>
             )}
@@ -83,7 +83,7 @@ export function ConfirmationArea({
             {/* Open restaurant button */}
             <div className="relative flex flex-col items-center gap-1.5">
                 {/* bold text above */}
-                <span className="text-xl font-bold text-slate-800">
+                <span className="text-lg sm:text-xl font-bold text-slate-800">
                     {"Estado"}
                 </span>
 

@@ -42,7 +42,7 @@ export function ConfigurationArea({
     const updatePhoneNumberToContactInputRef = useRef<HTMLInputElement>(null);
     
     return (
-    <div className="flex flex-row items-stretch">
+    <div className="w-full landscape:w-auto lg:w-auto flex flex-col landscape:flex-row lg:flex-row items-stretch gap-4 landscape:gap-0 lg:gap-0">
 
         <input
             ref={updateImageInputRef}
@@ -55,7 +55,7 @@ export function ConfigurationArea({
 
         {/* Restaurant info card */}
         <section
-            className="bg-brand-tertiary text-white rounded-2xl shadow-lg flex flex-col items-center gap-2.5 p-4 "
+            className="w-full landscape:w-auto lg:w-auto bg-brand-tertiary text-white rounded-2xl shadow-lg flex flex-col items-center gap-2.5 p-4"
             >
             {/* text next to icon */}
             <div className="flex justify-center items-center gap-2 font-accent">
@@ -64,7 +64,7 @@ export function ConfigurationArea({
                     <input
                         type="text"
                         ref={updateNameInputRef}
-                        className="text-4xl font-bold text-center"
+                        className="w-full min-w-0 text-2xl sm:text-3xl lg:text-4xl font-bold text-center"
                         defaultValue={restaurantName}
                         onBlur={()=>{
                             onUpdateStringField("restaurantName", updateNameInputRef.current?.value ?? "")
@@ -74,7 +74,7 @@ export function ConfigurationArea({
                     />
                 ) : (
                     <span 
-                        className="text-4xl font-bold text-center"
+                        className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center wrap-break-word"
                         onClick={interaction.toggleNameEdition}
                     >
                         {restaurantName || "Click aquí..."}
@@ -135,7 +135,7 @@ export function ConfigurationArea({
                 <div className="flex items-center justify-between gap-2">
                     <label className="text-md shrink-0">{"Ubicación*:"}</label>
 
-                    <span className="text-md shrink-0 text-white">
+                    <span className="text-sm sm:text-md shrink lg:shrink-0 text-right text-white min-w-0 wrap-break-word">
                         {coordinates[0] === 0 && coordinates[1] === 0 ? "No asignada" : `${coordinates[0].toFixed(6)}, ${coordinates[1].toFixed(6)}`}   {/**TODO: Change the empty coordinates by null (but it needs backend changes) */}
                     </span>
 
@@ -188,7 +188,7 @@ export function ConfigurationArea({
 
         {/* Restaurant media card */}
         <section
-            className="bg-white rounded-2xl shadow-lg border border-orange-100
+            className="w-full landscape:w-auto lg:w-auto bg-white rounded-2xl shadow-lg border border-orange-100
                         flex flex-col items-center
                         gap-2.5 p-4"
             style={{ color: "#ff751f" }}
@@ -242,7 +242,7 @@ export function ConfigurationArea({
             </span>
 
             {/* 3 icons horizontally ordered */}
-            <div className="flex items-center gap-4 pt-1">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 pt-1 flex-wrap landscape:flex-nowrap lg:flex-nowrap">
                 {(['FRONT1', 'FRONT2', 'FRONT3'] as const).map((imageType, index) => (
                     <button
                         key={imageType}
