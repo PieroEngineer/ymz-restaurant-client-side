@@ -114,7 +114,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     // ===== 🖼️User interface =====
 
     return (
-        <div className="w-full min-h-dvh lg:h-full flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 items-stretch overflow-y-auto lg:overflow-hidden bg-brand-background select-none px-3 sm:px-4 py-3 lg:py-0">
+        <div className="w-full h-dvh lg:h-full flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6 items-stretch overflow-y-auto lg:overflow-hidden bg-brand-background select-none px-3 sm:px-4 py-3 lg:py-0">
           <div className="w-full lg:w-30 flex flex-row lg:flex-col gap-2 sm:gap-3 lg:gap-4 lg:pt-20 lg:pb-5 shrink-0 lg:h-full items-stretch lg:items-center overflow-x-auto lg:overflow-visible pb-1">
             <div className="flex-none w-32 sm:w-36 lg:w-3/4">
               <PageChanger
