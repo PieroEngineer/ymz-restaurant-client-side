@@ -68,7 +68,7 @@ export function TableRequestsPage() {
       </div>
 
       {/* TOP-RIGHT COMPACT ALTERNATING IMAGE CONTROLLER */}
-      <div className="absolute top-2 right-2 sm:top-0 sm:right-0 sm:mt-2 sm:mr-4 z-30 scale-75 sm:scale-100 origin-top-right">
+      <div className="absolute top-14 right-2 sm:top-0 sm:right-0 sm:mt-2 sm:mr-4 z-30 scale-75 sm:scale-100 origin-top-right">
         <div className="relative bg-white rounded-xl p-3 shadow-md flex items-center gap-4 border border-brand-navy/5">
 
           {/* Alternating Slot 2 */}
@@ -146,7 +146,7 @@ export function TableRequestsPage() {
 
       {/* WORKSPACE GRID FRAME: RESERVED FOR INCOMING LIVE TABLE REQUESTS */}
       {/* Positioned cleanly below the header banners (pt-15) and to the right of the status rail (pl-24) */}
-      <main className="w-full h-full pt-16 md:pt-15 pl-3 md:pl-24 pr-3 md:pr-4 pb-20 md:pb-2 overflow-hidden">
+      <main className="w-full h-full pt-32 md:pt-15 pl-3 md:pl-24 pr-3 md:pr-4 pb-20 md:pb-2 overflow-hidden">
         <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-2 transition-colors duration-300">
           
           {/* Scalable Container Delivery */}

@@ -61,7 +61,7 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
   console.log(`🔎🍖  Order selections (In Card):\n ${JSON.stringify(selectedOrder)}`)
 
   return (
-    <article className="w-full bg-white rounded-2xl shadow-yummizi border border-slate-100 flex flex-col overflow-hidden break-inside-avoid transition-all duration-200 hover:-translate-y-0.5">
+    <article className="w-full scale-[0.9] md:scale-100 origin-top-left bg-white rounded-2xl shadow-yummizi border border-slate-100 flex flex-col overflow-hidden break-inside-avoid transition-all duration-200 hover:-translate-y-0.5">
       
       {/* SECTION 1: Main Text */}
       <header className="py-2 text-center">
