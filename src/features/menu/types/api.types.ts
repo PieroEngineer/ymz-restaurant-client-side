@@ -18,7 +18,7 @@ export interface CloudDishItemPayload {
   coordinateXInMenu: number;
   coordinateYInMenu: number;  ///
   availableComplementaryDishIds: string[];
-  type: DishTypeToken;
+  dishType: DishTypeToken;
   description: string;
   createdAt: number;
 }

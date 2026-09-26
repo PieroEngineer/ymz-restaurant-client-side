@@ -81,7 +81,7 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 coordinateXInMenu: cd.coordinateXInMenu,    ///
                 coordinateYInMenu: cd.coordinateYInMenu,
                 availableComplementaryDishIds: cd .availableComplementaryDishIds,            
-                type: cd .type,                
+                dishType: cd .type,                
                 description: '', // Preset parameter enforcement rule
                 createdAt: cd.createdAt /// Or Date.now()?
             });
@@ -93,7 +93,7 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
                 if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;    ///
                 if (!areArraysEquivalent(original.availableComplementaryDishIds, cd.availableComplementaryDishIds)) updatedFields.availableComplementaryDishIds = cd.availableComplementaryDishIds;
-                if (original.type !== cd.type) updatedFields.type = cd.type;
+                if (original.type !== cd.type) updatedFields.dishType = cd.type;
                 if (original.isOutOfStock !== cd.isOutOfStock) updatedFields.isOutOfStock = cd.isOutOfStock;
                 if (original.parentPageId !== cd.parentPageId) updatedFields.menuPageId = cd.parentPageId;  /// Is it possible? perhaps this line is unnecessary
                 /// Is it necessary to include  "createAt"?

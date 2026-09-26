@@ -29,7 +29,7 @@ export function toDomainDishItem(dto: CloudDishItemPayload): DishItem {
         coordinateXInMenu: dto.coordinateXInMenu,
         coordinateYInMenu: dto.coordinateYInMenu,   ///
         availableComplementaryDishIds: dto.availableComplementaryDishIds ?? [],     // Adapting with previous
-        type: dto.type ?? 'MAIN',                                                                                             //
+        type: dto.dishType ?? 'MAIN',                                                                                             //
         description: dto.description,
         createdAt: dto.createdAt
     }

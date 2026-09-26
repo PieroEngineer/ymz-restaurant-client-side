@@ -119,7 +119,7 @@ function ComplementDishChecklist({
         <fieldset className="space-y-3">
             <legend className="mb-2 text-sm font-semibold text-brand-navy">Incluir complementos</legend>
             {dishes.length === 0 ? (
-                <p className="rounded-lg bg-slate-50 px-3 py-4 text-sm text-slate-500">Incluye platos en el tipo "Complemento" para verlos aquí</p>
+                <p className="rounded-lg bg-slate-50 px-3 py-4 text-sm text-slate-500">Incluye otros platos en el tipo "Complemento" para verlos aquí</p>
             ) : (
                 <div className="max-h-52 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2">
                     <label className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm font-semibold text-brand-navy hover:bg-slate-50">
