@@ -20,7 +20,6 @@ import { UpdatePageIcon } from "@/features/menu/components/icons/UpdatePageIcon"
 import { RemovePageIcon } from "@/features/menu/components/icons/RemovePageIcon";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
 import { openInNewTab } from "@/shared/utils/webActors";
-import type { DishTypeToken } from "@/features/menu/types/support/selection.types";
 import { useExtraDetailsModal } from "@/features/menu/hooks/useExtraDetailsModal";
 import { ExtraDetailsModal } from "@/features/menu/components/ExtraDetailsModal";
 
