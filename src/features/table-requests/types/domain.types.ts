@@ -42,5 +42,6 @@ export interface OrderItem {
   dishId: string,
   dishName: string,
   quantity: number,
+  complementaryDishId: string,
   historicalUnitPriceInCents: number
 }

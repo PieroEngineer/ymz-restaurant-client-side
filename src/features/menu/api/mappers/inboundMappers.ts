@@ -27,7 +27,9 @@ export function toDomainDishItem(dto: CloudDishItemPayload): DishItem {
         isOutOfStock: dto.isOutOfStock,
         parentPageId: dto.menuPageId,
         coordinateXInMenu: dto.coordinateXInMenu,
-        coordinateYInMenu: dto.coordinateYInMenu,
+        coordinateYInMenu: dto.coordinateYInMenu,   ///
+        availableComplementaryDishIds: dto.availableComplementaryDishIds ?? [],     // Adapting with previous
+        type: dto.type ?? 'MAIN',                                                                                             //
         description: dto.description,
         createdAt: dto.createdAt
     }

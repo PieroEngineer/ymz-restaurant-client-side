@@ -20,6 +20,9 @@ import { UpdatePageIcon } from "@/features/menu/components/icons/UpdatePageIcon"
 import { RemovePageIcon } from "@/features/menu/components/icons/RemovePageIcon";
 import { useAuthUser } from "@/shared/hooks/useAuthUser";
 import { openInNewTab } from "@/shared/utils/webActors";
+import type { DishTypeToken } from "@/features/menu/types/support/selection.types";
+import { useExtraDetailsModal } from "@/features/menu/hooks/useExtraDetailsModal";
+
 
 export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" where necessary
 
@@ -52,64 +55,65 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     const activePage = useActivePage(menuDraft.draftMenuPages)
     
     const localPageFile = useLocalPageFile(
-        addPagesInputRef,
-        replacePageInputRef,
+      addPagesInputRef,
+      replacePageInputRef,
 
-        menuDraft.draftMenuPages, 
-        activePage.activePageIndex,
+      menuDraft.draftMenuPages, 
+      activePage.activePageIndex,
 
-        {   // For adding a new image
-            onAddNewPages: menuDraft.onAddNewPages,
-            onStackNewLocalImagesInMap: localPageMap.onStackNewLocalImagesInMap,
-            onSetCurrentActivePageIndex: activePage.onSetCurrentActivePageIndex 
-        },
-        {   // For replacing a new image
-          onReplaceLocalImageInMap: localPageMap.onReplaceLocalImageInMap,
-          onReplacePage: menuDraft.onReplacePage
-        },
-        {   // For removing a new image
-            onRemoveLocalImageFromMap: localPageMap.onRemoveLocalImageFromMap,
-            onRemovePage: menuDraft.onRemovePage,
-            onActivePageDeleted: activePage.onActivePageDeleted 
-        },
+      {   // For adding a new image
+        onAddNewPages: menuDraft.onAddNewPages,
+        onStackNewLocalImagesInMap: localPageMap.onStackNewLocalImagesInMap,
+        onSetCurrentActivePageIndex: activePage.onSetCurrentActivePageIndex 
+      },
+      {   // For replacing a new image
+        onReplaceLocalImageInMap: localPageMap.onReplaceLocalImageInMap,
+        onReplacePage: menuDraft.onReplacePage
+      },
+      {   // For removing a new image
+        onRemoveLocalImageFromMap: localPageMap.onRemoveLocalImageFromMap,
+        onRemovePage: menuDraft.onRemovePage,
+        onActivePageDeleted: activePage.onActivePageDeleted 
+      },
 
-        activeEditCell.onQuitActiveEditCell
+      activeEditCell.onQuitActiveEditCell
     )
 
     // Compute sync status based on current draft and database state
     const syncStatus = useMenuSyncStatus(
-        menuDraft.draftMenuPages,
-        menuDraft.draftDishItems,
-        menuDraft.isUploading,
+      menuDraft.draftMenuPages,
+      menuDraft.draftDishItems,
+      menuDraft.isUploading,
 
-        menuDraft.syncMenu,
+      menuDraft.syncMenu,
 
-        menuDraft.isErrorInUpload,
-        isDownloading,
-        isErrorInDownload,
+      menuDraft.isErrorInUpload,
+      isDownloading,
+      isErrorInDownload,
     );
 
     // Manage the modal state
     const modalValidation = useModalValidation(
-        menuDraft.draftMenuPages,
-        menuDraft.draftDishItems,
-        localPageFile.onCurrentImageRemove,
-        menuDraft.onUploadMenu
+      menuDraft.draftMenuPages,
+      menuDraft.draftDishItems,
+      localPageFile.onCurrentImageRemove,
+      menuDraft.onUploadMenu
     )
 
     // Control the pin coordinates
     const pinCoordinate = usePinCoordinate(
-        activePage.currentActivePage, 
-        
-        menuDraft.onAddNewDish,
-        menuDraft.onRemoveDish, 
-        
-        activeEditCell.onActivateEditCell,
-        activeEditCell.onHandleSomeCellRemoved,
-        
-        menuDraft.onUpdateDishCoordinates
+      activePage.currentActivePage, 
+      
+      menuDraft.onAddNewDish,
+      menuDraft.onRemoveDish, 
+      
+      activeEditCell.onActivateEditCell,
+      activeEditCell.onHandleSomeCellRemoved,
+      
+      menuDraft.onUpdateDishCoordinates
     );
 
+    const extraDetailsModal = useExtraDetailsModal() /// ✏️  AIHERE: A new hook to handle the intrinsic features of "ExtraDetailsModal"
 
     // ===== 🖼️User interface =====
 
@@ -177,7 +181,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
               <MenuDisplay
                 activeImageSrc={activePage.currentActivePage ? activePage.currentActivePage.imageUrl : null}
                 currentPageId={activePage.currentActivePage?.pageId ?? null}
-                dishesWithNumbers={menuDraft.dishesWithOrder}
+                dishesWithNumbers={menuDraft.dishesWithOrderNumbers}
                 onImagesUploaded={localPageFile.onLocalImageImported}
                 onCoordinateAdded={pinCoordinate.onAddNewCoordinate}
                 onCoordinateUpdated={pinCoordinate.onUpdateCoordinate}
@@ -202,7 +206,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     
             <div className="flex-none lg:flex-1 py-3 lg:pb-4 lg:pt-4 lg:min-h-0">
               <DishChart
-                items={menuDraft.dishesWithOrder}
+                dishItems={menuDraft.dishesWithOrderNumbers}
                 activeEditCell={activeEditCell.currentActiveEditCell}
                 setActiveEditCell={activeEditCell.setActiveEditCell}    // TODO: Change this for "onQuitActiveEditCell" (existing) and "onGoToSpecificCell"
                 onUpdateItem={menuDraft.onUpdateDishData}
@@ -222,6 +226,17 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             onClose={modalValidation.onCloseFrame}
             onProceedAnyway={modalValidation.onConfirmSync}
           />
+
+          {/* ✏️  AIHERE
+           
+          <ExtraDetailsModal
+            isOpen ...
+            onUpdateDishItem = {menuDraft.onUpdateDishData}
+            selectedDish ... 
+            ...
+          >
+          
+          */}
         </div>
       );
 }

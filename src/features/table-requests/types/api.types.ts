@@ -34,9 +34,10 @@ export interface OrderPreselectionPayload{
   paymentImageUrl: string
 }
 interface OrderItemPayload{
-  dishId: string
+  dishId: string,
   dishName: string,
-  quantity: number
+  quantity: number,
+  complementaryDishId: string,
   historicalUnitPriceInCents: number
 }
 

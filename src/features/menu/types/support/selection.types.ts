@@ -6,3 +6,5 @@ export interface ActiveEditCell {
   id: string;
   field: EditableDishFieldType;
 }
+
+export type DishTypeToken =  'MAIN' | 'COMPLEMENTARY'

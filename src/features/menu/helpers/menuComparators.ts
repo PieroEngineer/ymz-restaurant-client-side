@@ -1,5 +1,6 @@
 import type { CloudDishItemPayload, CloudMenuDiffPayload } from "@/features/menu/types/api.types";
 import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.types';
+import { areArraysEquivalent } from "@/shared/utils/arrayComparators";
 
 
 export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[], dbSnapshot: Menu): boolean => {
@@ -13,18 +14,20 @@ export const checkMinimalDiff = (localPages: MenuPage[], localDishes: DishItem[]
       });
 
     const isDishesChanged = localDishes.length !== dbSnapshot.dishes.length ||
-      localDishes.some(cd => {
-        const snap = dbSnapshot.dishes.find(d => d.id === cd.id);
-        if (!snap) return true;
+        localDishes.some(cd => {
+            const snap = dbSnapshot.dishes.find(d => d.id === cd.id);
+            if (!snap) return true;
 
-        return snap.name !== cd.name ||
-          snap.priceCents !== cd.priceCents ||
-          snap.prepTime !== cd.prepTime ||
-          snap.coordinateXInMenu !== cd.coordinateXInMenu ||
-          snap.coordinateYInMenu !== cd.coordinateYInMenu ||
-          snap.parentPageId !== cd.parentPageId ||
-          snap.isOutOfStock !== cd.isOutOfStock;  /// Is this line necessary? Maybe it's always false
-      });
+            return snap.name !== cd.name ||
+            snap.priceCents !== cd.priceCents ||
+            snap.prepTime !== cd.prepTime ||
+            snap.coordinateXInMenu !== cd.coordinateXInMenu ||
+            snap.coordinateYInMenu !== cd.coordinateYInMenu ||    ///
+            !areArraysEquivalent(snap.availableComplementaryDishIds, cd.availableComplementaryDishIds) ||
+            snap.type !== cd.type ||
+            snap.parentPageId !== cd.parentPageId ||
+            snap.isOutOfStock !== cd.isOutOfStock;  /// Is this line necessary? Maybe it's always false
+        });
 
     return isPagesChanged || isDishesChanged;
 }
@@ -75,8 +78,10 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 prepTime: cd.prepTime,
                 isOutOfStock: cd.isOutOfStock,
                 menuPageId: cd.parentPageId,
-                coordinateXInMenu: cd.coordinateXInMenu,
+                coordinateXInMenu: cd.coordinateXInMenu,    ///
                 coordinateYInMenu: cd.coordinateYInMenu,
+                availableComplementaryDishIds: cd .availableComplementaryDishIds,            
+                type: cd .type,                
                 description: '', // Preset parameter enforcement rule
                 createdAt: cd.createdAt /// Or Date.now()?
             });
@@ -86,7 +91,9 @@ export const generateDiffPayload = (currentPages: MenuPage[], currentDishes: Dis
                 if (original.priceCents !== cd.priceCents) updatedFields.priceCents = cd.priceCents;
                 if (original.prepTime !== cd.prepTime) updatedFields.prepTime =cd. prepTime;
                 if (original.coordinateXInMenu !== cd.coordinateXInMenu) updatedFields.coordinateXInMenu = cd.coordinateXInMenu;
-                if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;
+                if (original.coordinateYInMenu !== cd.coordinateYInMenu) updatedFields.coordinateYInMenu = cd.coordinateYInMenu;    ///
+                if (!areArraysEquivalent(original.availableComplementaryDishIds, cd.availableComplementaryDishIds)) updatedFields.availableComplementaryDishIds = cd.availableComplementaryDishIds;
+                if (original.type !== cd.type) updatedFields.type = cd.type;
                 if (original.isOutOfStock !== cd.isOutOfStock) updatedFields.isOutOfStock = cd.isOutOfStock;
                 if (original.parentPageId !== cd.parentPageId) updatedFields.menuPageId = cd.parentPageId;  /// Is it possible? perhaps this line is unnecessary
                 /// Is it necessary to include  "createAt"?

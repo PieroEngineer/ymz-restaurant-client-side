@@ -25,7 +25,7 @@ interface MenuDisplayProps {
   onTargetRowFocusRequested: (id: string) => void;
 }
 
-export function MenuDisplay({ 
+export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-based refactoring
   activeImageSrc, 
   currentPageId, 
 
@@ -134,9 +134,11 @@ export function MenuDisplay({
     }
   };
 
+  // Complementary dishes shouldn't appear in the menu
+  const mainDishesWithNumbers = dishesWithNumbers.filter( dish => dish.type !== "COMPLEMENTARY" );
+  
   // Filter out pin markers belonging strictly to the menu page being viewed right now
-
-  const activePagePins = dishesWithNumbers.filter(dish => dish.parentPageId === currentPageId);
+  const activePagePins = mainDishesWithNumbers.filter(dish => dish.parentPageId === currentPageId);
 
   //TODO: Verify if it's ok that the menu recompose everytime some letter is written in the dish chart. I found it by placing a log in the possition of this comment
 

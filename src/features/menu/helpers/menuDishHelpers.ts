@@ -1,6 +1,7 @@
 import type { DishItem, MenuPage } from '@/features/menu/types/domain.types';
+import { areArraysEquivalent } from '@/shared/utils/arrayComparators';
 
-export function areDishCollectionsEqual(left: DishItem[], right: DishItem[]): boolean {
+export function areDishCollectionsEqual(left: DishItem[], right: DishItem[]): boolean { // Unused
   if (left.length !== right.length) return false;
 
   return left.every((leftDish, index) => {
@@ -13,7 +14,9 @@ export function areDishCollectionsEqual(left: DishItem[], right: DishItem[]): bo
       leftDish.prepTime === rightDish.prepTime &&
       leftDish.parentPageId === rightDish.parentPageId &&
       leftDish.coordinateXInMenu === rightDish.coordinateXInMenu &&
-      leftDish.coordinateYInMenu === rightDish.coordinateYInMenu &&
+      leftDish.coordinateYInMenu === rightDish.coordinateYInMenu && ///
+      areArraysEquivalent(leftDish.availableComplementaryDishIds, rightDish.availableComplementaryDishIds) &&
+      leftDish.type === rightDish.type &&
       leftDish.createdAt === rightDish.createdAt
     );
   });

@@ -30,6 +30,7 @@ export function toDomainOrder(dto: OrderPreselectionPayload): Order {
             dishId: selection.dishId,
             dishName: selection.dishName,
             quantity: selection.quantity,
+            complementaryDishId: selection.complementaryDishId,
             historicalUnitPriceInCents: selection.historicalUnitPriceInCents,
         })),
         paymentImageUrl: dto.paymentImageUrl

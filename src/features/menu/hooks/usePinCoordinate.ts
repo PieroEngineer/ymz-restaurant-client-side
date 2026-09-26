@@ -20,8 +20,10 @@ export function usePinCoordinate(
                 imageUrl: '',
                 priceCents: 0,
                 prepTime: 0,
-                isOutOfStock: false,
+                isOutOfStock: false,    ///
                 parentPageId: activePageObject.pageId,
+                availableComplementaryDishIds: [],
+                type: 'MAIN',
                 ...coords,
                 description: '',
                 createdAt: Date.now(),

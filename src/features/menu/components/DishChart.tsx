@@ -8,7 +8,7 @@ import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 interface DishChartProps {
   // 📋 Direct injection of sorted structured list items
-  items: (DishItem & { orderNumber: number })[];
+  dishItems: (DishItem & { orderNumber: number })[];
   activeEditCell: { id: string; field: EditableDishFieldType } | null;
   setActiveEditCell: (cell: { id: string; field: EditableDishFieldType } | null) => void;
   onUpdateItem: (id: string, field: EditableDishFieldType, value: string | boolean, fallbackValue?: number) => void;
@@ -21,7 +21,7 @@ interface DishChartProps {
 }
 
 export function DishChart({ 
-  items,
+  dishItems,
   activeEditCell,
   setActiveEditCell,
   onUpdateItem,
@@ -51,10 +51,10 @@ export function DishChart({
     // Prevent default browser tab loops so we can control the focus trajectory
     e.preventDefault();
 
-    const idx = items.findIndex(item => item.id === currentId);
+    const idx = dishItems.findIndex(item => item.id === currentId);
     if (idx === -1) return;
 
-    const currentItem = items[idx];
+    const currentItem = dishItems[idx];
 
     // 🗺️ Focus Path Checklist Matrix
     if (isTab) {
@@ -64,8 +64,8 @@ export function DishChart({
         setActiveEditCell({ id: currentId, field: 'prepTime' });
       } else if (currentField === 'prepTime') {
         // Jump to the first column of the next row if available
-        if (idx < items.length - 1) {
-          setActiveEditCell({ id: items[idx + 1].id, field: 'name' });
+        if (idx < dishItems.length - 1) {
+          setActiveEditCell({ id: dishItems[idx + 1].id, field: 'name' });
         } else {
           setActiveEditCell(null); // Close edit mode if we are on the very last field
         }
@@ -124,7 +124,7 @@ export function DishChart({
           </thead>
           
           <tbody className="divide-y-0">
-            {items.map((dish) => (
+            {dishItems.map((dish) => (
               <tr 
                 key={dish.id} 
                 /* 🧭 Feature: Clicking anywhere on a row takes you to its respective page */
@@ -195,6 +195,7 @@ export function DishChart({
                 
 
                 {/* ⏱️ ITEM PREPARATION TIME COMPONENT CELL */}
+                {/* ✏️ AIHERE: Move this text field to the new "ExtraDetailsModal". This table slot won't be a textfield anymore, but a button that opens the "ExtraDetailsModal" for the current dish*/}
                 <td 
                   className="border-l border-brand-navy/10 px-3 lg:px-4"
                   onClick={() => setActiveEditCell({ id: dish.id, field: 'prepTime' })}

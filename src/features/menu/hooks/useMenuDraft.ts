@@ -102,7 +102,7 @@ export function useMenuDraft(
   return {
     syncMenu,
 
-    dishesWithOrder: useMemo( () => sortDishesWithOrderNumbers(draftDishItems, draftMenuPages), [draftDishItems, draftMenuPages]),
+    dishesWithOrderNumbers: useMemo( () => sortDishesWithOrderNumbers(draftDishItems, draftMenuPages), [draftDishItems, draftMenuPages]),
 
     draftMenuPages,
 
@@ -132,7 +132,7 @@ export function useMenuDraft(
       });
     },
 
-    onUpdateDishData: (id: string, field: EditableDishFieldType, anyValue: string | boolean, fallbackValue = 0) => {
+    onUpdateDishData: (id: string, field: EditableDishFieldType, anyValue: string | boolean, fallbackValue = 0) => {  //  ✏️  AIHERE: Adapt this function to accept the list of strings too.
 
       let savedValue: string | number | boolean;
       // Ensuring the field match with the type   // TODO: Find another path where the 

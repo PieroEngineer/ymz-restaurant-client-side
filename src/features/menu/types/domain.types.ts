@@ -1,3 +1,4 @@
+import type { DishTypeToken } from "@/features/menu/types/support/selection.types";
 
 export interface MenuPage {
   pageId: string;
@@ -15,6 +16,8 @@ export interface DishItem { // TODO: Moving to this
   parentPageId: string; // References MenuPage.pageId
   coordinateXInMenu: number;
   coordinateYInMenu: number;  /// Consider move them to tuples
+  availableComplementaryDishIds: string[];
+  type: DishTypeToken;
   description: string;
   createdAt: number;
 }

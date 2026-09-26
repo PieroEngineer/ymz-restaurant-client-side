@@ -1,3 +1,5 @@
+import type { DishTypeToken } from "@/features/menu/types/support/selection.types";
+
 // ===== Input Formats =====
 export interface CloudMenuPagePayload {
   pageId: string;
@@ -14,7 +16,9 @@ export interface CloudDishItemPayload {
   isOutOfStock: boolean;
   menuPageId: string;
   coordinateXInMenu: number;
-  coordinateYInMenu: number;
+  coordinateYInMenu: number;  ///
+  availableComplementaryDishIds: string[];
+  type: DishTypeToken;
   description: string;
   createdAt: number;
 }

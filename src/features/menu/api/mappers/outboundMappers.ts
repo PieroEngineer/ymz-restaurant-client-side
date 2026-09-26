@@ -26,7 +26,9 @@ export function toRemoteDishItem(local: DishItem): CloudDishItemPayload {
         isOutOfStock: local.isOutOfStock,
         menuPageId: local.parentPageId,
         coordinateXInMenu: local.coordinateXInMenu,
-        coordinateYInMenu: local.coordinateYInMenu,
+        coordinateYInMenu: local.coordinateYInMenu, ///
+        availableComplementaryDishIds: local.availableComplementaryDishIds,
+        type: local.type,
         description: local.description,
         createdAt: local.createdAt
     };
