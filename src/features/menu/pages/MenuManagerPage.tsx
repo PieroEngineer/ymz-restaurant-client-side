@@ -22,6 +22,7 @@ import { useAuthUser } from "@/shared/hooks/useAuthUser";
 import { openInNewTab } from "@/shared/utils/webActors";
 import type { DishTypeToken } from "@/features/menu/types/support/selection.types";
 import { useExtraDetailsModal } from "@/features/menu/hooks/useExtraDetailsModal";
+import { ExtraDetailsModal } from "@/features/menu/components/ExtraDetailsModal";
 
 
 export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" where necessary
@@ -113,7 +114,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
       menuDraft.onUpdateDishCoordinates
     );
 
-    const extraDetailsModal = useExtraDetailsModal() /// ✏️  AIHERE: A new hook to handle the intrinsic features of "ExtraDetailsModal"
+    const extraDetailsModal = useExtraDetailsModal(menuDraft.draftDishItems, menuDraft.onUpdateDishData)
 
     // ===== 🖼️User interface =====
 
@@ -210,6 +211,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
                 activeEditCell={activeEditCell.currentActiveEditCell}
                 setActiveEditCell={activeEditCell.setActiveEditCell}    // TODO: Change this for "onQuitActiveEditCell" (existing) and "onGoToSpecificCell"
                 onUpdateItem={menuDraft.onUpdateDishData}
+                onSeeExtraDetails={extraDetailsModal.onSeeExtraDetails}
                 onRowClicked={activePage.onGoToSomePage}
                 syncStatus={syncStatus}
                 onSyncRequested={modalValidation.onAttemptSync}
@@ -227,16 +229,17 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
             onProceedAnyway={modalValidation.onConfirmSync}
           />
 
-          {/* ✏️  AIHERE
-           
           <ExtraDetailsModal
-            isOpen ...
-            onUpdateDishItem = {menuDraft.onUpdateDishData}
-            selectedDish ... 
-            ...
-          >
-          
-          */}
+            isOpen={extraDetailsModal.isOpen}
+            dish={extraDetailsModal.selectedDish}
+            complementaryDishes={extraDetailsModal.complementaryDishes}
+            allComplementsSelected={extraDetailsModal.allComplementsSelected}
+            onClose={extraDetailsModal.onClose}
+            onUpdatePrepTime={extraDetailsModal.onUpdatePrepTime}
+            onUpdateDishType={extraDetailsModal.onUpdateDishType}
+            onToggleComplement={extraDetailsModal.onToggleComplement}
+            onToggleAllComplements={extraDetailsModal.onToggleAllComplements}
+          />
         </div>
       );
 }

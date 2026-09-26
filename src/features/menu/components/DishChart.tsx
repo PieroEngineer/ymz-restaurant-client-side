@@ -3,7 +3,6 @@ import type { DishItem } from '@/features/menu/types/domain.types';
 import type { SyncStatusType } from '@/features/menu/types/support/syncStatus.types';
 import { SyncStatusIndicator } from '@/features/menu/components/SyncStatusIndicator';
 import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
-import { ensureTimeFormat } from '@/features/menu/helpers/timeValidators';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 
 interface DishChartProps {
@@ -12,6 +11,7 @@ interface DishChartProps {
   activeEditCell: { id: string; field: EditableDishFieldType } | null;
   setActiveEditCell: (cell: { id: string; field: EditableDishFieldType } | null) => void;
   onUpdateItem: (id: string, field: EditableDishFieldType, value: string | boolean, fallbackValue?: number) => void;
+  onSeeExtraDetails: (dish: DishItem) => void;
   // 🔌 Notification pipeline to alert the orchestrator when a row is selected
   onRowClicked: (pageId: string) => void;
   // 🔌 New Sync Connection Prop Lines
@@ -25,6 +25,7 @@ export function DishChart({
   activeEditCell,
   setActiveEditCell,
   onUpdateItem,
+  onSeeExtraDetails,
   onRowClicked,
   syncStatus,
   onSyncRequested
@@ -61,8 +62,6 @@ export function DishChart({
       if (currentField === 'name') {
         setActiveEditCell({ id: currentId, field: 'priceCents' });
       } else if (currentField === 'priceCents') {
-        setActiveEditCell({ id: currentId, field: 'prepTime' });
-      } else if (currentField === 'prepTime') {
         // Jump to the first column of the next row if available
         if (idx < dishItems.length - 1) {
           setActiveEditCell({ id: dishItems[idx + 1].id, field: 'name' });
@@ -76,12 +75,8 @@ export function DishChart({
     if (isEnter) {
       if (currentField === 'name') {
         if (!currentItem.priceCents) setActiveEditCell({ id: currentId, field: 'priceCents' });
-        else if (!currentItem.prepTime) setActiveEditCell({ id: currentId, field: 'prepTime' });
         else setActiveEditCell(null);
       } else if (currentField === 'priceCents') {
-        if (!currentItem.prepTime) setActiveEditCell({ id: currentId, field: 'prepTime' });
-        else setActiveEditCell(null);
-      } else if (currentField === 'prepTime') {
         setActiveEditCell(null);
       }
     }
@@ -195,26 +190,20 @@ export function DishChart({
                 
 
                 {/* ⏱️ ITEM PREPARATION TIME COMPONENT CELL */}
-                {/* ✏️ AIHERE: Move this text field to the new "ExtraDetailsModal". This table slot won't be a textfield anymore, but a button that opens the "ExtraDetailsModal" for the current dish*/}
                 <td 
                   className="border-l border-brand-navy/10 px-3 lg:px-4"
-                  onClick={() => setActiveEditCell({ id: dish.id, field: 'prepTime' })}
                 >
-                  {activeEditCell?.id === dish.id && activeEditCell?.field === 'prepTime' ? (
-                    <input
-                      ref={activeInputRef}
-                      type="text"
-                      value={dish.prepTime}
-                      onChange={(e) => onUpdateItem(dish.id, 'prepTime', ensureTimeFormat(e.target.value))}
-                      onKeyDown={(e) => handleKeyDownGridTraverse(e, dish.id, 'prepTime')}
-                      onBlur={() => setActiveEditCell(null)}
-                      className="w-full bg-slate-50 border border-brand-primary/30 rounded px-2 py-1 outline-none text-sm font-medium"
-                    />
-                  ) : (
-                    <span className={`block text-sm ${!dish.prepTime && 'text-slate-300 font-normal italic'}`}>
-                      {dish.prepTime ? `${dish.prepTime} min` : '0 min'}
-                    </span>
-                  )}
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onSeeExtraDetails(dish);
+                    }}
+                    aria-label={`Editar detalles de ${dish.name || 'plato'}`}
+                    className="rounded-md px-2 py-1 text-sm font-medium text-brand-navy hover:bg-brand-primary/10 focus-visible:outline-2 focus-visible:outline-brand-primary"
+                  >
+                    {dish.prepTime ? `${dish.prepTime} min` : 'Configurar'}
+                  </button>
                 </td>
 
                 {/* ✅ ITEM AVAILABILITY COMPONENT CELL */}

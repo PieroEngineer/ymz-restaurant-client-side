@@ -6,7 +6,11 @@ import { injectRemoteUrlInPages } from '@/features/menu/helpers/handleRemoteUrls
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelpers';
 import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
+import type { DishTypeToken } from '@/features/menu/types/support/selection.types';
 import { decimalToCents, ensureCostFormat } from '@/shared/utils/moneyConversors';
+
+type DraftDishField = EditableDishFieldType | 'type' | 'availableComplementaryDishIds';
+type DraftDishValue = string | boolean | string[] | DishTypeToken;
 
 export function useMenuDraft(
   initialMenu: Menu | undefined,
@@ -132,20 +136,28 @@ export function useMenuDraft(
       });
     },
 
-    onUpdateDishData: (id: string, field: EditableDishFieldType, anyValue: string | boolean, fallbackValue = 0) => {  //  ✏️  AIHERE: Adapt this function to accept the list of strings too.
+    onUpdateDishData: (id: string, field: DraftDishField, anyValue: DraftDishValue, fallbackValue = 0) => {
 
-      let savedValue: string | number | boolean;
+      let savedValue: string | number | boolean | string[] | DishTypeToken;
       // Ensuring the field match with the type   // TODO: Find another path where the 
       switch(field){
         case "name":
-        case "prepTime":
           savedValue = String(anyValue);
+          break;
+        case "prepTime":
+          savedValue = Math.max(0, Number.parseInt(String(anyValue), 10) || 0);
           break;
         case "priceCents":
           savedValue = decimalToCents(parseFloat(ensureCostFormat(String(anyValue))) || fallbackValue);
           break;
         case "isOutOfStock":
           savedValue = Boolean(anyValue);
+          break;
+        case "type":
+          savedValue = anyValue as DishTypeToken;
+          break;
+        case "availableComplementaryDishIds":
+          savedValue = Array.isArray(anyValue) ? anyValue : [];
           break;
       }
 
