@@ -113,7 +113,7 @@ export function DishChart({
               <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase px-3 lg:px-4">N°</th>
               <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Nombre</th>
               <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Costo</th>
-              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Tiempo de prep.</th>
+              <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Detalles</th>
               <th className="pb-3 lg:pb-4 text-sm md:text-lg font-bold tracking-wide uppercase border-l border-brand-navy/10 px-3 lg:px-4">Dispon.</th>
             </tr>
           </thead>
@@ -182,14 +182,12 @@ export function DishChart({
                     />
                   ) : (
                     <span className={`block text-sm font-mono ${!dish.priceCents && 'text-slate-300 font-normal italic'}`}>
-                      {dish.priceCents ? `$${centsToDecimal(dish.priceCents)}` : '$0.00'}
+                      {dish.priceCents ? (dish.type=='COMPLEMENTARY' ? "Complemento" : `$${centsToDecimal(dish.priceCents)}`) : '$0.00'}
                     </span>
                   )}
                 </td>
 
-                
-
-                {/* ⏱️ ITEM PREPARATION TIME COMPONENT CELL */}
+                {/* 🌟 EXTRA DETAILS CELL */}
                 <td 
                   className="border-l border-brand-navy/10 px-3 lg:px-4"
                 >
@@ -200,9 +198,9 @@ export function DishChart({
                       onSeeExtraDetails(dish);
                     }}
                     aria-label={`Editar detalles de ${dish.name || 'plato'}`}
-                    className="rounded-md px-2 py-1 text-sm font-medium text-brand-navy hover:bg-brand-primary/10 focus-visible:outline-2 focus-visible:outline-brand-primary"
+                    className="min-w-16 rounded-full px-3 py-1 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-95 bg-brand-blue hover:bg-brand-navy"
                   >
-                    {dish.prepTime ? `${dish.prepTime} min` : 'Configurar'}
+                    {"Editar"}
                   </button>
                 </td>
 
