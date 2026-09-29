@@ -100,8 +100,8 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
     onCoordinateAdded({ coordinateXInMenu: xPercent, coordinateYInMenu: yPercent });  /// Possible optimization (#3252)
   };
 
-  // 🪵 Gesture Dragging Engine: Updates coordinates as mouse moves across container canvas bounds
-  const handleCanvasMouseMove = (e: React.MouseEvent) => {
+  // 🪵 Gesture Dragging Engine: Updates coordinates as the active pointer moves across the canvas
+  const handleCanvasPointerMove = (e: React.PointerEvent) => {
     if (!draggingPinIdRef.current || !imageRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
@@ -112,8 +112,8 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
   };
 
 
-  // 🛑 Gesture Drop Event Engine: Fires formal completion hook when user releases mouse hold click
-  const handleCanvasMouseUp = () => {
+  // 🛑 Gesture Drop Event Engine: Fires formal completion hook when the active pointer is released
+  const handleCanvasPointerUp = () => {
     if (!draggingPinIdRef.current) return;
 
     const activeDragId = draggingPinIdRef.current;
@@ -145,9 +145,9 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
   return (
     <div 
       className="w-full lg:w-auto h-full min-h-96 lg:min-h-0 bg-white border-2 lg:border-3 shadow-yummizi border-brand-navy rounded-2xl lg:rounded-3xl flex flex-col justify-center items-center relative overflow-hidden"
-      onMouseMove={handleCanvasMouseMove}
-      onMouseUp={handleCanvasMouseUp}
-      onMouseLeave={handleCanvasMouseUp} // Auto-drop if mouse slips entirely out of the display box
+      onPointerMove={handleCanvasPointerMove}
+      onPointerUp={handleCanvasPointerUp}
+      onPointerCancel={handleCanvasPointerUp}
     >
 
       {/* 📥 Hidden System Input Element managed by pointer anchors */}
@@ -181,14 +181,21 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
                 <div
                   key={pin.id}
                   ref={setPinElementRef(pin.id)}
-                  /* 🔌 Mouse Event hooks injected to track shared bounding space */
-                  onMouseEnter={() => setHoveredPinId(pin.id)}
-                  onMouseLeave={() => setHoveredPinId(null)}
-                  onMouseDown={(e) => {
+                  /* 🔌 Pointer hooks support both mouse and touch gestures */
+                  onPointerEnter={(e) => {
+                    if (e.pointerType === 'mouse') setHoveredPinId(pin.id);
+                  }}
+                  onPointerLeave={(e) => {
+                    if (e.pointerType === 'mouse') setHoveredPinId(null);
+                  }}
+                  onPointerDown={(e) => {
+                    if (e.target instanceof Element && e.target.closest('button')) return;
                     e.stopPropagation(); // Stop click from creating a second pin on top of this one
                     // onCoordinateDragStarted(pin.id);
                     setDraggingPinId(pin.id);
                     draggingPinIdRef.current = pin.id;
+                    if (e.pointerType === 'touch') setHoveredPinId(pin.id);
+                    e.currentTarget.setPointerCapture(e.pointerId);
                   }}
                   /* 🔥 Crucial Fix: Changed pointer-events-none to auto, added grip styling changes */
                   className={`absolute size-6 -ml-3 -mt-3 bg-brand-primary border-2 border-white rounded-full flex items-center justify-center shadow-md animate-scale-in text-[10px] text-white font-bold select-none pointer-events-auto transition-transform touch-none ${
@@ -211,7 +218,7 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
 
                   {/* 🧡 THE EXPANDING ACTION OBROUND FRAME */}
                   <div
-                    className={`absolute top-1/2 -translate-y-1/2 h-10 bg-brand-primary rounded-full flex items-center justify-center px-3 gap-3 transition-all duration-200 ease-out z-50 pointer-events-auto cursor-default ${
+                    className={`absolute top-1/2 -translate-y-1/2 h-12 lg:h-10 bg-brand-primary rounded-full flex items-center justify-center px-4 lg:px-3 gap-3 transition-all duration-200 ease-out z-50 pointer-events-auto cursor-default ${
                       isHovered 
                         ? 'opacity-100 scale-100 visible' 
                         : 'opacity-0 scale-75 invisible pointer-events-none'
@@ -232,10 +239,10 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
                         onCoordinateDeleted(pin.id);
                         setHoveredPinId(null);
                       }}
-                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                      className="size-12 lg:size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition-transform cursor-pointer"
                       title="Borrar pin"
                     >
-                      <TrashIcon className='size-5'/>
+                      <TrashIcon className='size-6 lg:size-5'/>
                     </button>
 
                     {/* ▫️ Vertical partition separation wireframe rule line */}
@@ -249,10 +256,10 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
                         onTargetRowFocusRequested(pin.id);
                         setHoveredPinId(null); // Collapse frame after jumping
                       }}
-                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-90 transition-transform cursor-pointer"
+                      className="size-12 lg:size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                       title="Editar pin"
                     >
-                      <PencilIcon className='size-5'/>
+                      <PencilIcon className='size-6 lg:size-5'/>
                     </button>
                   </div>
                 </div>
