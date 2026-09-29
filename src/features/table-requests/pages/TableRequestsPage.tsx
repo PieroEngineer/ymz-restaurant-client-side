@@ -51,24 +51,26 @@ export function TableRequestsPage() {
   console.log('🔎💸  Observed Payment URL:', paymentViewModal.observedPaymentUrl);
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none">
+    <div className="relative flex h-full w-full flex-col overflow-hidden select-none">
       
       {/* TOP-CENTER TITLE BANNER RECTANGLE */}
-      <div className="relative top-0 w-[92%] sm:w-[80%] max-w-2xl left-1/2 -translate-x-1/2 bg-brand-navy px-4 sm:px-8 md:px-12 rounded-b-2xl flex items-center justify-center z-20 shadow-yummizi-blue">
-        <h1 className="font-heading mx-auto sm:mx-10 md:mx-30 my-1 font-bold text-white text-base sm:text-xl lg:text-5xl tracking-wide whitespace-nowrap overflow-hidden text-ellipsis">
+      <header
+        className="relative mx-auto w-full shrink-0 bg-brand-navy rounded-b-2xl shadow-lg flex items-center justify-center py-3 px-14 sm:px-16 lg:w-200 lg:px-6"
+      >
+        <h1 className="text-white text-2xl sm:text-3xl font-semibold tracking-wide text-center">
           Solicitudes para mesa
         </h1>
 
         <button
-          className="absolute right-0 top-0 h-full w-10 sm:w-12 bg-white rounded-b-2xl flex items-center justify-center hover:scale-[1.1] cursor-pointer shrink-0"
+          className="absolute right-0 top-0 h-full w-12 bg-white rounded-b-2xl flex items-center justify-center hover:scale-[1.1] cursor-pointer"
           onClick={() => openInNewTab('https://youtu.be/fAfyB8eCOTE?si=tUD2BbaatAMSYTAQ&t=116')}  // TODO: Move to a hook
         >
-          <Videoicon className='size-6 sm:size-8'/>
+          <Videoicon className='size-8'/>
         </button>
-      </div>
+      </header>
 
       {/* TOP-RIGHT COMPACT ALTERNATING IMAGE CONTROLLER */}
-      <div className="absolute top-14 right-2 sm:top-0 sm:right-0 sm:mt-2 sm:mr-4 z-30 scale-75 sm:scale-100 origin-top-right">
+      <div className="absolute top-14 right-2 z-30 hidden scale-75 origin-top-right sm:top-0 sm:right-0 sm:mt-2 sm:mr-4 sm:scale-100 md:block">
         <div className="relative bg-white rounded-xl p-3 shadow-md flex items-center gap-4 border border-brand-navy/5">
 
           {/* Alternating Slot 2 */}
@@ -107,9 +109,9 @@ export function TableRequestsPage() {
       </div>
 
       {/* VERTICAL LEFT-SIDE STATUS RAIL*/}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-14 w-[90%] max-w-xs top-auto md:top-20 md:left-0 md:w-20 md:h-auto md:bottom-0 md:translate-x-0 py-0 md:py-4 flex flex-row md:flex-col items-center justify-center z-20">
+      <div className="relative z-20 flex h-14 w-full shrink-0 flex-row items-center justify-center py-0 md:absolute md:bottom-0 md:left-0 md:top-20 md:h-auto md:w-20 md:flex-col md:py-4">
         {/* Master Shell Container */}
-        <div className="w-full h-12 md:w-18 md:h-full bg-white rounded-full shadow-yummizi border border-brand-navy/5 flex flex-row md:flex-col items-center justify-between px-3 py-1 md:py-8 md:px-2">
+        <div className="h-12 w-[90%] max-w-xs bg-white rounded-full shadow-yummizi border border-brand-navy/5 flex flex-row md:h-full md:w-18 md:max-w-none md:flex-col items-center justify-between px-3 py-1 md:py-8 md:px-2">
           
           {/* Sub-Obround 1 */}
           <button
@@ -146,7 +148,7 @@ export function TableRequestsPage() {
 
       {/* WORKSPACE GRID FRAME: RESERVED FOR INCOMING LIVE TABLE REQUESTS */}
       {/* Positioned cleanly below the header banners (pt-15) and to the right of the status rail (pl-24) */}
-      <main className="w-full h-full pt-32 md:pt-15 pl-3 md:pl-24 pr-3 md:pr-4 pb-20 md:pb-2 overflow-hidden">
+      <main className="w-full min-h-0 flex-1 overflow-hidden px-3 pt-3 pb-3 md:pl-24 md:pr-4 md:pt-15 md:pb-0">
         <div className="w-full h-full border-2 border-dashed border-brand-navy/20 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center p-2 transition-colors duration-300">
           
           {/* Scalable Container Delivery */}
