@@ -17,6 +17,7 @@ export function toDomainTableRequest(dto: TableRequestPayload): TableRequest {
 
 export function toDomainOrder(dto: OrderPreselectionPayload): Order {
     return {
+        orderId: dto.orderId,
         userId: dto.userId,
         requestId: dto.requestId,
         userName: dto.userName,

@@ -113,7 +113,7 @@ export function RequestDashboard({
                   expectedArrivalTime = {tableRequest.onQueuedTimestamp}
                   relatedInfo = {relatedInfo}
                   onAcceptCardFromQueue={requests.updateRequestStatus}
-                  onDeclineRequest={handleDecline}
+                  // onDeclineRequest={handleDecline}
                 />
               </div>
             );
@@ -141,7 +141,7 @@ export function RequestDashboard({
                   expectedArrivalTime = {tableRequest.onQueuedTimestamp}
                   relatedInfo = {relatedInfo}
                   onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
-                  onDeclineRequest={handleDecline}
+                  // onDeclineRequest={handleDecline}
                 />
               </div>
             );
@@ -164,18 +164,18 @@ export function RequestDashboard({
           const expectedArrivalTime = (customerOrder.arrivalTimeInMinutes*60_000) + customerOrder.onPaidTimeStamp;  // TODO: minutes difference here (Check if it's giving an extra minute when reload the page)
           
           return (
-            <div key={customerOrder.requestId} className="w-72 shrink-0">
-              <TableRequestCard
-                requestId = {customerOrder.requestId}  //
+            <div key={customerOrder.orderId} className="w-72 shrink-0">
+              <TableRequestCard // TODO: Separate in different UIs
+                requestId = {customerOrder.orderId}
                 userName = {customerOrder.userName}
                 state = {'PAID'}
                 expectedArrivalTime = {expectedArrivalTime}
                 relatedInfo = {relatedInfo}
                 selectedOrder = {customerOrder.orderSelections}
-                onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
-                onDeclineRequest={handleDecline}
+                //X onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
+                // onDeclineRequest={handleDecline}
                 onTryToObservePaymentUrl = { () => { onTryToObservePaymentUrl(customerOrder.paymentImageUrl) } }
-                onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.requestId ) } }
+                onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.orderId ) } }
                 isTimesUp = {expectedArrivalTime < Date.now() ? true : false} 
               />
             </div>

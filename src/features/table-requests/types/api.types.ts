@@ -20,6 +20,7 @@ export interface UpdateInfoPayload{
 }
 
 export interface OrderPreselectionPayload{
+  orderId: string,
   requestId: string,
   userId: string,
   userName: string,

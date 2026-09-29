@@ -25,6 +25,7 @@ export interface TableRequest {
 }
 
 export interface Order {
+  orderId: string,
   requestId: string,
   userId: string,
   userName: string,
