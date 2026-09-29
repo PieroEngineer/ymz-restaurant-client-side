@@ -45,9 +45,9 @@ export function RequestDashboard({
   // Mount the real-time WebSocket listener dedicated to the restaurant operations channel
   useRealTimeDashboard(requests.onRequestUpdated, orders.onOrderUpdate, realTimeChannelName)
 
-  const handleDecline = (id: string) => {
-    console.log(`Declined request: ${id}`); // TODO
-  };
+  // const handleDecline = (id: string) => {
+  //   console.log(`Declined request: ${id}`); // TODO
+  // };
 
   useEffect(() => {
     if (!scrollTarget) return;
