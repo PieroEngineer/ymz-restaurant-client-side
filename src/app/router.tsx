@@ -1,7 +1,7 @@
 import { createRootRoute, createRoute, createRouter } from '@tanstack/react-router';
 import { HubPage } from '@/features/hub/pages/HubPage';
 import { TableRequestsPage } from '@/features/table-requests/pages/TableRequestsPage';
-import { SectionLayout } from '@/layouts/SectionLayout';
+import { SectionLayout } from '@/layouts/MainLayout/SectionLayout';
 import { MenuManagerPage } from '@/features/menu/pages/MenuManagerPage';
 import { AuthScreen } from '@/features/auth/pages/AuthPage';
 import { RestaurantConfigPage } from '@/features/profile/pages/RestaurantProfileConfigPage';

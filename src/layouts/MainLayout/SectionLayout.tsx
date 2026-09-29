@@ -1,5 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
-import React, { useState } from 'react';
+import React from 'react';
+import publicInvitationPoster from "@/assets/images/public-invitation-poster.webp"
+
 
 import yummizilogo from '@/assets/images/yummizi-logo.webp'
 // import { GearIcon } from '@/shared/components/icons/GearIcon';
@@ -10,6 +12,9 @@ import { ExitIcon } from '@/shared/components/icons/ExitIcon';
 import { StoreIcon } from '@/shared/components/icons/StoreIcon';
 import { NavigationPaths } from '@/shared/constants/navigation-names';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
+import { useInteraction } from '@/layouts/MainLayout/hooks/useInteraction';
+import { useAssetDownload } from '@/layouts/MainLayout/hooks/useDownloadableImage';
+import { Downloadicon } from '@/shared/components/icons/Downloadicon';
 
 interface SectionLayoutProps {
   children: React.ReactNode;
@@ -21,9 +26,9 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
 
   const authUser = useAuthUser()
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const interaction = useInteraction()
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const assetDownload = useAssetDownload()
 
   return (
     <div className="flex h-screen w-screen bg-brand-background overflow-hidden relative font-sans">
@@ -43,7 +48,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
         className={`
           h-full bg-white text-brand-navy flex flex-col transition-all duration-300 ease-in-out z-30 border-r border-brand-navy/5 relative
           rounded-tr-3xl
-          ${isSidebarOpen ? 'w-72' : 'w-0 border-r-0'}
+          ${interaction.isSidebarOpen ? 'w-72' : 'w-0 border-r-0'}
         `}
       >
         {/* TOP INTERIOR GAP: Allocating space for the layout matching top-left button */}
@@ -55,7 +60,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           {/* Main Hub Option */}
           <button onClick = {() => navigate({ to: NavigationPaths.Hub })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <HouseIcon className='size-10'/>
-            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+            <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Inicio
             </span>
           </button>
@@ -66,7 +71,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           {/* Menu Option */}
           <button onClick = {() => navigate({ to: NavigationPaths.Menu })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <MenuIcon className='size-10'/>
-            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+            <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Mi Menú
             </span>
           </button>
@@ -74,7 +79,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           {/* Dashboard Option */}
           <button onClick = {() => navigate({ to: NavigationPaths.RequestDashboard })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <RequestIcon className='size-10'/>
-            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+            <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Solicitudes
             </span>
           </button>
@@ -82,8 +87,16 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           {/* Profile Option */}
           <button onClick = {() => navigate({ to: NavigationPaths.RestaurantProfile })} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <StoreIcon className='size-10'/>
-            <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+            <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
               Mi Restaurante
+            </span>
+          </button>
+
+          {/* Download marketing poster Option */}
+          <button onClick = {() => assetDownload.downloadBlob(publicInvitationPoster)} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
+            <Downloadicon className='size-10'/>
+            <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+              Descargar invitación
             </span>
           </button>
 
@@ -95,7 +108,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
               className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy/80"
             >
               <ExitIcon className='size-7' />
-              <span className={`${isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
+              <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
                 Salir
               </span>
             </button>
@@ -114,7 +127,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
       {/* ASYMMETRIC FLOATING TOGGLE BUTTON (Locks strictly to the extreme Top-Left layout boundary) */}
       <div className="absolute top-0 left-0 z-50">
           <button 
-          onClick={toggleSidebar}
+          onClick={interaction.toggleSidebar}
           className="w-16 h-16 flex items-center justify-center bg-brand-primary text-white shadow-yummizi transition-all duration-300 ease-in-out cursor-pointer rounded-br-2xl"
           style={{ borderRadius: '0px 0px 16px 0px' }} // Only bottom-right corner rounded
           aria-label="Toggle Navigation Control"
@@ -122,7 +135,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           {/* Custom pure HTML/CSS 3-lines burger icon to easily execute the 90° rotation spec */}
           <div 
               className={`flex flex-col justify-between w-6 h-4 transition-transform duration-300 ease-in-out ${
-              isSidebarOpen ? 'rotate-90' : 'rotate-0'
+              interaction.isSidebarOpen ? 'rotate-90' : 'rotate-0'
               }`}
           >
               <span className="w-full h-0.5 bg-white rounded-full" />
