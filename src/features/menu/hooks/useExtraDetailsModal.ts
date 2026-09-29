@@ -7,9 +7,13 @@ type ExtraDetailsValue = string | string[] | DishTypeToken;
 type UpdateDishData = (id: string, field: ExtraDetailsField, value: ExtraDetailsValue) => void;
 
 export function useExtraDetailsModal(dishes: DishItem[], onUpdateDishData: UpdateDishData) {
+    
     const [selectedDishId, setSelectedDishId] = useState<string | null>(null);
+    
     const selectedDish = dishes.find((dish) => dish.id === selectedDishId) ?? null;
+    
     const complementaryDishes = dishes.filter((dish) => dish.type === 'COMPLEMENTARY');
+    
     const allComplementsSelected = complementaryDishes.length > 0 && selectedDish !== null &&
         complementaryDishes.every((complement) => selectedDish.availableComplementaryDishIds.includes(complement.id));
 
@@ -18,14 +22,23 @@ export function useExtraDetailsModal(dishes: DishItem[], onUpdateDishData: Updat
     };
 
     return {
+        
         isOpen: selectedDish !== null,
+        
         selectedDish,
+        
         complementaryDishes,
+        
         allComplementsSelected,
+        
         onSeeExtraDetails: (dish: DishItem) => setSelectedDishId(dish.id),
+        
         onClose: () => setSelectedDishId(null),
+        
         onUpdatePrepTime: (value: string) => updateSelectedDish('prepTime', value),
+        
         onUpdateDishType: (value: DishTypeToken) => updateSelectedDish('type', value),
+        
         onToggleComplement: (dishId: string, checked: boolean) => {
             if (!selectedDish) return;
             const selectedIds = selectedDish.availableComplementaryDishIds;
@@ -34,6 +47,7 @@ export function useExtraDetailsModal(dishes: DishItem[], onUpdateDishData: Updat
                 : selectedIds.filter((id) => id !== dishId);
             updateSelectedDish('availableComplementaryDishIds', nextIds);
         },
+        
         onToggleAllComplements: (checked: boolean) => updateSelectedDish(
             'availableComplementaryDishIds',
             checked ? complementaryDishes.map((dish) => dish.id) : [],

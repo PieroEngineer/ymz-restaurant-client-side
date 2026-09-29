@@ -117,7 +117,7 @@ function ComplementDishChecklist({
 }) {
     return (
         <fieldset className="space-y-3">
-            <legend className="mb-2 text-sm font-semibold text-brand-navy">Incluir complementos</legend>
+            <legend className="mb-2 text-sm font-semibold text-brand-navy">Incluir complementos (Precio incluído en plato principal)</legend>
             {dishes.length === 0 ? (
                 <p className="rounded-lg bg-slate-50 px-3 py-4 text-sm text-slate-500">Incluye otros platos en el tipo "Complemento" para verlos aquí</p>
             ) : (
