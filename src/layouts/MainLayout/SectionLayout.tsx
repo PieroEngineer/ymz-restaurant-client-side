@@ -96,7 +96,7 @@ export function SectionLayout({ children, showLogo = true }: SectionLayoutProps)
           <button onClick = {() => assetDownload.downloadBlob(publicInvitationPoster)} className="w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-bold font-sans transition-all group duration-200 hover:shadow-yummizi cursor-pointer bg-white text-brand-navy">
             <Downloadicon className='size-10'/>
             <span className={`${interaction.isSidebarOpen ? 'opacity-100' : 'opacity-0'} transition-opacity duration-200 whitespace-nowrap`}>
-              Descargar invitación
+              Imprimir invitación
             </span>
           </button>
 
