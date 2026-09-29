@@ -49,7 +49,7 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
     // Manage the local draft menu 
     const menuDraft = useMenuDraft(dbSnapshot, localPageMap.localPageFilesMap, localPageMap.onResetLocalImageMap, authUser.data?.userId)
 
-    console.log("🔎  The menu pages are ", menuDraft.draftMenuPages)
+    // console.log("🔎  The menu pages are ", menuDraft.draftMenuPages)
 
     // Control the current active page
     const activePage = useActivePage(menuDraft.draftMenuPages)
@@ -113,7 +113,10 @@ export function MenuManagerPage() { // TODO: Apply "useCallBack" and "useMemo" w
       menuDraft.onUpdateDishCoordinates
     );
 
-    const extraDetailsModal = useExtraDetailsModal(menuDraft.draftDishItems, menuDraft.onUpdateDishData)
+    const extraDetailsModal = useExtraDetailsModal(
+      menuDraft.draftDishItems,
+      menuDraft.onUpdateDishData
+    )
 
     // ===== 🖼️User interface =====
 

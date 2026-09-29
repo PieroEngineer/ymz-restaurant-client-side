@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { menuApi } from '@/features/menu/api/menuApi';
 import type { DishItem, Menu, MenuPage } from '@/features/menu/types/domain.types';
 import { generateDiffPayload } from '@/features/menu/helpers/menuComparators';
@@ -8,6 +8,7 @@ import { sortDishesWithOrderNumbers } from '@/features/menu/helpers/menuDishHelp
 import type { EditableDishFieldType } from '@/features/menu/types/support/selection.types';
 import type { DishTypeToken } from '@/features/menu/types/support/selection.types';
 import { decimalToCents, ensureCostFormat } from '@/shared/utils/moneyConversors';
+import type { MenuQueryKey } from '@/features/menu/types/query.types';
 
 type DraftDishField = EditableDishFieldType | 'type' | 'availableComplementaryDishIds';
 type DraftDishValue = string | boolean | string[] | DishTypeToken;
@@ -19,8 +20,10 @@ export function useMenuDraft(
   onResetLocalImageMap: () => void,
   loggedRestaurantId: string | undefined
 ) {
+
+  const queryClient = useQueryClient();
   
-  const [syncMenu, useSyncMenu] = useState<Menu>({menuPages: [], dishes: []})
+  const [syncMenu, useSyncMenu] = useState<Menu>({menuPages: [], dishes: []}) // TODO (#739): Maybe it can be replaced by the state of TanStack Query
 
   const [draftMenuPages, setMenuPagesDraft] = useState<MenuPage[]>([])
   const [draftDishItems, setDishItemsDraft] = useState<DishItem[]>([])
@@ -87,7 +90,18 @@ export function useMenuDraft(
       console.log('  Dishe data now', draftDishItems);
       
       setMenuPagesDraft(finalSnapshotPages);
-      useSyncMenu({menuPages: finalSnapshotPages, dishes: draftDishItems});
+      
+      const committedMenu = { menuPages: finalSnapshotPages, dishes: draftDishItems };
+      useSyncMenu(committedMenu); // TODO (#739)
+      if (loggedRestaurantId) {
+
+        const menuQueryKey: MenuQueryKey = ['menu', 'dataset', { restaurantId: loggedRestaurantId }]
+        queryClient.setQueryData(
+          menuQueryKey,
+          committedMenu,
+        );
+      }
+      
       onResetLocalImageMap();
     },
     onError: () =>{
@@ -159,6 +173,20 @@ export function useMenuDraft(
         case "availableComplementaryDishIds":
           savedValue = Array.isArray(anyValue) ? anyValue : [];
           break;
+      }
+
+      if(field==='type' && savedValue === "MAIN"){
+        setDishItemsDraft((prev) =>
+          prev.map((dish) => 
+            ( dish.availableComplementaryDishIds.includes(id) ? 
+              { 
+                ...dish,
+                availableComplementaryDishIds: dish.availableComplementaryDishIds.filter(complementaryDishId => complementaryDishId!==id) 
+              } :
+              dish
+            )
+          ),
+        );
       }
 
       setDishItemsDraft((prev) =>
