@@ -90,7 +90,11 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
 
   // 🎯 Core Canvas Interaction: Adds a pin if we aren't dragging or interacting with an action frame
   const handleImageCanvasClick = (e: React.MouseEvent<HTMLImageElement>) => {
-    if (draggingPinId || hoveredPinId) return;
+    if (hoveredPinId) {
+      setHoveredPinId(null);
+      return;
+    }
+    if (draggingPinId) return;
     if (!imageRef.current) return;
 
     const rect = imageRef.current.getBoundingClientRect();
