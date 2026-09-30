@@ -137,7 +137,9 @@ export function DishChart({
                   className="border-l border-brand-navy/10 px-3 lg:px-4"  // |-> X add cursor text 
                   onClick={(e) => {
                     e.stopPropagation(); // Stop row click navigation from resetting things
-                    setActiveEditCell({ id: dish.id, field: 'name' });
+                    if (activeEditCell?.id !== dish.id || activeEditCell.field !== 'name') {
+                      setActiveEditCell({ id: dish.id, field: 'name' });
+                    }
                   }}
                 >
                   {activeEditCell?.id === dish.id && activeEditCell?.field === 'name' ? (
