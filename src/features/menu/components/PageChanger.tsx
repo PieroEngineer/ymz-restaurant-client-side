@@ -23,7 +23,7 @@ export function PageChanger({ onPageUp, onPageDown, currentPage, totalPages}: Pa
           isAtFirstPage ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-primary/10 cursor-pointer'
         }`}
       >
-        <ArrowIcon className='size-7 lg:size-8 -rotate-90 lg:rotate-180'/>
+        <ArrowIcon className='size-7 lg:size-8 rotate-90 lg:rotate-180'/>
       </button>
       
       {/* Live Page Count Tracker Layout Slot */}
@@ -40,7 +40,7 @@ export function PageChanger({ onPageUp, onPageDown, currentPage, totalPages}: Pa
           isAtLastPage ? 'opacity-20 cursor-not-allowed' : 'hover:bg-brand-primary/10 cursor-pointer'
         }`}
       >
-        <ArrowIcon className='size-7 lg:size-8 rotate-90 lg:rotate-0'/>
+        <ArrowIcon className='size-7 lg:size-8 -rotate-90 lg:rotate-0'/>
       </button>
     </div>
   );
