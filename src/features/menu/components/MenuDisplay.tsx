@@ -218,7 +218,7 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
 
                   {/* 🧡 THE EXPANDING ACTION OBROUND FRAME */}
                   <div
-                    className={`absolute top-1/2 -translate-y-1/2 h-12 lg:h-10 bg-brand-primary rounded-full flex items-center justify-center px-4 lg:px-3 gap-3 transition-all duration-200 ease-out z-50 pointer-events-auto cursor-default ${
+                    className={`absolute top-1/2 -translate-y-1/2 h-10 bg-brand-primary rounded-full flex items-center justify-center px-4 lg:px-3 gap-3 transition-all duration-200 ease-out z-50 pointer-events-auto cursor-default ${
                       isHovered 
                         ? 'opacity-100 scale-100 visible' 
                         : 'opacity-0 scale-75 invisible pointer-events-none'
@@ -239,10 +239,10 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
                         onCoordinateDeleted(pin.id);
                         setHoveredPinId(null);
                       }}
-                      className="size-12 lg:size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-95 transition-transform cursor-pointer"
                       title="Borrar pin"
                     >
-                      <TrashIcon className='size-6 lg:size-5'/>
+                      <TrashIcon className='size-5'/>
                     </button>
 
                     {/* ▫️ Vertical partition separation wireframe rule line */}
@@ -256,10 +256,10 @@ export function MenuDisplay({   // TODO: This sub comonent needs an urgent hook-
                         onTargetRowFocusRequested(pin.id);
                         setHoveredPinId(null); // Collapse frame after jumping
                       }}
-                      className="size-12 lg:size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-90 transition-transform cursor-pointer"
+                      className="size-10 flex items-center justify-center rounded-full hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                       title="Editar pin"
                     >
-                      <PencilIcon className='size-6 lg:size-5'/>
+                      <PencilIcon className='size-5'/>
                     </button>
                   </div>
                 </div>
