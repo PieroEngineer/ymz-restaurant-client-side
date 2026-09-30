@@ -98,7 +98,7 @@ export function RequestDashboard({
       <div ref={queuedRequestsRef} className="flex flex-wrap items-start gap-4 scroll-mt-2">
         {requests.currentState.map((tableRequest) => {
 
-          if(tableRequest.state === 'QUEUED' || tableRequest.state === 'ACCEPTED') {
+          if(tableRequest.state === 'QUEUED' || tableRequest.state === 'ACCEPTED') {  // TODO (#299)
             const relatedInfo: CardInfoItem[] = [
               {nomination: 'Personas', value: String(tableRequest.groupSize)},
               {nomination: 'Tiempo plan.', value: String(tableRequest.arrivlaTime)}
@@ -125,7 +125,7 @@ export function RequestDashboard({
       <div ref={readyRequestsRef} className="flex flex-wrap items-start gap-4 scroll-mt-2">
         {requests.currentState.map((tableRequest) => {
 
-          if(tableRequest.state === 'READY' || tableRequest.state === 'PAY_TRIED') {
+          if(tableRequest.state === 'READY' || tableRequest.state === 'PAY_TRIED') {  // TODO (#299)
             const relatedInfo: CardInfoItem[] = [
               {nomination: 'Personas', value: String(tableRequest.groupSize)},
               {nomination: 'Tiempo plan.', value: String(tableRequest.arrivlaTime)},
