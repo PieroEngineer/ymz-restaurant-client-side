@@ -121,7 +121,7 @@ export function TableRequestsPage() {
             className="w-[30%] h-9 md:w-14 md:h-[30%] bg-[#ff3131] rounded-full shadow-inner transition-transform hover:scale-105 active:scale-95 cursor-pointer grid place-items-center px-1"
           >
             {/* A column containing the QueueIcon and a integer number below */}
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex md:flex-col items-center justify-center gap-1">
               <QueueIcon className="w-full h-full max-h-6 md:max-h-none"/>
               <span className="text-white text-lg font-bold">{requests.currentState.filter((request) => request.state === 'QUEUED' || request.state === 'ACCEPTED').length}</span>  {/* TODO (#299): Move this logic to the hook */}
             </div>
@@ -135,7 +135,7 @@ export function TableRequestsPage() {
             onClick={() => scrollDashboardTo('ready')}
             className="w-[30%] h-9 md:w-14 md:h-[30%] bg-brand-primary rounded-full shadow-inner transition-transform hover:scale-105 active:scale-95 cursor-pointer grid place-items-center px-1"
           >
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex md:flex-col items-center justify-center gap-1">
               <DoorIcon className="w-full h-full max-h-6 md:max-h-none"/>
               <span className="text-white text-lg font-bold">{requests.currentState.filter((request) => request.state === 'READY' || request.state === 'PAY_TRIED').length}</span>  {/* TODO (#299): Move this logic to the hook */}
             </div>
@@ -149,7 +149,7 @@ export function TableRequestsPage() {
             onClick={() => scrollDashboardTo('paid')}
             className="w-[30%] h-9 md:w-14 md:h-[30%] bg-[#00bf63] rounded-full shadow-inner transition-transform hover:scale-105 active:scale-95 cursor-pointer grid place-items-center px-1"
           >
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex md:flex-col items-center justify-center gap-1">
               <CookingIcon className="w-full h-full max-h-6 md:max-h-none"/>
               <span className="text-white text-lg font-bold">{orders.currentState.length}</span>  {/* TODO (#299): Move this logic to the hook */}
             </div>
