@@ -64,13 +64,13 @@ export function MenuActionModal({
           )}
           {mode === 'EMPTY_PAGES' && (
             <p>
-              <span className="font-extrabold underline">{formatPageNumbersList(emptyPageNumbers)}</span> comidas adjuntas. Por favor, clickee sobre la image del menú para agregarlas.
+              <span className="font-extrabold underline">{formatPageNumbersList(emptyPageNumbers)}</span> comidas adjuntas. Por favor, presione sobre la image del menú para agregarlas.
             </p>
           )}
           {mode === 'INVALID_DISHES' && (
             <div className="flex flex-col gap-3">
               <p className="text-sm font-semibold border-b border-white/20 pb-2">
-                Aún no se puede guardar los cambios, porque hay comidas con datos incompletos. <br /><br />Por favor, completelos en la tabla de la derecha.
+                Hay con datos incompletos. <br /><br />Por favor, completarlos.
               </p>
               <ul className="flex flex-col gap-3 mt-1">
                 {invalidDishes.map((dish, idx) => (
