@@ -34,6 +34,7 @@ export function toDomainOrder(dto: OrderPreselectionPayload): Order {
             complementaryDishId: selection.complementaryDishId,
             historicalUnitPriceInCents: selection.historicalUnitPriceInCents,
         })),
-        paymentImageUrl: dto.paymentImageUrl
+        paymentImageUrl: dto.paymentImageUrl,
+        extraCommentaries: dto.extraCommentaries
     };
 }

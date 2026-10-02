@@ -27,7 +27,7 @@ export const requestApi = {
         const [, , { restaurantId }] = queryKey;
         
         const response = await axiosClient.get<TableRequestPayload[]>(`requests/${restaurantId}`);
-        console.log(`🔎  Raw request data :\n ${JSON.stringify(response.data)}`)
+        // console.log(`🔎  Raw request data :\n ${JSON.stringify(response.data)}`)
         return response.data.map(toDomainTableRequest);
     },
 

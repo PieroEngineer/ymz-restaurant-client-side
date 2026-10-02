@@ -1,24 +1,37 @@
+import type { DetailsUiModel, TabSelectionToken } from "@/features/table-requests/types/support/cardFields.types"
 import { useState } from "react"
 
 
-export function usePaymentViewModal(
+export function useDetailsModal(
 
 ) {
     const [isOpen, setIsSelecting] = useState(false)
-    const [observedPaymentUrl, setObservedPaymentUrl] = useState<string | null>(null)
+    const [selectedTab, setSelectedTab] = useState<TabSelectionToken>('PAYMENT')
+    const [details, setDetails] = useState<DetailsUiModel |null>(null)
+
+    // const [observedPaymentUrl, setObservedPaymentUrl] = useState<string | null>(null)
 
     const toggleOpening = () => {
         setIsSelecting((prev) => !prev)
     }
 
-    return {
-        observedPaymentUrl,
+    const onSelectTab = (tab: TabSelectionToken) => {
+        setSelectedTab(tab)
+    }
 
-        setObservedPaymentUrl,
+    return {
+
+        details,
+
+        setDetails,
 
         isOpen,
 
-        toggleOpening
+        toggleOpening,
+
+        selectedTab,
+
+        onSelectTab
     }
 
 }

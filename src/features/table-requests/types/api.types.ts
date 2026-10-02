@@ -33,6 +33,7 @@ export interface OrderPreselectionPayload{
   // customerArrived: Boolean,
   orderSelections: OrderItemPayload[],
   paymentImageUrl: string
+  extraCommentaries: string
 }
 interface OrderItemPayload{
   dishId: string,

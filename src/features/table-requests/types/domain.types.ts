@@ -25,19 +25,20 @@ export interface TableRequest {
 }
 
 export interface Order {
-  orderId: string,
-  requestId: string,
-  userId: string,
-  userName: string,
-  // lastUpdateTimestamp: number,
-  arrivalTimeInMinutes: number,
-  groupSize: number,
-  totalCostInCents: number,
-  // currentDistanceInMeters: number,   // TODO
-  onPaidTimeStamp: number,
-  customerArrived: boolean,
-  orderSelections: OrderItem[],
+  orderId: string
+  requestId: string
+  userId: string
+  userName: string
+  // lastUpdateTimestamp: number
+  arrivalTimeInMinutes: number
+  groupSize: number
+  totalCostInCents: number
+  // currentDistanceInMeters: number   // TODO
+  onPaidTimeStamp: number
+  customerArrived: boolean
+  orderSelections: OrderItem[]
   paymentImageUrl: string
+  extraCommentaries: string
 }
 export interface OrderItem {
   dishId: string,

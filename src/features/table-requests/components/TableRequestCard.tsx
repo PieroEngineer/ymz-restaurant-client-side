@@ -14,7 +14,7 @@ interface TableRequestCardProps {
   isTimesUp?: boolean; 
   onAcceptCardFromQueue?: (requestId: string, newState: TableRequestState) => void; // TODO: Remove the parameters from here, because there should be assigned previously (e.g. "onTryToObservePaymentUrl" and "onFinalizeOrder")
   onDeclineRequest?: (id: string) => void;
-  onTryToObservePaymentUrl?: () => void;
+  onTryToObserveDetails?: () => void;
   onFinalizeOrder?: () => void;
 }
 
@@ -28,7 +28,7 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
   isTimesUp,
   onAcceptCardFromQueue,
   onDeclineRequest,
-  onTryToObservePaymentUrl,
+  onTryToObserveDetails,
   onFinalizeOrder
 }: TableRequestCardProps) {
 
@@ -58,7 +58,6 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
 
   const currentConfig = typeConfigs[state];
 
-  console.log(`🔎🍖  Order selections (In Card):\n ${JSON.stringify(selectedOrder)}`)
 
   return (
     <article className="w-full scale-[0.9] md:scale-100 origin-top-left bg-white rounded-2xl shadow-yummizi border border-slate-100 flex flex-col overflow-hidden break-inside-avoid transition-all duration-200 hover:-translate-y-0.5">
@@ -94,7 +93,7 @@ export function TableRequestCard({  // TODO: Divide this UI component in differe
           selectedOrder =  { selectedOrder }
           onAcceptCardFromQueue = { () => onAcceptCardFromQueue?.(requestId, 'ACCEPTED') }  // TODO: This and the bellow function doesn't need the parameters here because they can be passed in the call of "TableRequestCard"
           onDeclineRequest = { () => onDeclineRequest?.(requestId) }  // TODO: It will be used once the websockets of the customer's client-side is in different screens
-          onTryToObservePaymentUrl = {onTryToObservePaymentUrl}
+          onTryToObserveDetails = {onTryToObserveDetails}
           onFinalizeOrder = {onFinalizeOrder}
           isTimesUp = {isTimesUp} // TODO: It should be triggered by the re-render and for the countdown. The countdown is missing
         />

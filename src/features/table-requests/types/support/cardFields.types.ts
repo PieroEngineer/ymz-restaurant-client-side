@@ -13,3 +13,10 @@ export interface UpdateStatusAttributes {
 export interface CancelRequestAttributes { 
   requestId: string;
 }
+
+export interface DetailsUiModel {
+  paymentImageUrl: string
+  extraCommentaries: string
+}
+
+export type TabSelectionToken = 'PAYMENT' | 'COMMENTARIES'

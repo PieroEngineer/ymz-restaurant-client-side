@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 import { TableRequestCard } from '@/features/table-requests/components/TableRequestCard';
 import { useRealTimeDashboard } from '@/features/table-requests/hooks/useRealTimeDashboard';
-import type { CardInfoItem } from '@/features/table-requests/types/support/cardFields.types';
+import type { CardInfoItem, DetailsUiModel } from '@/features/table-requests/types/support/cardFields.types';
 import { centsToDecimal } from '@/shared/utils/moneyConversors';
 import type { RequestDashboardScrollSection } from '@/features/table-requests/types/support/requestDashboard.types';
 import type { Order, TableRequest, TableRequestState } from '@/features/table-requests/types/domain.types';
@@ -15,7 +15,7 @@ type RequestDashboardScrollTarget = {
 
 type RequestDashboardProps = {
   scrollTarget?: RequestDashboardScrollTarget | null;
-  onTryToObservePaymentUrl: (url: string | null) => void;
+  onTryToObserveDetails: (details: DetailsUiModel | null) => void;
   requests: {
     currentState: TableRequest[];
     onRequestUpdated: (eventName: string, data: Message) => void;
@@ -31,7 +31,7 @@ type RequestDashboardProps = {
 
 export function RequestDashboard({
   scrollTarget = null,
-  onTryToObservePaymentUrl,
+  onTryToObserveDetails: onTryToObserveDetails,
   requests,
   orders,
   realTimeChannelName
@@ -174,7 +174,12 @@ export function RequestDashboard({
                 selectedOrder = {customerOrder.orderSelections}
                 //X onAcceptCardFromQueue={requests.updateRequestStatus} // TODO: Necessary here?
                 // onDeclineRequest={handleDecline}
-                onTryToObservePaymentUrl = { () => { onTryToObservePaymentUrl(customerOrder.paymentImageUrl) } }
+                onTryToObserveDetails = { () => {
+                  onTryToObserveDetails({
+                    paymentImageUrl: customerOrder.paymentImageUrl,
+                    extraCommentaries: customerOrder.extraCommentaries
+                  })
+                }}
                 onFinalizeOrder = { () => { orders.finalizeOrder( customerOrder.orderId ) } }
                 isTimesUp = {expectedArrivalTime < Date.now() ? true : false} 
               />

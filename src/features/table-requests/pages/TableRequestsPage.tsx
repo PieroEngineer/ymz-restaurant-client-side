@@ -11,13 +11,14 @@ import { LightMgfGlassIcon } from '@/features/table-requests/components/icons/Li
 import { DoorIcon } from '@/features/table-requests/components/icons/DoorIcon';
 import { QueueIcon } from '@/features/table-requests/components/icons/QueueIcon';
 import { CookingIcon } from '@/features/table-requests/components/icons/CookingIcon';
-import { PaymentViewModal } from '@/features/table-requests/components/PaymentViewModal';
-import { usePaymentViewModal } from '@/features/table-requests/hooks/usePaymentViewModal';
+import { OrderDetailsModal } from '@/features/table-requests/components/OrderDetailsModal';
+import { useDetailsModal } from '@/features/table-requests/hooks/usePaymentViewModal';
 import { useRequests } from '@/features/table-requests/hooks/useRequests';
 import { useOrders } from '@/features/table-requests/hooks/useOrders';
 import { useAuthUser } from '@/shared/hooks/useAuthUser';
 import Videoicon from '@/shared/components/icons/Videoicon';
 import { openInNewTab } from '@/shared/utils/webActors';
+import type { DetailsUiModel } from '@/features/table-requests/types/support/cardFields.types';
 
 type RequestDashboardScrollSection = 'queued' | 'ready' | 'paid'; // TODO: Move to types
 
@@ -43,12 +44,12 @@ export function TableRequestsPage() {
 
   const channelName = `restaurant:${authUser.data?.userId}:ops`;
 
-  const paymentViewModal = usePaymentViewModal()
+  const paymentViewModal = useDetailsModal()
   const requests = useRequests(authUser.data?.userId);
   const orders = useOrders(authUser.data?.userId);
   const isLoading = requests.isPending || orders.isPending;
 
-  console.log('🔎💸  Observed Payment URL:', paymentViewModal.observedPaymentUrl);
+  console.log('🔎💸  Observed Payment URL:', paymentViewModal.details?.paymentImageUrl);
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden select-none">
@@ -184,9 +185,9 @@ export function TableRequestsPage() {
                 requests={requests}
                 orders={orders}
                 scrollTarget={dashboardScrollTarget}
-                onTryToObservePaymentUrl = { (url: string | null) => {
+                onTryToObserveDetails = { (details: DetailsUiModel | null) => {
+                  paymentViewModal.setDetails(details)
                   paymentViewModal.toggleOpening()
-                  paymentViewModal.setObservedPaymentUrl(url)
                 }}
                 realTimeChannelName={channelName}
               />
@@ -196,10 +197,13 @@ export function TableRequestsPage() {
         </div>
       </main>
 
-      <PaymentViewModal
+      <OrderDetailsModal
         isOpen = {paymentViewModal.isOpen}
-        paymentImageUrl = {paymentViewModal.observedPaymentUrl}
+        // paymentImageUrl = {paymentViewModal.observedPaymentUrl}
         onClose = {paymentViewModal.toggleOpening}
+        details = {paymentViewModal.details}
+        selectedTab = {paymentViewModal.selectedTab}
+        onSelectTab = {paymentViewModal.onSelectTab}
         // onContactUser = {() => {}}
       />
 
