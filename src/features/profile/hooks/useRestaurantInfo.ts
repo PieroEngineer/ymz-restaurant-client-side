@@ -42,17 +42,17 @@ export function useRestaurantInfo( restaurantId: string | undefined ){  // TODO:
       if(draftRestaurantInfo == null) return
       if(restaurantId === undefined) return
 
-      const logoWasModified = snapshot.logoUrl != draftRestaurantInfo.logoUrl
+      const modifiedLogoImageUrl = snapshot.logoUrl != draftRestaurantInfo.logoUrl ? draftRestaurantInfo.logoUrl : ""
 
-      const dishImagesWereModified: [boolean, boolean, boolean] = [
-        snapshot.dishesToShowUrls[0] != draftRestaurantInfo.dishesToShowUrls[0],
-        snapshot.dishesToShowUrls[1] != draftRestaurantInfo.dishesToShowUrls[1],
-        snapshot.dishesToShowUrls[2] != draftRestaurantInfo.dishesToShowUrls[2]
+      const modifiedDishImageUrls: [string, string, string] = [
+        (snapshot.dishesToShowUrls[0] != draftRestaurantInfo.dishesToShowUrls[0]) ? draftRestaurantInfo.dishesToShowUrls[0] : "",
+        (snapshot.dishesToShowUrls[1] != draftRestaurantInfo.dishesToShowUrls[1]) ? draftRestaurantInfo.dishesToShowUrls[1] : "",
+        (snapshot.dishesToShowUrls[2] != draftRestaurantInfo.dishesToShowUrls[2]) ? draftRestaurantInfo.dishesToShowUrls[2] : ""
       ]
 
-      const qrWasModified = snapshot.qrUrl != draftRestaurantInfo.qrUrl
+      const modifiedQrImageUrl = snapshot.qrUrl != draftRestaurantInfo.qrUrl ? draftRestaurantInfo.qrUrl : ""
 
-      const payload = toRemoteRestaurantUpdate(draftRestaurantInfo, logoWasModified, dishImagesWereModified, qrWasModified)
+      const payload = toRemoteRestaurantUpdate(draftRestaurantInfo, modifiedLogoImageUrl, modifiedDishImageUrls, modifiedQrImageUrl)
 
       console.log('⬆️  Payload to send', JSON.stringify(payload))
 

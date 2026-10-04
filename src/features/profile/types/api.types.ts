@@ -26,15 +26,15 @@ export interface UploadRestaurantInfoResponse{
 
 export interface UpdateRestaurantInfoPayload{   // TODO: For now we send all the data because the restaurant data doesn't change frequently, but later use the specific fields logic  
     restaurantName: string,
-    logoUrlRequired: boolean,
+    logoUrl: string,
     latitude: number,
     longitude: number,
     // openTime: string,
     // closeTime: string,
-    dishesToShowUrlsRequired: [boolean, boolean, boolean],
+    dishesToShowUrls: [string, string, string],
     phoneNumberToPay: string,
     phoneNumberToContact: string,
-    paymentQrUrlsRequired: boolean
+    paymentQrUrl: string
 }
 
 export interface InitializeRestaurantInfoPayload{  // TODO: Use "omit" of the "UpdateRestaurantInfoPayload"

@@ -4,21 +4,21 @@ import type { Restaurant } from "@/features/profile/types/domain.types";
 
 export function toRemoteRestaurantUpdate(
     local: Restaurant,
-    logoWasModified: boolean,
-    dishImagesWereModified: [boolean, boolean, boolean],
-    qrWasModified: boolean
+    modifiedLogoImageUrl: string,
+    modifiedDishImageUrls: [string, string, string],
+    modifiedQrImageUrl: string
 ): UpdateRestaurantInfoPayload {
     return {
         restaurantName: local.restaurantName,
-        logoUrlRequired: logoWasModified,
+        logoUrl: modifiedLogoImageUrl,
         latitude: local.coordinates[0],
         longitude: local.coordinates[1],
         // openTime: local.openingTime,
         // closeTime: local.closingTime,
-        dishesToShowUrlsRequired: dishImagesWereModified,
+        dishesToShowUrls: modifiedDishImageUrls,
         phoneNumberToPay: formatPeruvianNumberWithCountryCode(local.peruvianPaymentNumber),
         phoneNumberToContact: formatPeruvianNumberWithCountryCode(local.peruvianContactNumber),
-        paymentQrUrlsRequired: qrWasModified
+        paymentQrUrl: modifiedQrImageUrl
     };
 }
 
