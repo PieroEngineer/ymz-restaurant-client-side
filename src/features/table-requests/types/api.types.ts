@@ -68,4 +68,5 @@ export interface DenyRequestPayload {
 // ===== Response formats =====
 export interface UpdatingRequestStatusResponse {
   message: string
+  onUpdateRequestStateTimestamp: number
 }
