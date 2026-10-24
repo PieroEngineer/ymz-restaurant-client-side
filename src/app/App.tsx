@@ -8,7 +8,6 @@ import { AuthInitProvider } from '@/app/providers/AuthInitProvider';
 ----------------------------------------------------------------
 Credits: Made by Piero Olivas Tuesta 😉
 LinkedIn: /pieroengineerperu
-Email: psot14022001@gmail.com
 ----------------------------------------------------------------
 */
 
